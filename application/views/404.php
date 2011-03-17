@@ -5,9 +5,9 @@
 <title>404: Page Not Found</title> 
 <style>
 body {background-color: #c8e1f6;  margin: 0 auto; padding: 0; }
-div#error { position: absolute; bottom: 0; min-height: 573px; width: 100%; margin: 0; background: url(public/img/404.png) no-repeat;}
+div#error { position: absolute; bottom: 0; min-height: 573px; width: 100%; margin: 0; background: url(media/img/404.png) no-repeat;}
 * html div#error  { height: 573px; }
-div#grass { position: absolute; bottom: 0; width: 55%; height: 140px; background: url(public/img/grass.png) repeat-x; left: 800px;  }
+div#grass { position: absolute; bottom: 0; width: 55%; height: 140px; background: url(media/img/grass.png) repeat-x; left: 800px;  }
 </style>
 </head> 
 <body> 

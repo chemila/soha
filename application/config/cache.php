@@ -46,10 +46,6 @@ return array
 		'driver'             => 'apc',
 		'default_expire'     => 3600,
 	),
-	'eaccelerator'           => array
-	(
-		'driver'             => 'eaccelerator',
-	),
 	'xcache'   => array
 	(
 		'driver'             => 'xcache',

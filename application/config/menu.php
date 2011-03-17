@@ -3,10 +3,10 @@
 return array
 (
     'admin' => array(
-        'title' => '用户管理',
+        'title' => 'xxx',
         'actions' => array(
-            'list' => array('title' => '用户列表'),
-            'add' => array('title' => '添加用户'),
+            'list' => array('title' => 'xxx'),
+            'add' => array('title' => 'xxx'),
         ),
     ),
 );

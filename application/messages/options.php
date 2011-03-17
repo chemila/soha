@@ -2,7 +2,7 @@
 
 return array(
     'role' => array(
-        'admin' => '管理员',
-        'login' => '网站编辑',
+        'admin' => 'xxx',
+        'login' => 'xxx',
     ),
 );
