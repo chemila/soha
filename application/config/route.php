@@ -11,16 +11,14 @@
  */
 return array
 (
-    'welcomes' => array(
-        'uri' => 'welcome(/<action>(/<id>))',
-        'patterns' => array(
-            'id' => '\d+',
-        ),
-        'defaults' => array('controller' => 'welcome', 'action' => 'index'),
+    'test' => array(
+        'uri' => 'test(/<action>(/<id>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'test', 'action' => 'index'),
     ),
     'default' => array(
         'uri' => '(<controller>(/<action>))',
         'patterns' => array(),
-        'defaults' => array('controller' => 'welcome', 'action' => 'index'),
+        'defaults' => array('controller' => 'test', 'action' => 'index'),
     ),
 );

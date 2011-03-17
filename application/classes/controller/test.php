@@ -1,27 +1,35 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Welcome extends Controller {
+class Controller_Test extends Controller {
 
 	public function action_index()
 	{
 		$this->request->response = 'hey u!';
 	}
 
-    public function action_test() {
+    public function action_core() {
         $res = Core::find_file('class', 'CE');
-        //var_dump(Core::config('database')); 
-        //var_dump(Validate::email('test@@fdsf.com'));
+        var_dump(Core::config('database')); 
+        var_dump(Validate::email('test@@fdsf.com'));
 
-        $doc = phpQuery::newDocumentHTML('<div id="test">test</div>');
         $this->request->response = 'tset';
     }
 
-    public function action_tenx() 
+    public function action_phpquery() 
     {
         phpQuery::browserGet(
             'http://www.324324.cn/top/qq_wb.php?page=1&order=tz',
             'parse_tenx'
         );
+    }
+
+    public function action_database() 
+    {
+        $res = DB::query(Database::SELECT, 'select * from yule_collect order by rand(unix_timestamp()) limit 10')
+            ->execute()
+            ->as_array();
+        var_dump($res);
+	    // Create a custom configured instance
     }
 } // End Welcome
 
@@ -44,5 +52,3 @@ function parse_tenx($browser) {
         var_dump($data);
     }
 }
-
-

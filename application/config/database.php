@@ -26,9 +26,8 @@ return array
 		'table_prefix' => 'yule_',
 		'charset'      => 'utf8',
 		'caching'      => TRUE,
-		'profiling'    => FALSE,
 	),
-	'alternate' => array(
+	'slave' => array(
 		'type'       => 'mysql',
 		'connection' => array(
 			/**
@@ -53,6 +52,5 @@ return array
 		'table_prefix' => 'yule_',
 		'charset'      => 'utf8',
 		'caching'      => TRUE,
-		'profiling'    => FALSE,
 	),
 );
