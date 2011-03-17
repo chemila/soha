@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 /**
  * This file is executed everytime classes is included. Use it to set all
  * your personal needs in the library.
