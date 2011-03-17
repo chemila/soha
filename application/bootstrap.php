@@ -57,12 +57,11 @@ Core::$config->attach(new Config_File);
 Core::modules(array(
 	'cache'      => MODPATH.'cache',      // Caching with multiple backends
 	'database'   => MODPATH.'database',   // Database access
-	// 'image'      => MODPATH.'image',      // Image manipulation
+	'image'      => MODPATH.'image',      // Image manipulation
 	// 'oauth'      => MODPATH.'oauth',      // OAuth authentication
-	//'pagination' => MODPATH.'pagination', // Paging of results
-	// 'unittest'   => MODPATH.'unittest',   // Unit testing
-	// 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
-	//'email'       => MODPATH.'email',       // Basic authentication
+	'pagination' => MODPATH.'pagination', // Paging of results
+	'email'       => MODPATH.'email',       // Basic authentication
+    'phpQuery' => MODPATH.'phpQuery',
 	));
 
 /**

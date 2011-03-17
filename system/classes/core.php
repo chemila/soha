@@ -499,7 +499,7 @@ class Core {
 
 		// Set the current module list
 		Core::$_modules = $modules;
-
+        
 		foreach (Core::$_modules as $path)
 		{
 			$init = $path.'init'.EXT;

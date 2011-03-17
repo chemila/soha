@@ -11,7 +11,8 @@ class Controller_Welcome extends Controller {
         $res = Core::find_file('class', 'CE');
         //var_dump(Core::config('database')); 
         //var_dump(Validate::email('test@@fdsf.com'));
-        throw new CE('test');
+
+        $doc = phpQuery::newDocumentHTML('<div id="test">test</div>');
         $this->request->response = 'tset';
     }
 } // End Welcome

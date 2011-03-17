@@ -1,7 +1,6 @@
 <?php defined('SYSPATH') or die('No direct access allowed.');
 /**
  * Text helper class. Provides simple methods for working with text.
- *
  */
 class Text {
 
