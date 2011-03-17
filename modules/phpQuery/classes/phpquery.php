@@ -1061,6 +1061,7 @@ abstract class phpQuery {
 	public static function callbackRun($callback, $params = array(), $paramStructure = null) {
 		if (! $callback)
 			return;
+        
 		if ($callback instanceof CallbackParameterToReference) {
 			// TODO support ParamStructure to select which $param push to reference
 			if (isset($params[0]))
@@ -1071,6 +1072,7 @@ abstract class phpQuery {
 			$paramStructure = $callback->params;
 			$callback = $callback->callback;
 		}
+        
 		if (! $paramStructure)
 			return call_user_func_array($callback, $params);
 		$p = 0;

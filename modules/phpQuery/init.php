@@ -17,12 +17,11 @@ define('DOMELEMENT', 'DOMElement');
 define('DOMNODELIST', 'DOMNodeList');
 define('DOMNODE', 'DOMNode');
 
-require_once(dirname(__FILE__).'/classes/callback.php');
+phpQuery::$plugins = new phpQueryPlugins();
 
 // Load Zend's Autoloader
-if ($path = Core::find_file('vendor', 'Zend/library/Zend/Loader'))
+if ($path = Core::find_file('vendor', 'Zend/Loader'))
 {
 	ini_set('include_path', ini_get('include_path').PATH_SEPARATOR.dirname(dirname($path)));
-	require_once 'Zend/Loader/Autoloader.php';
-	Zend_Loader_Autoloader::getInstance();
+	require_once 'Zend/Loader.php';
 }
