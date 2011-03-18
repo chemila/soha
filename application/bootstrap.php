@@ -36,9 +36,9 @@ Core::init(array(
 	'base_url'   => '/',
     'index_file' => 'index.php',
     'cache_dir' => $_SERVER['SINASRV_CACHE_DIR'],
-    'errors' => FALSE,
+    'errors' => FALSE,       
     'charset' => 'utf-8',
-    'caching' => TRUE,
+    'caching' => FALSE,
 ));
 
 /**
@@ -58,10 +58,10 @@ Core::modules(array(
 	'cache'      => MODPATH.'cache',      // Caching with multiple backends
 	'database'   => MODPATH.'database',   // Database access
 	'image'      => MODPATH.'image',      // Image manipulation
-	// 'oauth'      => MODPATH.'oauth',      // OAuth authentication
+	'oauth'      => MODPATH.'oauth',      // OAuth authentication
 	'pagination' => MODPATH.'pagination', // Paging of results
 	'email'       => MODPATH.'email',       // Basic authentication
-    'phpQuery' => MODPATH.'phpQuery',
+    'phpQuery' => MODPATH.'phpQuery',     // php end jquery functionlity
 	));
 
 /**

@@ -19,13 +19,6 @@ $modules = 'modules';
 $system = 'system';
 
 /**
- * The media directory must contain the media file.
- *
- */
-$media = 'media';
-
-
-/**
  * The default extension of resource files. If you change this, all resources
  * must be renamed to use the new extension.
  *
@@ -62,15 +55,10 @@ if ( ! is_dir($modules) AND is_dir(DOCROOT.$modules))
 if ( ! is_dir($system) AND is_dir(DOCROOT.$system))
 	$system = DOCROOT.$system;
 
-// Make the media relative to the docroot
-if ( ! is_dir($media) AND is_dir(DOCROOT.$media))
-	$media = DOCROOT.$system;
-
 // Define the absolute paths for configured directories
 define('APPPATH', realpath($application).DIRECTORY_SEPARATOR);
 define('MODPATH', realpath($modules).DIRECTORY_SEPARATOR);
 define('SYSPATH', realpath($system).DIRECTORY_SEPARATOR);
-define('MEDPATH', realpath($media).DIRECTORY_SEPARATOR);
 
 // Clean up the configuration vars
 unset($application, $modules, $system);

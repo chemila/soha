@@ -141,7 +141,7 @@ abstract class Kohana_OAuth_Provider {
 
 		// Create a response from the request
 		$response = $request->execute();
-
+        
 		// Store this token somewhere useful
 		return OAuth_Token::factory('request', array(
 			'token'  => $response->param('oauth_token'),

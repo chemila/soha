@@ -14,7 +14,7 @@ class Kohana_OAuth_Request {
 	/**
 	 * Create a new request object.
 	 *
-	 *     $request = OAuth_Request::factory('token', 'http://example.com/oauth/request_token');
+	 *     $request = OAuth_Request::factory('token', 'get', 'http://example.com/oauth/request_token');
 	 *
 	 * @param   string  request type
 	 * @param   string  request URL

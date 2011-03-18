@@ -328,6 +328,7 @@ class phpQueryObject
 		$pseudoChars = array('-');
 		$tagChars = array('*', '|', '-');
 		// split multibyte string
+        // FIXME: mb_substr
 		// http://code.google.com/p/phpquery/issues/detail?id=76
 		$_query = array();
 		for ($i=0; $i<$strlen; $i++)
