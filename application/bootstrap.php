@@ -60,9 +60,10 @@ Core::modules(array(
 	'image'      => MODPATH.'image',      // Image manipulation
 	'oauth'      => MODPATH.'oauth',      // OAuth authentication
 	'pagination' => MODPATH.'pagination', // Paging of results
-	'email'       => MODPATH.'email',       // Basic authentication
-    'phpQuery' => MODPATH.'phpQuery',     // php end jquery functionlity
-	));
+	'email'      => MODPATH.'email',       // Basic authentication
+    'phpQuery'   => MODPATH.'phpQuery',     // php end jquery functionlity
+    'orm'        => MODPATH.'orm',
+));
 
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of

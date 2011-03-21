@@ -33,6 +33,5 @@ class OAuth extends Kohana_OAuth {
     public function access() 
     {
         $this->access_token = $this->provider->access_token($this->consumer, $this->request_token);
-        // save access_token
     }
 }

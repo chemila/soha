@@ -180,10 +180,10 @@ abstract class Kohana_OAuth {
 	{
 		// Split the parameters by &
 		$params = explode('&', trim($params));
-		
+
 		// Create an array of parsed parameters
 		$parsed = array();
-		
+
 		foreach ($params as $param)
 		{
 			// Split the parameter into name and value
