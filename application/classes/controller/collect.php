@@ -114,11 +114,7 @@ class Controller_Collect extends Controller {
             $data['info'] = phpQuery::pq($li)->find('b[class="nm"]>i')->attr('title');
             $data['category'] = $category;
             
-            try
-            {
-                $model->insert($data);
-            }
-            catch(Exception $e) {}
+            $model->insert($data);
         }
     }
 
@@ -154,41 +150,13 @@ class Controller_Collect extends Controller {
             }
 
             if( ! $result['uid'])
-            {
                 break;
-            }
             
-            try
-            {
-                $model->insert($result);
-                $count ++;
-            }
-            catch(Exception $e) { }
+            $model->insert($result);
+            $count ++;
         }
 
         return $count;
-    }
-
-    private function parse_tenx($browser) {
-        $trs = $browser->find('table tr:gt(0)');
-        
-        if( ! $trs)
-            return false;
-
-        $data = array();
-        echo (count($trs)) . "<br>";
-        return;
-
-        foreach($trs as $tr) {
-            $data['uid'] = pq($tr)->find('td:eq(1) a:eq(1)')->text();
-            $data['nick'] = iconv('gbk', 'utf-8', pq($tr)->find('td:eq(2) a:eq(0) font')->html());
-            $data['src'] = 'tenx';
-            $data['rank'] = (int)pq($tr)->find('td:eq(4)')->text();
-            $data['place'] = pq($tr)->find('td:eq(7) a')->text();
-            $data['url'] = pq($tr)->find('td:eq(8) a')->attr('href');
-
-            db_insert($data);
-        }
     }
 
     private function parse_qq($document, $i) {
@@ -208,11 +176,7 @@ class Controller_Collect extends Controller {
             $data['rank'] = 0;
             $data['category'] = ($i == 288) ? '草根' : '明星';
 
-            try
-            {
-                $model->insert($data);
-            }
-            catch(Exception $e) {}
+            $model->insert($data);
         }
     }
 
@@ -236,11 +200,7 @@ class Controller_Collect extends Controller {
             $data['rank'] = phpQuery::pq($li)->find('span.topData')->text();
             $data['category'] = $cnt > 50 ? '草根' : '明星';
 
-            try
-            {
-                $model->insert($data);
-            }
-            catch(Exception $e) {}
+            $model->insert($data);
         }
     }
 } // End Welcome

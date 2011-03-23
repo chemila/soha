@@ -63,6 +63,7 @@ Core::modules(array(
 	'email'      => MODPATH.'email',       // Basic authentication
     'phpQuery'   => MODPATH.'phpQuery',     // php end jquery functionlity
     'orm'        => MODPATH.'orm',
+    'smarty'     => MODPATH.'smarty',
 ));
 
 /**
