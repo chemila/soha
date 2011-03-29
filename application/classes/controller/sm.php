@@ -1,11 +1,6 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
-/**
- * Smarty demonstration controller. This controller is not required for Smarty to
- * work with Kohana and should NOT be used in production - it is for demonstration
- * purposes only!
- */
-class Controller_Sm extends Controller_Smarty{
+class Controller_sm extends Controller_Smarty{
 
     // Disable this controller when Kohana is set to production mode.
     // See http://docs.kohanaphp.com/installation/deployment for more details.
@@ -14,11 +9,8 @@ class Controller_Sm extends Controller_Smarty{
     // Set the name of the page layout template to use
     public $template = 'smarty:smarty_demo_page';
 
-    /**
-     * Default action - demonstrate Smarty in action
-     */
     public function action_index() {
-      $view = sview::factory('smarty:smarty_demo');
+      $view = view_smarty::factory('smarty:smarty_demo');
       // set variables for the 'features' section
       $view->myvar = 'This is a variable';
       $view->username = 'My Name';
@@ -33,9 +25,6 @@ class Controller_Sm extends Controller_Smarty{
 
     }
 
-    /**
-     * Demonstrate a renderer for the text/plain MIME type.
-     */
     public function action_demo_text() {
 
       $this->template->content = file_get_contents(__FILE__);
@@ -43,11 +32,7 @@ class Controller_Sm extends Controller_Smarty{
       $this->template->render();
     }
 
-    /**
-     * Demonstrate a renderer for a JSON object.
-     */
     public function action_demo_json() {
-
       // we can either put the data explicitly in a variable called _data, or do this
       // which is useful if the same controller is used for HTML and AJAX
       $this->template->title = 'This page has been updated';

@@ -18,12 +18,12 @@ return array
 			 * Ports and sockets may be appended to the hostname.
 			 */
 			'hostname'   => 'localhost',
-			'database'   => 'yule',
+			'database'   => 'pin',
 			'username'   => 'root',
 			'password'   => '',
 			'persistent' => FALSE,
 		),
-		'table_prefix' => 'yule_',
+		'table_prefix' => 'pin_',
 		'charset'      => 'utf8',
 		'caching'      => TRUE,
 	),
@@ -39,7 +39,7 @@ return array
 			 * boolean  persistent  use persistent connections?
 			 */
 			'hostname'   => 'localhost',
-			'database'   => 'yule',
+			'database'   => 'pin',
 			'username'   => 'root',
 			'password'   => '',
 			'persistent' => FALSE,
@@ -49,7 +49,7 @@ return array
 		 *
 		 * string   identifier  set the escaping identifier
 		 */
-		'table_prefix' => 'yule_',
+		'table_prefix' => 'pin_',
 		'charset'      => 'utf8',
 		'caching'      => TRUE,
 	),

@@ -97,7 +97,7 @@ class Controller_Collect extends Controller {
         }
 
         $data = array();
-        $model = new Model_Collect;
+        $model = new Model_Collect_List;
 
         foreach($lis as $li) {
             $data['uid'] = phpQuery::pq($li)->attr('vid');
@@ -126,7 +126,7 @@ class Controller_Collect extends Controller {
         $result = array();
         $tag = Core::config('yql.' . $src . '.tag');
         $items = $data['query']['results'][$tag];
-        $model = new Model_Collect;
+        $model = new Model_Collect_List;
         $count = 0;
 
         foreach($items as $item)
@@ -165,7 +165,7 @@ class Controller_Collect extends Controller {
         if( ! $lis) return false;
 
         $data = array();
-        $model = new Model_Collect;
+        $model = new Model_Collect_List;
 
         foreach($lis as $li) {
             $data['uid'] = trim(phpQuery::pq($li)->find('a:eq(1)')->attr('href'), '/');     
@@ -186,7 +186,7 @@ class Controller_Collect extends Controller {
         if( ! $lis) return false;
 
         $data = array();
-        $model = new Model_Collect;
+        $model = new Model_Collect_List;
         $cnt = 0;
 
         foreach($lis as $li) {
@@ -202,5 +202,9 @@ class Controller_Collect extends Controller {
 
             $model->insert($data);
         }
+    }
+
+    public function action_star()
+    {
     }
 } // End Welcome

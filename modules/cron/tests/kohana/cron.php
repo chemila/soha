@@ -1,25 +1,25 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php
 
-class Model_Collect extends ORM {
-    protected $_table_names_plural = FALSE;
-
-    public function insert($data)
-    {
-        try
-        {
-            return DB::insert($this->_table_name)
-                ->columns(array_keys($data))
-                ->values(array_values($data))
-                ->execute($this->_db);
-        }
-        catch(Database_Exception $e)
-        {
-            // Maybe because of the duplicated key 
-            return FALSE;
-        }
-    }
-
-    public function test_next($period, $from, $expected_result)
+/**
+ * @package Cron
+ * @group   kohana
+ * @group   kohana.cron
+ *
+ * @author      Chris Bandy
+ * @copyright   (c) 2010 Chris Bandy
+ * @license     http://www.opensource.org/licenses/isc-license.txt
+ */
+class Kohana_Cron_Test extends PHPUnit_Framework_TestCase
+{
+	/**
+	 * @test
+	 * @dataProvider    provider_next
+	 *
+	 * @param   string  Period
+	 * @param   integer Timestamp from which to calculate
+	 * @param   integer Next timestamp in period
+	 */
+	public function test_next($period, $from, $expected_result)
 	{
 		$cron = new Cron($period, NULL);
 		$result = $cron->next($from);
@@ -82,5 +82,4 @@ class Model_Collect extends ORM {
 			),
 		);
 	}
-
 }
