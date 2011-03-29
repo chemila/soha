@@ -18,14 +18,12 @@ return array (
         // ... and the smarty cache (only used if it is enabled)
         'cache_dir'       => Core::$cache_dir . '/smarty_compiled',
 
-        // TODO think about some theme overriding. At the moment the interface
         // provides an absolute path to template files, but the path here needs to be
         // set for the smarty {include} function
         'template_dir'    =>  array(
             APPPATH.'views',
         ),
 
-        // TODO need to create some useful plugins. Investigate whether
         // pre-registering gives a meaningful speed gain.
         'plugins_dir'     =>  array(
             APPPATH.'smarty_plugins',
@@ -34,7 +32,7 @@ return array (
         ),
 
         // If you want to use smarty config files, put them in this place
-        //'config_dir'      =>  APPPATH.'smarty_config',
+        'config_dir'      =>  APPPATH.'smarty',
 
         // useful when developing, override to false in your application's config
         // for a small speed increase
