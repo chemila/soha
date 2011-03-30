@@ -21,4 +21,9 @@ return array
         'patterns' => array(),
         'defaults' => array('controller' => 'test', 'action' => 'index'),
     ),
+    'setting' => array(
+        'uri' => '(<controller>(/<action>(/<id>)))',
+        'patterns' => array('id' => '\d+'),
+        'defaults' => array('controller' => 'setting', 'action' => 'index'),
+    )
 );

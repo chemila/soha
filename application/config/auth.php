@@ -5,4 +5,7 @@ return array(
         'skipped' => array('test'),
         'required' => array('index', 'get'),
     ),        
+    'setting' => array(
+        'required' => array('rm_personal', 'add_personal'),
+    ),
 );

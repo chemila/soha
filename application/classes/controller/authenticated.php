@@ -6,8 +6,8 @@ class Controller_Authenticated extends Controller {
     {
         $config = Core::config('auth.'.$this->request->controller);
 
-        is_array($config['skipped']) or $config['skipped'] = array();
-        is_array($config['required']) or $config['required'] = array();
+        isset($config['skipped']) or $config['skipped'] = array();
+        isset($config['required']) or $config['required'] = array();
 
         if( ! in_array($this->request->action, $config['skipped']) and 
               in_array($this->request->action, $config['required']))

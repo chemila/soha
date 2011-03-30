@@ -49,5 +49,11 @@ class Controller_Test extends Controller {
     public function action_api()
     {
     }
+
+    public function action_smarty()
+    {
+        $view = new View_Smarty('smarty:test/index');
+        $view->
+    }
 } // End Welcome
 

@@ -422,6 +422,7 @@ class Route {
          */
         foreach($routes as $name => $route)
         {
+            @$route['defaults'] or $route['defaults'] = array();
             Route::set($name, $route['uri'], $route['patterns'])->defaults($route['defaults']);
         }
     }
