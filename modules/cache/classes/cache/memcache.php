@@ -267,7 +267,7 @@ class Cache_Memcache extends Cache {
 	 * @return  void|boolean
 	 * @since   3.0.8
 	 */
-	protected function _failed_request($hostname, $port)
+	public function _failed_request($hostname, $port)
 	{
 		if ( ! $this->_config['instant_death'])
 			return; 

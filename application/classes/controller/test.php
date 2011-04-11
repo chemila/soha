@@ -46,14 +46,25 @@ class Controller_Test extends Controller {
         $oauth->access();
     }
 
-    public function action_api()
+    public function action_yql()
     {
+        set_time_limit(0);
+
+        $url = $_GET['url'];
+        $xpath = $_GET['xpath'];
+        $base_url =  'http://query.yahooapis.com/v1/public/yql';
+        $yql_query = "select * from html where url='{$url}' and xpath='{$xpath}'";
+        $yql_query_url = $base_url."?q=".urlencode($yql_query)."&format=json";
+        echo $yql_query_url."<br>";
+        $response = file_get_contents($yql_query_url);
+        $this->request->response = core::debug(json_decode($response, true));
     }
 
-    public function action_smarty()
+    public function action_memcached()
     {
-        $view = new View_Smarty('smarty:test/index');
-        $view->
+        $memc = cache::instance('memcache');
+        $memc->set('test', 'hello world');
+
+        $this->request->response = $memc->get('test');
     }
 } // End Welcome
-

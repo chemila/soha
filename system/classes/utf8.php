@@ -749,6 +749,43 @@ class UTF8 {
 		return _from_unicode($arr);
 	}
 
+	public static function convert($var, $charset = NULL)
+	{
+		if ( ! $charset)
+		{
+			// Use the application character set
+			$charset = Core::$charset;
+		}
+
+		if (is_array($var) OR is_object($var))
+		{
+			foreach ($var as $key => $val)
+			{
+				// Recursion!
+				$var[self::convert($key)] = self::convert($val);
+			}
+		}
+		elseif (is_string($var) AND $var !== '')
+		{
+			// Remove control characters
+			$var = self::strip_ascii_ctrl($var);
+
+			if ( ! self::is_ascii($var))
+			{
+				// Disable notices
+				$error_reporting = error_reporting(~E_NOTICE);
+
+				// iconv is expensive, so it is only used when needed
+				$var = iconv($charset, Core::$charset.'//IGNORE', $var);
+
+				// Turn notices back on
+				error_reporting($error_reporting);
+			}
+		}
+
+		return $var;
+	}
+
 } // End UTF8
 
 if (UTF8::$server_utf8 === NULL)

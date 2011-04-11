@@ -10,8 +10,8 @@ return array
 		(
 			array
 			(
-				'host'             => $_SERVER['SINASRV_MEMCACHED_HOST'],  // Memcache Server
-				'port'             => $_SERVER['SINASRV_MEMCACHED_PORT'],  // Memcache port number
+				'host'             => 'localhost',
+				'port'             => '11211',
 				'persistent'       => FALSE,        // Persistent connection
 				'weight'           => 1,
 				'timeout'          => 1,
@@ -58,4 +58,3 @@ return array
 		'default_expire'     => 3600,
 	)
 );
-

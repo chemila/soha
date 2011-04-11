@@ -203,8 +203,4 @@ class Controller_Collect extends Controller {
             $model->insert($data);
         }
     }
-
-    public function action_star()
-    {
-    }
 } // End Welcome
