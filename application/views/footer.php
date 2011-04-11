@@ -1,5 +1,5 @@
-	<!--footer start-->
-	<!--footer end-->
+<!--footer start-->
 </div>
 </body>
 </html>
+<!--footer end-->

@@ -16,10 +16,6 @@ class Controller_Test extends Controller {
 
     public function action_phpquery() 
     {
-        phpQuery::browserGet(
-            'http://www.324324.cn/top/qq_wb.php?page=1&order=tz',
-            'parse_tenx'
-        );
         $this->request->response = Core::debug(extension_loaded('mbstring') && phpQuery::$mbstringSupport);
     }
 
@@ -30,7 +26,6 @@ class Controller_Test extends Controller {
             ->as_array();
 
         $this->request->response = Core::debug($res);
-	    // Create a custom configured instance
     }
 
     public function action_oauth()

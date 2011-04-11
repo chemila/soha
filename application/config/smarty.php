@@ -26,8 +26,8 @@ return array (
 
         // pre-registering gives a meaningful speed gain.
         'plugins_dir'     =>  array(
-            APPPATH.'smarty_plugins',
-            //MODPATH.'smarty/smarty_plugins',
+            //APPPATH.'smarty_plugins',
+            MODPATH.'smarty/smarty_plugins',
             //'plugins',
         ),
 
@@ -54,8 +54,8 @@ return array (
         'security'        =>   false,
 
         // use different delimiters throughout your templates if you really want to!
-        'left_delimiter'  =>  '{',
-        'right_delimiter' =>  '}',
+        'left_delimiter'  =>  '<!--{',
+        'right_delimiter' =>  '}-->',
 
         // this could be useful if there are very many templates
         'use_sub_dirs'    => false, 

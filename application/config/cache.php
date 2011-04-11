@@ -19,6 +19,7 @@ return array
 				'status'           => TRUE,
 			),
 		),
+        'key_prefix'         => $_SERVER['SINASRV_MEMCACHED_KEY_PREFIX'], //key prefix
 		'instant_death'      => TRUE,               // Take server offline immediately on first fail (no retry)
 	),
 	'memcachetag' => array
