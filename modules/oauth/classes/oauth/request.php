@@ -9,4 +9,5 @@ abstract class OAuth_Request extends Kohana_OAuth_Request {
 
         return md5($mt . $rand);
 	}
+
 }

@@ -13,19 +13,19 @@ return array(
         'oauth_version' => '1.0',
         'key' => '1f3753ef450043dc8d76776a854af1a8',
         'secret' => 'cfa2cd474ce1d4b6fe7314004c43b96b',
-        'callback' => 'http://test.com',
+        'callback' => 'http://dev.pin.com/index.php/test/oauth_callback',
     ),
     'sohu' => array(
         'oauth_version' => '1.0',
         'key' => 'LVndlxxu3SJK9Q3fB6Jf',
-        'secret' => 'D(u5MyFJ^2CZdnRO)zCEQgYaK=QaiJ#tQkWQ*AD',
-        'callback' => '',
+        'secret' => 'D(u5MyFJ^2CZdnRO)zCEQgYaK=QaiJ#tQkWQ*ADk',
+        'callback' => 'http://dev.pin.com/index.php/test/oauth_callback',
     ),
     '163' => array(
         'oauth_version' => '1.0',
         'key' => 'uKTa7XQYOiiMnPYo',
         'secret' => 'ueHYVlbd0pGp8FAC5Bt0ObPxBqh6YvmM',
-        'callback' => '',
+        'callback' => 'http://dev.pin.com/index.php/test/oauth_callback',
     ),
 );
 

@@ -135,13 +135,16 @@ abstract class Kohana_OAuth_Provider {
 			// Load user parameters
 			$request->params($params);
 		}
-
 		// Sign the request using only the consumer, no token is available yet
 		$request->sign($this->signature, $consumer);
 
 		// Create a response from the request
 		$response = $request->execute();
         
+        // Check response valid or not
+        if( ! $response->valid_token())
+            throw new CE('Invalid response, error: '.(string)$response);
+
 		// Store this token somewhere useful
 		return OAuth_Token::factory('request', array(
 			'token'  => $response->param('oauth_token'),
@@ -205,6 +208,10 @@ abstract class Kohana_OAuth_Provider {
 		// Create a response from the request
 		$response = $request->execute();
 
+        // Check response valid or not
+        if( ! $response->valid_token())
+            throw new CE('Invalid response');
+
 		// Store this token somewhere useful
 		return OAuth_Token::factory('access', array(
 			'token'  => $response->param('oauth_token'),
@@ -225,10 +232,17 @@ abstract class Kohana_OAuth_Provider {
 	public function access($url, OAuth_Consumer $consumer, OAuth_Token_Access $token, $method = "GET", Array $params = NULL)
 	{
 		// Create a new request for a request token with the required parameters
-		$request = OAuth_Request::factory('resource', strtoupper($method), $url, array(
+		$request = OAuth_Request::factory('resource', $method, $url, array(
 			'oauth_consumer_key' => $consumer->key,
 			'oauth_token'        => $token->token,
 		));
+
+        $options = array();
+        if(isset($params['include_oauth']))
+        {
+            $options['include_oauth'] = $params['include_oauth'];
+            unset($params['include_oauth']);
+        }
 
 		if ($params)
 		{
@@ -236,12 +250,13 @@ abstract class Kohana_OAuth_Provider {
 			$request->params($params);
 		}
 
-		// Sign the request using only the consumer, no token is available yet
 		$request->sign($this->signature, $consumer, $token);
 
 		// Create a response from the request
-		$response = $request->execute();
+		$response = $request->execute($options);
 
+        // Check response valid or not
         return $response;
 	}
+
 } // End OAuth_Signature

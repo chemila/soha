@@ -1,6 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Test extends Controller {
+    public $oauth_name = 'sohu';
 
 	public function action_index()
 	{
@@ -28,26 +29,38 @@ class Controller_Test extends Controller {
         $this->request->response = Core::debug($res);
     }
 
-    public function action_oauth()
+    public function action_oauth_request()
     {
-        $oauth = new OAuth('sina');
-        $this->request->redirect($oauth->request_token());
+        $oauth = new OAuth($this->oauth_name);
+
+        if($callback_url = $oauth->request_token())
+        {
+            $this->request->redirect($callback_url);
+        }
     }
 
     public function action_oauth_callback()
     {
-        // TODO: pass oauth_verifier as session or request parameter
-        //session::instance()->set('oauth_verifier', $_GET['oauth_verifier']);
-        $this->request->response = sprintf('<a href="/index.php/test/oauth_access?oauth_verifier=%s">get request token successfully. Continue to access ?</a>', $_GET['oauth_verifier']);
-    }
+        $oauth = new OAuth($this->oauth_name);
+        $model_oauth = new model_oauth;
 
-    public function action_oauth_access()
-    {
-        $oauth = new OAuth('sina');
-        //$access_token = $oauth->access_token($_GET['oauth_verifier']);
-        $url = 'http://api.t.sina.com.cn/statuses/home_timeline.json?count=10';
-        $response = $oauth->access($url, 'get');
+        // verified before: fetch from session or DB instead
+        $access_token = $oauth->access_token($_GET['oauth_verifier']);
 
+        $timeline = array(
+            'qq' => 'http://open.t.qq.com/api/statuses/home_timeline?f=1&format=json&pageflag=0&reqnum=20&pagetime=0',
+            'sohu' => 'http://api.t.sohu.com/statuses/public_timeline.json',
+            'sina' => 'http://api.t.sina.com.cn/statuses/home_timeline.json?count=10',
+            '163' => 'http://api.t.163.com/statuses/public_timeline.json',
+        );
+
+        $params = array();
+        if($this->oauth_name == 'qq')
+        {
+            $params['include_oauth'] = true;
+        }
+
+        $response = $oauth->access($timeline[$this->oauth_name], 'get', $access_token, $params);
         $this->request->response = core::debug(json_decode($response));
     }
 
@@ -73,4 +86,16 @@ class Controller_Test extends Controller {
         $this->request->response = $memc->get('test');
     }
 
+    public function timeline()
+    {
+        $model_auth = new model_auth();
+
+        // Fetch access token first
+        $data = $model_auth->timeline($access_token);
+
+        $view = new View_Smarty('smarty:test/index');
+        $view->data = $data;
+
+        $this->request->response = $view->render();
+    }
 } // End Welcome

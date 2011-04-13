@@ -17,7 +17,6 @@ class Controller_Home extends Controller {
         }
 
         $view->stars = $stars;
-        $view->title = '微博明星';
 
         $this->request->response = $view->render();
     }

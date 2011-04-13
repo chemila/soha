@@ -47,6 +47,15 @@ class Remote {
 		// The transfer must always be returned
 		$options[CURLOPT_RETURNTRANSFER] = TRUE;
 
+        // Https request
+        if(preg_match('~^https://~i', $url))
+        {
+            $options = $options + array(
+                CURLOPT_SSL_VERIFYPEER => FALSE,
+                CURLOPT_SSL_VERIFYHOST => FALSE,
+            );
+        }
+
 		// Open a new remote connection
 		$remote = curl_init($url);
 
@@ -62,7 +71,6 @@ class Remote {
 
 		// Get the response information
 		$code = curl_getinfo($remote, CURLINFO_HTTP_CODE);
-
 		if ($code AND $code < 200 OR $code > 299)
 		{
 			$error = $response;
@@ -71,7 +79,7 @@ class Remote {
 		{
 			$error = curl_error($remote);
 		}
-
+ 
 		// Close the connection
 		curl_close($remote);
 

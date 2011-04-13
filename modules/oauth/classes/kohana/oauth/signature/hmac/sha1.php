@@ -38,7 +38,7 @@ class Kohana_OAuth_Signature_HMAC_SHA1 extends OAuth_Signature {
 
 		// Get the base string for the signature
 		$base_string = $request->base_string();
-
+        
 		// Sign the base string using the key
 		return base64_encode(hash_hmac('sha1', $base_string, $key, TRUE));
 	}

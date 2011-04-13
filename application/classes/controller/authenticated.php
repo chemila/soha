@@ -24,6 +24,8 @@ class Controller_Authenticated extends Controller {
 
     protected function authenticate()
     {
+        // Check session or cookie whether user info exists
+        // if not: go for oauth request token first
         return true;
     }
 
