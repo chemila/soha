@@ -10,12 +10,15 @@ class OAuth_Provider_Sina extends Kohana_OAuth_Provider {
 		return 'http://api.t.sina.com.cn/oauth/request_token';
 	}
 
-	public function url_authorize($sign_in_already = FALSE)
+	public function url_authorize()
 	{
-		return $sign_in_already ? 
-            'http://api.t.sina.com.cn/oauth/authenticate' :
-            'http://api.t.sina.com.cn/oauth/authorize';
+        return 'http://api.t.sina.com.cn/oauth/authorize';
 	}
+
+    public function url_authenticate()
+    {
+        return 'http://api.t.sina.com.cn/oauth/authenticate';
+    }
 
 	public function url_access_token()
 	{

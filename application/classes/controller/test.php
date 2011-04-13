@@ -31,14 +31,24 @@ class Controller_Test extends Controller {
     public function action_oauth()
     {
         $oauth = new OAuth('sina');
+        $this->request->redirect($oauth->request_token());
+    }
 
-        $this->request->redirect($oauth->request());
+    public function action_oauth_callback()
+    {
+        // TODO: pass oauth_verifier as session or request parameter
+        //session::instance()->set('oauth_verifier', $_GET['oauth_verifier']);
+        $this->request->response = sprintf('<a href="/index.php/test/oauth_access?oauth_verifier=%s">get request token successfully. Continue to access ?</a>', $_GET['oauth_verifier']);
     }
 
     public function action_oauth_access()
     {
         $oauth = new OAuth('sina');
-        $oauth->access();
+        //$access_token = $oauth->access_token($_GET['oauth_verifier']);
+        $url = 'http://api.t.sina.com.cn/statuses/home_timeline.json?count=10';
+        $response = $oauth->access($url, 'get');
+
+        $this->request->response = core::debug(json_decode($response));
     }
 
     public function action_yql()
@@ -62,4 +72,5 @@ class Controller_Test extends Controller {
 
         $this->request->response = $memc->get('test');
     }
+
 } // End Welcome

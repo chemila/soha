@@ -161,7 +161,7 @@ class Kohana_OAuth_Request {
 	 */
 	public function nonce()
 	{
-		return Text::random('alnum', 40);
+        return Text::random('alnum', 40);
 	}
 
 	/**

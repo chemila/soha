@@ -63,7 +63,6 @@ abstract class Kohana_OAuth_Token {
 		}
 
 		$this->token = $options['token'];
-
 		$this->secret = $options['secret'];
 	}
 
@@ -78,6 +77,7 @@ abstract class Kohana_OAuth_Token {
 	 */
 	public function __get($key)
 	{
+        // TODO: url_encode($key);
 		return $this->$key;
 	}
 
@@ -89,6 +89,5 @@ abstract class Kohana_OAuth_Token {
 	public function __toString()
 	{
 		return (string) $this->token;
-	}
-
+    }
 } // End OAuth_Token

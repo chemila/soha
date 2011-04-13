@@ -103,7 +103,7 @@ abstract class Kohana_OAuth_Provider {
 	 */
 	abstract public function url_authorize();
 
-	/**
+    /**
 	 * Returns the access token endpoint for the provider.
 	 *
 	 *     $url = $provider->url_access_token();
@@ -212,4 +212,36 @@ abstract class Kohana_OAuth_Provider {
 		));
 	}
 
+	/**
+	 * Exchange the request token for an access token.
+	 *
+	 *     $token = $provider->access_token($consumer, $token);
+	 *
+	 * @param   OAuth_Consumer       consumer
+	 * @param   OAuth_Token_Request  token
+	 * @param   array                additional request parameters
+	 * @return  OAuth_Token_Access
+	 */
+	public function access($url, OAuth_Consumer $consumer, OAuth_Token_Access $token, $method = "GET", Array $params = NULL)
+	{
+		// Create a new request for a request token with the required parameters
+		$request = OAuth_Request::factory('resource', strtoupper($method), $url, array(
+			'oauth_consumer_key' => $consumer->key,
+			'oauth_token'        => $token->token,
+		));
+
+		if ($params)
+		{
+			// Load user parameters
+			$request->params($params);
+		}
+
+		// Sign the request using only the consumer, no token is available yet
+		$request->sign($this->signature, $consumer, $token);
+
+		// Create a response from the request
+		$response = $request->execute();
+
+        return $response;
+	}
 } // End OAuth_Signature
