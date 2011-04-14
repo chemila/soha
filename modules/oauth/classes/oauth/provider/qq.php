@@ -3,7 +3,7 @@
 class OAuth_Provider_QQ extends Kohana_OAuth_Provider {  
     public $name = 'qq';
 
-    public $this->send_header = false;
+    public $send_header = false;
 
     public $signature = 'HMAC_SHA1';
 

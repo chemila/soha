@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Test extends Controller {
-    public $oauth_name = '163';
+    public $oauth_name = 'sina';
 
 	public function action_index()
 	{
@@ -29,9 +29,10 @@ class Controller_Test extends Controller {
         $this->request->response = Core::debug($res);
     }
 
-    public function action_oauth_request()
+    public function action_oauth()
     {
-        $oauth = new OAuth($this->oauth_name);
+        $user = new model_user(1);
+        $oauth = Model_Oauth::instance($user);
 
         if($callback_url = $oauth->request_token())
         {
@@ -41,25 +42,18 @@ class Controller_Test extends Controller {
 
     public function action_oauth_callback()
     {
-        $verifier = isset($_GET['oauth_verifier']) ? 
-            $_GET['oauth_verifier'] : $_GET['oauth_token'];
+        $verifier = Arr::get($_GET, 'oauth_verifier', $_GET['oauth_token']);
+        
+        $user = new model_user(1);
+        $oauth = Model_Oauth::instance($user);
 
-        $oauth = new OAuth($this->oauth_name);
-        $model_oauth = new model_oauth;
+        $data = $oauth->access_token($verifier)->public_timeline();
 
-        // verified before: fetch from session or DB instead
-        $access_token = $oauth->access_token($verifier);
+        $view = new View_Smarty('smarty:test/index');
+        $view->data = core::debug($data);
 
-        $timeline = array(
-            'qq' => 'http://open.t.qq.com/api/statuses/home_timeline?f=1&format=json&pageflag=0&reqnum=20&pagetime=0',
-            'sohu' => 'http://api.t.sohu.com/statuses/public_timeline.json',
-            'sina' => 'http://api.t.sina.com.cn/statuses/home_timeline.json?count=10',
-            '163' => 'http://api.t.163.com/statuses/public_timeline.json',
-        );
+        $this->request->response = $view->render();
 
-        $params = array();
-        $response = $oauth->access($timeline[$this->oauth_name], 'get', $access_token, $params);
-        $this->request->response = core::debug(json_decode($response));
     }
 
     public function action_yql()
@@ -82,18 +76,5 @@ class Controller_Test extends Controller {
         $memc->set('test', 'hello world');
 
         $this->request->response = $memc->get('test');
-    }
-
-    public function timeline()
-    {
-        $model_auth = new model_auth();
-
-        // Fetch access token first
-        $data = $model_auth->timeline($access_token);
-
-        $view = new View_Smarty('smarty:test/index');
-        $view->data = $data;
-
-        $this->request->response = $view->render();
     }
 } // End Welcome

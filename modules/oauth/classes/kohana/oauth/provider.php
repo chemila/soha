@@ -240,7 +240,7 @@ abstract class Kohana_OAuth_Provider {
 	 * @param   array                additional request parameters
 	 * @return  OAuth_Token_Access
 	 */
-	public function access($url, OAuth_Consumer $consumer, OAuth_Token_Access $token, $method = "GET", Array $params = NULL)
+	public function access($url, OAuth_Consumer $consumer, OAuth_Token_Access $token, Array $params = NULL, $method = "GET")
 	{
 		// Create a new request for a request token with the required parameters
 		$request = OAuth_Request::factory('resource', $method, $url, array(
