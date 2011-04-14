@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Test extends Controller {
-    public $oauth_name = 'sohu';
+    public $oauth_name = '163';
 
 	public function action_index()
 	{
@@ -41,11 +41,14 @@ class Controller_Test extends Controller {
 
     public function action_oauth_callback()
     {
+        $verifier = isset($_GET['oauth_verifier']) ? 
+            $_GET['oauth_verifier'] : $_GET['oauth_token'];
+
         $oauth = new OAuth($this->oauth_name);
         $model_oauth = new model_oauth;
 
         // verified before: fetch from session or DB instead
-        $access_token = $oauth->access_token($_GET['oauth_verifier']);
+        $access_token = $oauth->access_token($verifier);
 
         $timeline = array(
             'qq' => 'http://open.t.qq.com/api/statuses/home_timeline?f=1&format=json&pageflag=0&reqnum=20&pagetime=0',
@@ -55,11 +58,6 @@ class Controller_Test extends Controller {
         );
 
         $params = array();
-        if($this->oauth_name == 'qq')
-        {
-            $params['include_oauth'] = true;
-        }
-
         $response = $oauth->access($timeline[$this->oauth_name], 'get', $access_token, $params);
         $this->request->response = core::debug(json_decode($response));
     }

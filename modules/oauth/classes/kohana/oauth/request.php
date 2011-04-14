@@ -437,10 +437,9 @@ class Kohana_OAuth_Request {
 		// Get the URL of the request
 		$url = $this->url;
 
-        if(preg_match('~https://~i', $url) OR (isset($options['include_oauth']) AND $options['include_oauth']))
+        if(preg_match('~https://~i', $url))
         {
             $this->send_header = FALSE;
-            unset($options['include_oauth']);
         }
 
 		if ( ! isset($options[CURLOPT_CONNECTTIMEOUT]))

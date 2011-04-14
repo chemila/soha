@@ -3,6 +3,8 @@
 class OAuth_Provider_Sohu extends Kohana_OAuth_Provider {  
     public $name = 'sohu';
 
+    public $send_header = false;
+
     public $signature = 'HMAC_SHA1';
 
 	public function url_request_token()

@@ -34,6 +34,11 @@ abstract class Kohana_OAuth_Provider {
 	public $name;
 
 	/**
+	 * @var  string  provider send_header
+	 */
+	public $send_header = TRUE;
+
+	/**
 	 * @var  array  additional request parameters to be used for remote requests
 	 */
 	protected $params = array();
@@ -130,6 +135,8 @@ abstract class Kohana_OAuth_Provider {
 			'oauth_callback'     => $consumer->callback,
 		));
 
+        $request->send_header = $this->send_header;
+
 		if ($params)
 		{
 			// Load user parameters
@@ -168,6 +175,8 @@ abstract class Kohana_OAuth_Provider {
 			'oauth_token' => $token->token,
 		));
 
+        $request->send_header = $this->send_header;
+
 		if ($params)
 		{
 			// Load user parameters
@@ -195,6 +204,8 @@ abstract class Kohana_OAuth_Provider {
 			'oauth_token'        => $token->token,
 			'oauth_verifier'     => $token->verifier,
 		));
+
+        $request->send_header = $this->send_header;
 
 		if ($params)
 		{
@@ -237,12 +248,7 @@ abstract class Kohana_OAuth_Provider {
 			'oauth_token'        => $token->token,
 		));
 
-        $options = array();
-        if(isset($params['include_oauth']))
-        {
-            $options['include_oauth'] = $params['include_oauth'];
-            unset($params['include_oauth']);
-        }
+        $request->send_header = $this->send_header;
 
 		if ($params)
 		{
@@ -253,10 +259,9 @@ abstract class Kohana_OAuth_Provider {
 		$request->sign($this->signature, $consumer, $token);
 
 		// Create a response from the request
-		$response = $request->execute($options);
+		$response = $request->execute();
 
         // Check response valid or not
         return $response;
 	}
-
 } // End OAuth_Signature
