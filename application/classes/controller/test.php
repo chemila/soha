@@ -77,4 +77,20 @@ class Controller_Test extends Controller {
 
         $this->request->response = $memc->get('test');
     }
+
+    public function action_mq()
+    {
+        $mq = Queue::instance();
+        $mq->create('mq');
+
+        $mq->send('mq', 'nice');
+        $mq->send('mq', 'good');
+        $mq->send('mq', 'terrific');
+
+        var_dump($mq->receive('mq'));
+        var_dump($mq->receive('mq'));
+        var_dump($mq->receive('mq'));
+        var_dump($mq->receive('mq'));
+        die;
+    }
 } // End Welcome
