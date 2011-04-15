@@ -19,7 +19,6 @@ class Model_OAuth_QQ extends Model_OAuth {
     public function parse_public_timeline($response)
     {
         return json_decode($response, true);
-
     }
 }
 

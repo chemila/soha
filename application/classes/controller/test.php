@@ -88,8 +88,7 @@ class Controller_Test extends Controller {
         $mq->send('mq', 'terrific');
 
         var_dump($mq->receive('mq'));
-        var_dump($mq->receive('mq'));
-        var_dump($mq->receive('mq'));
+        var_dump($mq->receive('mq', 2));
         var_dump($mq->receive('mq'));
         die;
     }

@@ -51,7 +51,6 @@ class Model_User extends Model {
             ->columns(array('uid', 'token', 'secret', 'created_at', 'updated_at'))
             ->values(array($this->id, $token, $secret, time(), time()))
             ->execute($this->_db);
-
     }
 
     public function has_access_token()

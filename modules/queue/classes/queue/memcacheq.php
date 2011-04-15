@@ -2,7 +2,7 @@
 class Queue_Memcacheq extends Queue
 {
     const DEFAULT_HOST = '127.0.0.1';
-    const DEFAULT_PORT = 22201;
+    const DEFAULT_PORT = 21201;
     const EOL          = "\r\n";
 
     /**
@@ -103,7 +103,7 @@ class Queue_Memcacheq extends Queue
      *
      * @param  string $name
      * @return boolean
-     * @throws \Zend\Queue\Exception
+     * @throws Queue_Exception
      */
     public function isExists($name)
     {
@@ -155,7 +155,7 @@ class Queue_Memcacheq extends Queue
      *
      * @param  string  $name queue name
      * @return boolean
-     * @throws \Zend\Queue\Exception
+     * @throws Queue_Exception
      */
     public function delete($name)
     {
@@ -180,7 +180,7 @@ class Queue_Memcacheq extends Queue
      * to determine if the adapter supports this feature.
      *
      * @return array
-     * @throws \Zend\Queue\Exception
+     * @throws Queue_Exception
      */
     public function getQueues()
     {
@@ -200,7 +200,7 @@ class Queue_Memcacheq extends Queue
      *
      * @param  Queue $queue
      * @return integer
-     * @throws \Zend\Queue\Exception (not supported)
+     * @throws Queue_Exception (not supported)
      */
     public function count()
     {
