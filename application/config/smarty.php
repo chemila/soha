@@ -26,8 +26,8 @@ return array (
 
         // pre-registering gives a meaningful speed gain.
         'plugins_dir'     =>  array(
-            //APPPATH.'smarty_plugins',
-            MODPATH.'smarty/smarty_plugins',
+            APPPATH.'plugins/smarty',
+            //MODPATH.'smarty/smarty_plugins',
             //'plugins',
         ),
 

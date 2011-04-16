@@ -140,12 +140,20 @@ class Queue_Memcacheq extends Queue
         // queues are created upon sending a packet.
         // We cannot use the send() and receive() functions because those
         // depend on the current name.
-        $result = $this->_memcache->set($name, 'creating queue', 0, 15);
-        $result = $this->_memcache->get($name);
+        if($this->_memcache->set($name, 'creating queue', 0, 15))
+        {
+            $result = $this->_memcache->get($name);
+            if($result)
+            {
+                $this->_queues[] = $name;
+                return true;
+            }
 
-        $this->_queues[] = $name;
+            return false;
 
-        return true;
+        }
+        
+        return false;
     }
 
     /**

@@ -139,20 +139,22 @@ jQuery(document).ready(function() {
 						</li>
 					</ul>
 				</div>
+                <!--star stars news-->
 				<div class="star_news w620bg">
 					<div class="title">
 						<h2 class="star_news_title">明星动态</h2>
 					</div>
 					<ul class="MIB_feed" id="feed_list">
+                        <!--{foreach from=$stars_news item=weibo}-->
 						<li class="MIB_linedot_l" id="mid_221110315125335821">
-							<div class="head_pic"><a namecard="true" uid="1645903643" href="http://t.sina.com.cn/qihoo" ><img src="/application/media/img/img.png"></a> </div>
+							<div class="head_pic"><a namecard="true" uid="<!--{$weibo.uid}-->" href="http://t.sina.com.cn/<!--{$weibo.domain_name}-->" ><img src="/application/media/img/img.png"></a> </div>
 							<div class="MIB_feed_c">
-								<p class="sms" mid="221110315125335821" type="3"><a  namecard="true" uid="1645903643" href="http://t.sina.com.cn/qihoo" title="360安全卫士">360安全卫士<img class="small_icon vip" dynamic-src="http://img.t.sinajs.cn/t3/style/images/common/transparent.gif" title="新浪认证" alt=""/></a>：在综合听取体验版用户反馈和建议之后，360安全桌面靓丽变身，正式更名为360桌面，并推出1.0beta版，多项改进，各种给力，还有什么你渴望实现的，赶紧告诉<a href="http://t.sina.com.cn/n/360%E6%A1%8C%E9%9D%A2"   namecard="true">@360桌面</a> 吧</p>
+								<p class="sms" mid="<!--{$weibo.id}-->" type="3"><a  namecard="true" uid="<!--{$weibo.uid}-->" href="http://t.sina.com.cn/<!--{$weibo.domain_name}-->" title="<!--{$weibo.name}-->"><!--{$weibo.name}--><img class="small_icon vip" dynamic-src="http://img.t.sinajs.cn/t3/style/images/common/transparent.gif" title="新浪认证" alt=""/></a>：<!--{$weibo.content}--><a href="http://t.sina.com.cn/n/<!--{$weibo.name}-->"   namecard="true">@<!--{$weibo.name}--></a></p>
 								<div class="MIB_assign">
 									<div class="MIB_asarrow_l"></div>
 									<div class="MIB_assign_t"></div>
 									<div class="MIB_assign_c MIB_txtbl">
-										<p class="source" mid="221110315125335821" type="2"> <a href="http://t.sina.com.cn/1998321847" namecard="true" uid="1998321847">@360桌面</a>：360安全桌面1.0beta发布啦~！从本版本开始，软件名称正式定为"360桌面"，同时也新增了广大用户关注的自定义添加文件、网址功能，以及一系列体验细节的优化，我们接下来将一一为大家揭秘~ 立即体验360桌面1.0beta版，请果断访问官网：<a href="http://sinaurl.cn/h5xb7a" target="_blank" mt="url" >http://sinaurl.cn/h5xb7a</a> <span class="source_att MIB_linkbl"><a href="http://t.sina.com.cn/1998321847/wr4klidqWo"><strong lang="CL1005">原文转发</strong><strong rid="201110315123201828" type="rttCount">(15)</strong></a><span class="MIB_line_l">|</span><a href="http://t.sina.com.cn/1998321847/wr4klidqWo"><strong lang="CC0603">原文评论</strong><strong rid="201110315123201828" type="commtCount">(13)</strong></a></span></p>
+										<p class="source" mid="221110315125335821" type="2"> <a href="http://t.sina.com.cn/1998321847" namecard="true" uid="1998321847">@<!--{$weibo.name}--></a>：<!--{$weibo.original_content}--><a href="http://sinaurl.cn/h5xb7a" target="_blank" mt="url" >http://sinaurl.cn/h5xb7a</a> <span class="source_att MIB_linkbl"><a href="http://t.sina.com.cn/1998321847/wr4klidqWo"><strong lang="CL1005">原文转发</strong><strong rid="201110315123201828" type="rttCount">(<!--{$weibo.forward_count}-->)</strong></a><span class="MIB_line_l">|</span><a href="http://t.sina.com.cn/1998321847/wr4klidqWo"><strong lang="CC0603">原文评论</strong><strong rid="201110315123201828" type="commtCount">(<!--{$weibo.comment_count}-->)</strong></a></span></p>
 										<div class="feed_preview" id="prev_221110315125335821">
 											<div class="feed_img"><a onClick="App.scaleImg(this,'771bf8b7jw6df986o6szyj',true);" href="javascript:void(0);"><img class="imgicon" dynamic-src="http://ww3.sinaimg.cn/thumbnail/771bf8b7jw6df986o6szyj.jpg" vimg="1" /></a> </div>
 											<div class="clear"></div>
@@ -162,12 +164,13 @@ jQuery(document).ready(function() {
 									<div class="MIB_assign_b"></div>
 								</div>
 								<div class="feed_att MIB_linkbl MIB_txtbl">
-									<div class="lf"><cite><a href="http://t.sina.com.cn/1645903643/zF4klimo5D"><strong date="1300166557">10秒前</strong></a></cite> <strong lang="CL1006">来自</strong><cite><a href="http://t.sina.com.cn" target="_blank">新浪微博</a></cite></div>
+									<div class="lf"><cite><a href="http://t.sina.com.cn/1645903643/zF4klimo5D"><strong date="1300166557"><!--{$weibo.timeline|date_format:"%H:%M:%S"}--></strong></a></cite> <strong lang="CL1006">来自</strong><cite><a href="http://t.sina.com.cn" target="_blank"><!--{$weibo.src|message:'weibo.src'}--></a></cite></div>
 									<div class="rt"><a href="javascript:void(0);"  lastforwarder="1645903643" lastforwardername="360安全卫士" initbloger="1998321847"  initblogername="360桌面" onClick="App.ModForward('221110315125335821','360%E5%AE%89%E5%85%A8%E6%A1%8C%E9%9D%A21.0beta%E5%8F%91%E5%B8%83%E5%95%A6%7E%EF%BC%81%E4%BB%8E%E6%9C%AC%E7%89%88%E6%9C%AC%E5%BC%80%E5%A7%8B%EF%BC%8C%E8%BD%AF%E4%BB%B6%E5%90%8D%E7%A7%B0%E6%AD%A3%E5%BC%8F%E5%AE%9A%E4%B8%BA%E2%80%9C360%E6%A1%8C%E9%9D%A2%E2%80%9D%EF%BC%8C%E5%90%8C%E6%97%B6%E4%B9%9F%E6%96%B0%E5%A2%9E%E4%BA%86%E5%B9%BF%E5%A4%A7%E7%94%A8%E6%88%B7%E5%85%B3%E6%B3%A8%E7%9A%84%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B7%BB%E5%8A%A0%E6%96%87%E4%BB%B6%E3%80%81%E7%BD%91%E5%9D%80%E5%8A%9F%E8%83%BD%EF%BC%8C%E4%BB%A5%E5%8F%8A%E4%B8%80%E7%B3%BB%E5%88%97%E4%BD%93%E9%AA%8C%E7%BB%86%E8%8A%82%E7%9A%84%E4%BC%98%E5%8C%96%EF%BC%8C%E6%88%91%E4%BB%AC%E6%8E%A5%E4%B8%8B%E6%9D%A5%E5%B0%86%E4%B8%80%E4%B8%80%E4%B8%BA%E5%A4%A7%E5%AE%B6%E6%8F%AD%E7%A7%98%7E%20%E7%AB%8B%E5%8D%B3%E4%BD%93%E9%AA%8C360%E6%A1%8C%E9%9D%A21.0beta%E7%89%88%EF%BC%8C%E8%AF%B7%E6%9E%9C%E6%96%AD%E8%AE%BF%E9%97%AE%E5%AE%98%E7%BD%91%EF%BC%9A%3Ca%20href%3D%22http%3A%2F%2Fsinaurl.cn%2Fh5xb7a%22%20target%3D%22_blank%22%20mt%3D%22url%22%20%3Ehttp%3A%2F%2Fsinaurl.cn%2Fh5xb7a%3C%2Fa%3E',0,this,'num_221110315125335821','360安全卫士','%E5%9C%A8%E7%BB%BC%E5%90%88%E5%90%AC%E5%8F%96%E4%BD%93%E9%AA%8C%E7%89%88%E7%94%A8%E6%88%B7%E5%8F%8D%E9%A6%88%E5%92%8C%E5%BB%BA%E8%AE%AE%E4%B9%8B%E5%90%8E%EF%BC%8C360%E5%AE%89%E5%85%A8%E6%A1%8C%E9%9D%A2%E9%9D%93%E4%B8%BD%E5%8F%98%E8%BA%AB%EF%BC%8C%E6%AD%A3%E5%BC%8F%E6%9B%B4%E5%90%8D%E4%B8%BA360%E6%A1%8C%E9%9D%A2%EF%BC%8C%E5%B9%B6%E6%8E%A8%E5%87%BA1.0beta%E7%89%88%EF%BC%8C%E5%A4%9A%E9%A1%B9%E6%94%B9%E8%BF%9B%EF%BC%8C%E5%90%84%E7%A7%8D%E7%BB%99%E5%8A%9B%EF%BC%8C%E8%BF%98%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%A0%E6%B8%B4%E6%9C%9B%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E8%B5%B6%E7%B4%A7%E5%91%8A%E8%AF%89%40360%E6%A1%8C%E9%9D%A2%20%E5%90%A7','')"><strong lang="CD0023">转发</strong><strong id="num_221110315125335821" rid="221110315125335821" type="rttCount"></strong></a> <span class="MIB_line_l">|</span> <a href="javascript:void(0);" onClick="App.addfavorite_miniblog('221110315125335821');"><strong lang="CL1003">收藏</strong></a> <span class="MIB_line_l">|</span> <a id="_comment_count_miniblog2_221110315125335821" href="javascript:void(0);" onClick="scope.loadCommentByRid(1645903643, 'miniblog2', '新浪微博', '221110315125335821', '%E5%9C%A8%E7%BB%BC%E5%90%88%E5%90%AC%E5%8F%96%E4%BD%93%E9%AA%8C%E7%89%88%E7%94%A8%E6%88%B7%E5%8F%8D%E9%A6%88%E5%92%8C%E5%BB%BA%E8%AE%AE%E4%B9%8B%E5%90%8E%EF%BC%8C360%E5%AE%89%E5%85%A8%E6%A1%8C%E9%9D%A2%E9%9D%93%E4%B8%BD%E5%8F%98%E8%BA%AB%EF%BC%8C%E6%AD%A3%E5%BC%8F%E6%9B%B4%E5%90%8D%E4%B8%BA360%E6%A1%8C%E9%9D%A2%EF%BC%8C%E5%B9%B6%E6%8E%A8%E5%87%BA1.0beta%E7%89%88%EF%BC%8C%E5%A4%9A%E9%A1%B9%E6%94%B9%E8%BF%9B%EF%BC%8C%E5%90%84%E7%A7%8D%E7%BB%99%E5%8A%9B%EF%BC%8C%E8%BF%98%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%A0%E6%B8%B4%E6%9C%9B%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8C%E8%B5%B6%E7%B4%A7%E5%91%8A%E8%AF%89%3Ca%20href%3D%22http%3A%2F%2Ft.sina.com.cn%2Fn%2F360%25E6%25A1%258C%25E9%259D%25A2%22%20%20%20namecard%3D%22true%22%3E%40360%E6%A1%8C%E9%9D%A2%3C%2Fa%3E%20%E5%90%A7', '', '', 1, 0, 1);"><strong lang="CL1004">评论</strong><strong rid="221110315125335821" type="commtCount"></strong></a> </div>
 								</div>
 								<div id="_comment_list_miniblog2_221110315125335821"></div>
 							</div>
 						</li>
+                        <!--{/foreach}-->
 						<li class="MIB_linedot_l" id="mid_201110315124347475">
 							<div class="head_pic"><a namecard="true" uid="1231687250" href="http://t.sina.com.cn/dfyuan" ><img src="/application/media/img/img.png"></a> </div>
 							<div class="MIB_feed_c">
