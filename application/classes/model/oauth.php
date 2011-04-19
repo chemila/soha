@@ -1,58 +1,31 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_OAuth extends Model {
-
-    public static function instance($user)
-    {
-        $name = $user->get_oauth_src();
-        $class = 'Model_OAuth_'.$name;
-        return new $class($user);
-    }
-
-    public $name;
-
-    public $user;
+abstract class Model_OAuth {
+    protected $name;
 
     protected $oauth_module;
 
-    public function __construct(Model_User $user)
+    protected $params = array();
+
+    public static function factory(OAuth $oauth)
     {
-        $this->user = $user;
-
-        // Get from database, may be nothing, dont care
-        $access_token = $user->get_access_token();
-
-        $this->oauth_module = new OAuth($this->name, $access_token); 
+        $class = 'Model_OAuth_'.$oauth->name;
+        return new $class($oauth);
     }
 
-    public function public_timeline(Array $params = NULL)
+    public function __construct($oauth)
     {
-        $response =  $this->oauth_module->access($this->url_public_timeline($params), $params);         
-
-        return $this->parse_public_timeline($response);
+        $this->name = $oauth->name;
+        $this->oauth_module = $oauth;
     }
 
-    public function parse_public_timeline($response){}
-
-    public function has_access_token()
+    public function __call($method, Array $params = NULL)
     {
-        return $this->user->has_access_token();
-    }
+        $params = empty($params) ? array() : $params[0];
 
-    public function request_token()
-    {
-        return $this->oauth_module->request_token();
-    }
+        $url = call_user_func(array($this, 'url_'.$method), $params);
+        $response = $this->oauth_module->access($url,  $this->params);
 
-    public function access_token($verifier = NULL) 
-    {
-        $access_token = $this->oauth_module->access_token($verifier);
-
-        if($access_token and ! $this->has_access_token())
-        {
-            $this->user->save_token($access_token->token, $access_token->secret);
-        }
-
-        return $this;
+        return call_user_func(array($this, 'parse_'.$method), $response);
     }
 }

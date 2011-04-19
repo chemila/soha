@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Star extends Model {
+class Model_Star extends Model_User {
     const TABLE_NAME = 'star';
 
     public function hot($page = 1, $limit = 18)

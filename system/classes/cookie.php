@@ -7,7 +7,7 @@ class Cookie {
 	/**
 	 * @var  string  Magic salt to add to the cookie
 	 */
-	public static $salt = 'kooky';
+	public static $salt = 'chemila';
 
 	/**
 	 * @var  integer  Number of seconds before the cookie expires

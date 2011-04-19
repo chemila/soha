@@ -13,10 +13,10 @@ jQuery(document).ready(function() {
         <!--start: header top--> 
         <!--{include file="header/top.php"}--> 
 		<ul class="nav">
-			<li><a href="#">微博明星(999999)</a></li>
+			<li><a href="#" class="current">微博明星(999999)</a></li>
 			<li><a href="#">行业大腕(999999)</a></li>
 			<li><a href="#">草根红人(999999)</a></li>
-			<li><a href="#" class="current">我关注的(999999)</a></li>
+			<li><a href="#">我关注的(999999)</a></li>
 		</ul>
 	</div>
 	<div class="main">
@@ -81,4 +81,3 @@ jQuery(document).ready(function() {
 		<div class="main_b"></div>
 	</div>
 <!--{include file="footer.php"}-->
-

@@ -19,7 +19,7 @@ return array
     'default' => array(
         'uri' => '(<controller>(/<action>))',
         'patterns' => array(),
-        'defaults' => array('controller' => 'test', 'action' => 'index'),
+        'defaults' => array('controller' => 'public', 'action' => 'index'),
     ),
     'setting' => array(
         'uri' => '(<controller>(/<action>(/<id>)))',

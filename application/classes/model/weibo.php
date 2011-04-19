@@ -7,6 +7,19 @@ class Model_Weibo extends Model {
     {
         return DB::select('*')->from(self::TABLE_NAME)
             ->where('uid', '!=', 0)
+            ->order_by('timeline', 'desc')
+            ->limit($limit)
+            ->offset($page - 1)
+            ->execute($this->_db)
+            ->as_array();
+    }
+
+    public function hot_commented($page = 1, $limit = 10)
+    {
+        return DB::select('*')->from(self::TABLE_NAME)
+            ->where('uid', '!=', 0)
+            ->order_by('comment_count', 'desc')
+            ->order_by('timeline', 'desc')
             ->limit($limit)
             ->offset($page - 1)
             ->execute($this->_db)

@@ -1,11 +1,11 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Home extends Controller_Authenticated {
+class Controller_Public extends Controller {
 
     public function action_index()
     {
         $page = $this->request->param('page', 1);
-        $view = new View_Smarty('smarty:home/index');
+        $view = new View_Smarty('smarty:public/index');
         
         $cache = cache::instance('memcache');
 
@@ -26,5 +26,12 @@ class Controller_Home extends Controller_Authenticated {
 
         $this->request->response = $view->render();
     }
-}
 
+    public function action_industry()
+    {
+    }
+
+    public function action_grass()
+    {
+    }
+}

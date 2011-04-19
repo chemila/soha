@@ -31,8 +31,15 @@ class Controller_Test extends Controller {
 
     public function action_oauth()
     {
-        $user = new model_user(1);
+        $user = new Model_User(1);
         $oauth = Model_Oauth::instance($user);
+
+        $data = $oauth->public_timeline();
+
+        $view = new View_Smarty('smarty:test/index');
+        $view->data = core::debug($data);
+
+        $this->request->response = $view->render();
 
         if($callback_url = $oauth->request_token())
         {
@@ -43,17 +50,30 @@ class Controller_Test extends Controller {
     public function action_oauth_callback()
     {
         $verifier = Arr::get($_GET, 'oauth_verifier', $_GET['oauth_token']);
-        
-        $user = new model_user(1);
-        $oauth = Model_Oauth::instance($user);
+        $src = session::instance()->get('oauth_src', false); 
 
-        $data = $oauth->access_token($verifier)->public_timeline();
+        if(empty($src))
+        {
+            $this->request->redirect('error/404');
+        }
 
-        $view = new View_Smarty('smarty:test/index');
-        $view->data = core::debug($data);
+        $oauth = new OAuth::factory($src);
+        $access_token = $oauth->access_token($verifier);
 
-        $this->request->response = $view->render();
+        if($access_token)
+        {
+            // Fetch userinfo accoss oauth
+            $userinfo = ;
+            // Create user, save user access_token
+            $user = new Model_User;
+            $user->create($userinfo);
 
+            $this->request->redirect('public/index');
+        }
+        else
+        {
+            $this->request->redirect('error/oauth', array('info' => 'invalid access token'));
+        }
     }
 
     public function action_yql()

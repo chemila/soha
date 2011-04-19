@@ -8,4 +8,7 @@ return array(
     'setting' => array(
         'required' => array('rm_personal', 'add_personal'),
     ),
+    'home' => array(
+        'required' => array('index'),   
+    ),
 );

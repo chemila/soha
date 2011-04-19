@@ -7,12 +7,13 @@ class OAuth_Response extends Kohana_OAuth_Response {
         return (bool)$this->param('oauth_token', FALSE);
     }
 
-    public function valid_json()
-    {
-    }
-
     public function __tostring()
     {
         return implode(' ', $this->params);
+    }
+
+    public function set($key, $value)
+    {
+        $this->params[$key] = $value;
     }
 }

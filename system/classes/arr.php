@@ -321,8 +321,8 @@ class Arr {
 	}
 
 	/**
-	 * Merges one or more arrays recursively and preserves all keys.
-	 * Note that this does not work the same as [array_merge_recursive](http://php.net/array_merge_recursive)!
+     * Merges one or more arrays recursively and preserves all keys.
+     * Note that this does not work the same as [array_merge_recursive](http://php.net/array_merge_recursive)!
 	 *
 	 *     $john = array('name' => 'john', 'children' => array('fred', 'paul', 'sally', 'jane'));
 	 *     $mary = array('name' => 'mary', 'children' => array('jane'));

@@ -1,11 +1,11 @@
 <?php
 /**
- * Kohana Smarty __ plugin
+ * Smarty __ plugin
  *
  * Type:     function<br />
  * Name:     __<br />
  * Purpose:  Translate a text string, optionally substituting variables.
- * This Smarty function provides an interface to the Kohana __() function which
+ * This Smarty function provides an interface to the __() function which
  * does the work.
  *
  * @author Mr Anchovy <mr dot anchovy at mranchovy dot com>

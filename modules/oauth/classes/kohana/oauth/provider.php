@@ -220,6 +220,7 @@ abstract class Kohana_OAuth_Provider {
 		$response = $request->execute();
 
         // Check response valid or not
+        // Save valid response
         if( ! $response->valid_token())
             throw new CE('Invalid response');
 
@@ -259,9 +260,6 @@ abstract class Kohana_OAuth_Provider {
 		$request->sign($this->signature, $consumer, $token);
 
 		// Create a response from the request
-		$response = $request->execute();
-
-        // Check response valid or not
-        return $response;
+		return $request->execute();
 	}
 } // End OAuth_Signature

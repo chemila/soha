@@ -9,21 +9,12 @@ class OAuth extends Kohana_OAuth {
 
     public $provider;
 
-    /**
-     * providers including: sina, tenx, sohu, etc.
-     */
-    public static function factory($src) 
-    {
-        return new Oauth($src);
-    }
-
     public function __construct($name, $access_token = NULL) 
     {
         if( ! in_array($name, array_keys((array)Core::config('oauth'))))
             throw new Kohana_OAuth_Exception("Unsupported OAuth provider: :src", array(':src' => $name));
 
         $config = (array)Core::config('oauth')->$name;
-
         $this->name = $name;
         $this->consumer = OAuth_Consumer::factory($config);
         $this->provider = OAuth_Provider::factory($name);
@@ -60,39 +51,24 @@ class OAuth extends Kohana_OAuth {
 
     public function access_token($verifier = NULL) 
     {
-        if($this->access_token)
-        {
+        if(false and $this->access_token)
             return $this->access_token;
-        }
 
-        if($access_token = OAuth_Token::session_factory('access', $this->name))
+        if(false and $access_token = OAuth_Token::session_factory('access', $this->name))
+            return $this->access_token = $access_token;
+
+        $request_token = OAuth_Token::session_factory('request', $this->name);
+
+        if( ! $request_token or ! $request_token instanceof OAuth_Token_Request)
         {
-            $this->access_token = $access_token;
+            throw new CE('Invalid request token');
         }
-        else
-        {
-            $request_token = OAuth_Token::session_factory('request', $this->name);
 
-            if( ! $request_token or ! $request_token instanceof OAuth_Token_Request)
-            {
-                throw new CE('Invalid request token');
-            }
-            
-            $request_token->verifier($verifier);
-
-            $this->access_token = $this->provider->access_token($this->consumer, $request_token);
-            $this->access_token->session_save($this->name);
-        }
+        $request_token->verifier($verifier);
+        $this->access_token = $this->provider->access_token($this->consumer, $request_token);
+        $this->access_token->session_save($this->name);
 
         return $this->access_token;
-    }
-
-    public function access_with_token($url, OAuth_Token_Access $access_token, 
-        Array $params = NULL, $method = "GET") 
-    {
-        $this->access_token = $access_token;
-
-        return $this->access($url, $params, $method);
     }
 
     public function access($url, Array $params = NULL, $method = "GET")
