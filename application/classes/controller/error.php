@@ -24,6 +24,10 @@ class Controller_Error extends Controller {
         $this->title = 'oauth';
     }
 
+    public function action_user()
+    {
+    }
+
     public function after()
     {
 	    $this->request->response = $this->template;

@@ -3,8 +3,11 @@
 return array(
 	'cookie' => array(
 		'encrypted' => FALSE,
+        'lifetime' => 2592000,
 	),
 	'native' => array(
 		'encrypted' => FALSE,
+        'lifetime' => 2592000,
 	),
 );
+

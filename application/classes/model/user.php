@@ -1,25 +1,39 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_User extends Model {
-    const TABLE_NAME = 'user';
+    const CATEGORY_DEFAULT = 0;
+    const CATEGORY_STAR    = 1;
 
-    public function __construct($uid = NULL)
+    protected $_data = array();
+
+    public function __construct($uid = NULL, Array $data = NULL)
     {
-        if($uid)
-        {
-            $this->uid = $uid;
-        }
+        $this->uid = $uid;
 
-        $this->data = array();
+        if($data)
+        {
+            $this->_data = $data;
+        }
     }
 
-    public function get_info() {
-        // get user info through API like: 
-        $this->data = array(
-            'uid' => $this->uid,
-        );
+    public function init($refresh = false) {
+        if( ! $this->uid)
+            return false;
 
-        return $this->data;
+        if($this->_data and ! $refresh)
+            return $this->_data;
+
+        $this->_data = Model_API::factory('user')->get_user_info(array('uid' => $this->uid));
+
+        if($this->is_star())
+        {
+            $star = new Model_User_Star($this->uid);
+            return $star->init();
+        }
+        else
+        {
+            return $this->_data;
+        }
     }
 
     public function get_access_token()
@@ -32,34 +46,19 @@ class Model_User extends Model {
             ->as_array();
     }
 
-    public function get_oauth_src()
-    {
-        return 'qq';
-    }
-
-    public function forword_weibo($weibo, $content)
-    {
-    }
-
-    public function publish_weibo($weibo)
-    {
-    }
-
-    public function __tostring()
-    {
-        if( ! $this->data)
-        {
-            $this->get_info();
-        }
-
-        return $this->uid;
-    }
-
     public function save_token($token, $secret)
     {
+        $data = array(
+            'uid' => $this->uid,
+            'token' => $token,
+            'secret' => $secret,
+            'created_at' => time(),
+            'updated_at' => time(),
+        );
+
         return DB::insert('user_token')
-            ->columns(array('uid', 'token', 'secret', 'created_at', 'updated_at'))
-            ->values(array($this->uid, $token, $secret, time(), time()))
+            ->columns(array_keys($data))
+            ->values(array_values($data))
             ->execute($this->_db);
     }
 
@@ -79,96 +78,140 @@ class Model_User extends Model {
      * Create a user accoess api
      * Success: save user into local user table at the same time
      */
-    public function create(Array $user_info)
+    public function create(Array $user_info, $star = FALSE)
     {
         $result = Model_API::factory('user')->create($user_info);
+
+        $this->uid = Arr::get($result, 'uid');
+        $this->_data = $result;
+
+        if( ! $this->uid)
+        {
+            throw new Model_User_Exception('Create user error, no uid in response');
+        }
+
+        // Create user successfully, save star info locally
+        if($star or $this->is_star())
+        {
+            $star = new Model_User_Star($this->uid);
+            return $star->insert_or_update($user_info);
+        }
+
+        return true;
+    }
+
+    public function get_source_code($source)
+    {
+        $config = Core::config('oauth.'.$source.'.source');
+
+        if(NULL === $config)
+        {
+            throw new Model_User_Exception('Unknown user source: :source', array(':source' => $source));
+        }
+
+        return $config;
+    }
+
+    public function is_star()
+    {
+        $category = Arr::get($this->_data, 'category', 0);
+        return $category == self::CATEGORY_STAR;
+    }
+
+    public function check_exist($suid, $source)
+    {
+        $result = Model_API::factory('user')->check_login(array(
+            'suid' => $suid,
+            'source' => $source,
+        ));
+
+        if( ! $result)
+            return false;
+
+        return $this->uid = $result;
+    }
+
+    public function __get($key)
+    {
+        if('uid' == $key)
+            return $this->uid;
+
+        if(empty($this->_data))
+        {
+            $this->init();
+        }
+
+        return Arr::get($this->_data, $key);
+    }
+
+    public function __set($key, $value)
+    {
+        if('uid' == $key)
+        {
+            $this->uid = (int)$value;
+        }
+
+        if(empty($this->_data))
+        {
+            $this->init();
+        }
+
+        $this->_data[$key] = $value;
+        return $this;
+    }
+
+    public function __isset($key)
+    {
+        if('uid' == $key)
+        {
+            return $this->uid;
+        }
+
+        if(empty($this->_data))
+        {
+            $this->init();
+        }
+
+        return Arr::get($this->_data, $key, false);
+    }
+
+    public function __unset($key)
+    {
+        if('uid' == $key)
+        {
+            throw new Model_User_Exception('U cant unset user uid');
+        }
+
+        if(empty($this->_data))
+        {
+            $this->init();
+        }
         
-        // Create user successfully, save user info locally
-        if(isset($result['uid']))
+        if(isset($this->_data[$key]))
         {
-            return $this->insert_or_update($result['uid'], $user_info);
+            unset($this->_data[$key]);
         }
 
-        return false;
+        return $this;
     }
 
-    public function insert_or_update($uid, $info)
+    public function __tostring()
     {
-        $data = array(
-            'uid' => $uid,       
-            'suid' => $info['id'],
-            'nick' => $info['nick'],
-            'domain_name' => $info['domain_name'],
-            'friends_count' => $info['friends_count'],
-            'followers_count' => $info['followers_count'],
-            'portrait' => $info['portrait'],
-            'gender' => $info['gender'],
-            'intro' => $info['intro'],
-            'country' => $info['country'],
-            'province' => $info['province'],
-            'city' => $info['city'],
-            'location' => $info['location'],
-            'verified' => $info['verified'],
-        );
+        if(empty($this->_data))
+        {
+            $this->init();
+        }
 
-        if($this->check_exist($uid))
-        {
-            return DB::insert(self::TABLE_NAME)
-                ->columns(array_keys($data))
-                ->values(array_values($data))
-                ->execute($this->_db);
-        }
-        else
-        {
-            return $this->update($info);
-        }
+        return Core::debug($this->_data); 
     }
 
-    public function update($info)
+    public function as_array()
     {
-        if( ! isset($info['suid']) or ! isset($info['source']))
+        if(empty($this->_data))
         {
-            throw new CE('Update user info failed, check suid and source');
+            $this->init();
         }
 
-        $data = array(
-            'nick' => $info['nick'],
-            'domain_name' => $info['domain_name'],
-            'friends_count' => $info['friends_count'],
-            'followers_count' => $info['followers_count'],
-            'portrait' => $info['portrait'],
-            'gender' => $info['gender'],
-            'intro' => $info['intro'],
-            'country' => $info['country'],
-            'province' => $info['province'],
-            'city' => $info['city'],
-            'location' => $info['location'],
-            'verified' => $info['verified'],
-        );
-
-        $source = Core::config('oauth')->get($info['source']);
-
-        if( ! $source)
-        {
-            throw new CE('Unknown oauth source config, check config.oauth please');
-        }
-
-        return DB::update(self::TABLE_NAME)
-            ->set($data)
-            ->where('suid', '=', $info['suid'])
-            ->where('source', '=', Arr::get($source, 'source'))
-            ->execute($this->_db);
-    }
-
-    public function check_exist($uid)
-    {
-        $res = DB::select("uid")
-            ->from(self::TABLE_NAME)
-            ->where('uid', '=', $uid)
-            ->limit(1)
-            ->execute($this->_db)
-            ->as_array();
-
-        return isset($res[0]['uid']);
+        return array('uid' => $this->uid) + $this->_data;
     }
 }

@@ -3,7 +3,7 @@
     <!--user head image, namecard attr bind loading namecard event--> 
     <div class="head_pic">
         <a namecard="true" uid="<!--{$weibo.uid}-->" href="<!--{$weibo.domain_name}-->" >
-            <img src="/application/media/img/img.png">
+            <img src="/media/img/img.png">
         </a> 
     </div>
     <div class="MIB_feed_c">

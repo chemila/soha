@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 abstract class Model_API
 {
-    const DOMAIN_URL = 'http://10.207.10.241/pin_user/api';
+    const DOMAIN_URL = 'http://10.207.10.242/pin_user/api';
 
     public $error = array();
     
@@ -21,10 +21,12 @@ abstract class Model_API
         $url = self::DOMAIN_URL.$path;
 	 
 	    // Do a GET request
-	    return Remote::get($url, array(
+	    $response = Remote::get($url, array(
 	        CURLOPT_POST       => FALSE,
 	        CURLOPT_POSTFIELDS => http_build_query($query),
 	    ));
+
+        return json_decode($response, TRUE);
     }
 
     public function post($path, Array $data)
@@ -32,17 +34,19 @@ abstract class Model_API
         $url = self::DOMAIN_URL.$path;
 
         // Do a GET request
-	    return Remote::get($url, array(
+	    $response = Remote::get($url, array(
 	        CURLOPT_POST       => TRUE,
 	        CURLOPT_POSTFIELDS => http_build_query($data),
 	    ));
+
+        return json_decode($response, TRUE);
     }
 
     public function failed($response)
     {
         if(isset($response['errno']))
         {
-            return 1 == $response['errno'];
+            return 1 != $response['errno'];
         }
 
         if(isset($response['errmsg']))
@@ -50,6 +54,6 @@ abstract class Model_API
             $this->error[] = $response['errmsg'];
         }
 
-        return false;
+        return true;
     }
 }

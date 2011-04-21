@@ -2,6 +2,15 @@
 
 class Model_Collect extends ORM {
 
+    public static function instance($type)
+    {
+        $classname = 'Model_Collect_'.ucfirst($type);
+
+        return new $classname;
+    }
+
+    public function __construct(){}
+
     public function insert($data)
     {
         try
@@ -16,5 +25,33 @@ class Model_Collect extends ORM {
             // Maybe because of the duplicated key 
             return FALSE;
         }
+    }
+
+    public function insert_or_update($data)
+    {
+        $this->select("id")
+            ->where('uid', '=', $data['uid'])
+            ->where('src', '=', $data['src'])
+            ->limit(1);
+    }
+
+    public function all($page, $limit = 100, $source)
+    {
+        return DB::select('*')
+            ->from($this->_table_name)
+            ->where('status', '=', 0)
+            ->where('src', '=', $source)
+            ->limit($limit)
+            ->offset($page - 1)
+            ->execute($this->_db)
+            ->as_array();
+    }
+
+    public function mark($id)
+    {
+        return DB::update($this->_table_name)
+            ->set(array('status' => 1))
+            ->where('id', '=', $id)
+            ->execute($this->_db);
     }
 }

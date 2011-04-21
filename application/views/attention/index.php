@@ -37,9 +37,10 @@ jQuery(document).ready(function() {
                 </div>
 				<ul id="scroll_star_list" class="jcarousel-skin-tango">
 				
-				  <!--{foreach from=$blocks item=block key=index}--> 
+				  <!--{foreach from=$attentions item=attention key=index}--> 
                    <li>
-						<!--{$block.uid}--><!--{$block.nick}--><!--{$block.datetime|date_format:"%Y-%m-%d"}-->
+                   		<!--{$attention.nick}-->
+                   		<!--{$attention.datetime|date_format:"%Y-%m-%d %H:%I:%S"}-->
                     </li>
                     <!--{foreachelse}-->
                     	无数据

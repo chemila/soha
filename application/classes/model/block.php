@@ -1,14 +1,48 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Block extends ORM {
-
-    public function all_by_user($uid)
+class Model_Block extends Model {
+	
+    public function all_block_by_user($data)
     {
-        return DB::select('*')
-            ->from($this->_table_name)
-            ->where('uid', '=', $uid)
-            ->limit(10)
-            ->execute($this->_db)
-            ->as_array();
+    	if( !$data )
+    	{
+    		return false;
+    	}
+    	
+		$this->_data = Model_API::factory('user')->list_block($data);
+		
+		if($this->_data) 
+		{
+            return $this->_data;
+		}
+    }
+    
+    public function add_block($data)
+    {
+    	if(empty($data['uid']) || empty($data['fuids']))
+    		return false;
+    		
+    	return Model_API::factory("user")->add_block($data);
+     }
+    
+    
+    public function delete_block($data)
+    {
+    	if(empty($data['uid']) || empty($data['fuids']))
+    		return false;
+    		
+    	return Model_API::factory("user")->delete_block($data);
+    }
+    
+    public function get_all_friend($data)
+    {
+    	$this->_data = Model_API::factory('user')->list_friend($data);
+		
+		if($this->_data) 
+		{
+            return $this->_data;
+		}
+		
+		return false;
     }
 }

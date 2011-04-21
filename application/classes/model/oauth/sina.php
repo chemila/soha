@@ -26,7 +26,15 @@ class Model_OAuth_Sina extends Model_OAuth {
         //http://api.t.sina.com.cn/account/verify_credentials.json
         if(isset($params['unique_id']))
         {
-            $this->params['user_id'] = $params['unique_id'];
+            if(is_int($params['unique_id']))
+            {
+                $this->params['user_id'] = $params['unique_id'];
+            }
+            else
+            {
+                $this->params['id'] = $params['unique_id'];
+            }
+
             $url = $this->domain.'/users/show.json'; 
         }
         else

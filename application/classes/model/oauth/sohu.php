@@ -11,8 +11,8 @@ class Model_OAuth_Sohu extends Model_OAuth {
         // http://api.t.sohu.com/account/verify_credentials.
         if(isset($params['unique_id']))
         {
-            $this->params['id'] = $params['unique_id'];
-            $url = $this->domain.'/users/show.json'; 
+            //$this->params['id'] = $params['unique_id'];
+            $url = $this->domain.'/users/show/'.$params['unique_id'].'.json'; 
         }
         else
         {
@@ -25,6 +25,9 @@ class Model_OAuth_Sohu extends Model_OAuth {
     public function parse_user_info($response)
     {
         $data = json_decode($response, true);
+
+        if(empty($data) or ! isset($data['screen_name']))
+            return false;
 
         return array(
             'suid' => $data['id'],

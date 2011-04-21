@@ -13,10 +13,12 @@ jQuery(document).ready(function() {
         <!--start: header top--> 
         <!--{include file="header/top.php"}--> 
 		<ul class="nav">
-			<li><a href="#">微博明星(999999)</a></li>
-			<li><a href="#">行业大腕(999999)</a></li>
-			<li><a href="#">草根红人(999999)</a></li>
-			<li><a href="#" class="current">我关注的(999999)</a></li>
+			<li><a href="/public">微博明星(<!--{$stars_count_all[0].cnt}-->)</a></li>
+            <!--
+			<li><a href="/public/industry">行业大腕(<!--{$stars_count_tag[2].cnt}-->)</a></li>
+			<li><a href="/public/grass">草根红人(<!--{$stars_count_tag[4].cnt}-->)</a></li>
+            -->
+			<li><a href="/home" class="current">我关注的</a></li>
 		</ul>
 	</div>
 	<div class="main">
@@ -30,23 +32,7 @@ jQuery(document).ready(function() {
 			</div>
             <!--start: stars list--> 
 			<div class="star_list">
-                <!-- pagination for stars --> 
-				<div class="pages">
-                    <a href="#" class="prev">上一页</a><span class="current">[<a href="#">1</a>]</span><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#" class="next">下一页</a>
-                </div>
-				<ul id="scroll_star_list" class="jcarousel-skin-tango">
-                    <!--{foreach from=$stars item=star}-->
-					<li>
-						<div class="star_info">
-							<div><a href="/user/<!--{$star.uid}-->"><img src="<!--{$star.head_url}-->"></a> <a href="/user/<!--{$star.uid}-->"><!--{$star.nick}--></a><br>
-								粉丝：
-								<!--{$star.followers_count}--></div>
-							<p><a href="#" class="btn3">已关注</a><a href="#"class="btn2">送礼品</a></p>
-						</div>
-                    </li>
-                    <!--{/foreach}-->
-					</li>
-				</ul>
+                <!--{include file="public/stars.php"}--> 
 			</div>
 			<!--start: weibo list including news and hot commented-->
 			<div class="clearfix">
@@ -81,4 +67,3 @@ jQuery(document).ready(function() {
 		<div class="main_b"></div>
 	</div>
 <!--{include file="footer.php"}-->
-

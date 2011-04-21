@@ -1,10 +1,9 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Test extends Controller {
-    public $oauth_name = 'sina';
-
 	public function action_index()
 	{
+        var_dump($_SERVER);
 		$this->request->response = 'hey u!';
 	}
 
@@ -57,23 +56,10 @@ class Controller_Test extends Controller {
             $this->request->redirect('error/404');
         }
 
-        $oauth = new OAuth::factory($src);
+        $oauth = OAuth::factory($src);
         $access_token = $oauth->access_token($verifier);
 
-        if($access_token)
-        {
-            // Fetch userinfo accoss oauth
-            $userinfo = ;
-            // Create user, save user access_token
-            $user = new Model_User;
-            $user->create($userinfo);
-
-            $this->request->redirect('public/index');
-        }
-        else
-        {
-            $this->request->redirect('error/oauth', array('info' => 'invalid access token'));
-        }
+        $this->request->response = core::debug($access_token); 
     }
 
     public function action_yql()
@@ -111,5 +97,53 @@ class Controller_Test extends Controller {
         var_dump($mq->receive('mq', 2));
         var_dump($mq->receive('mq'));
         die;
+    }
+
+    public function action_session()
+    {
+        $sess = Session::instance();
+        $res = $sess;
+
+        $this->request->response = core::debug($res);
+    }
+
+    public function action_tmp()
+    {
+        $sess = Session::instance('cookie');
+        $sess->get('test');
+
+        $this->request->response = core::debug($sess);
+    }
+
+    public function action_config()
+    {
+        $path = arr::get($_GET, 'path', 'oauth');
+    
+        $config = core::config($path);
+        var_dump($config);
+    }
+
+    public function action_user()
+    {
+        $user = new Model_User;
+        var_dump($user->get_source_code('sina'));
+    }
+
+    public function action_arr()
+    {
+
+	    $a1 = array('name' => 'john', 'mood' => 'happy', 'food' => 'bacon');
+	  $a2 = array('name' => 'jack', 'food' => 'tacos', 'drink' => 'beer', 'mood' => 'fdsaf');
+	 
+	  // Overwrite the values of $a1 with $a2
+	  $array = Arr::overwrite($a1, $a2);
+      var_dump($array);
+    }
+
+    public function action_orm()
+    {
+        $collect = Model_Collect::instance('list');
+
+        var_dump($collect->find_all()->as_array());
     }
 } // End Welcome

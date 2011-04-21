@@ -4,23 +4,23 @@ class Controller_Auth extends Controller {
 
     public function action_index()
     {
-        $this->request->response = view::factory('oauth');
+        $this->request->response = view::factory('auth/login');
     }
 
     public function action_login()
     {
-        $src = $_GET['src'];
+        $src = $this->request->param('source', 'sina');
 
         if(empty($src))
         {
-            $this->request->redirect('/index.php/error/oauth');
+            $this->request->redirect('/error/oauth');
         }
 
         $oauth = new OAuth($src);
 
         if( ! session::instance()->set('oauth_src', $src))
         {
-            $this->request->redirect('/index.php/error/oauth');
+            $this->request->redirect('/error/oauth');
         }
 
         if($callback = $oauth->request_token())
@@ -29,47 +29,53 @@ class Controller_Auth extends Controller {
         }
         else
         {
-            $this->request->redirect('error/oauth');
+            $this->request->redirect('/error/oauth');
         }
     }
 
     public function action_oauth_callback()
     {
         $verifier = Arr::get($_GET, 'oauth_verifier', $_GET['oauth_token']);
-        $src = session::instance()->get('oauth_src', false); 
+        $session = session::instance();
+        $src = $session->get('oauth_src', false); 
 
         if(empty($src))
         {
-            $this->request->redirect('error/404');
+            $this->request->redirect('/error/404');
         }
 
         $oauth = new OAuth($src);
         $access_token = $oauth->access_token($verifier);
 
-        if($oauth->has_access_token())
+        if( ! $oauth->has_access_token())
         {
-            // Fetch userinfo accoss oauth
-            $model_oauth = Model_OAuth::factory($oauth);
-            $user_info = $model_oauth->user_info();
+            $this->request->redirect('/error/oauth');
+        }
 
-            // Create user, save user access_token
-            $user = new Model_User;
+        // Fetch userinfo accoss oauth
+        $model_oauth = Model_OAuth::factory($oauth);
+        $user_info = $model_oauth->user_info();
 
-            if($result = $user->create($user_info))
+        $user = new Model_User;
+
+        if( ! $user->check_exist($user_info['suid'], $user_info['source']))
+        {
+            if($user->create($user_info))
             {
                 $user->save_token($access_token->token, $access_token->secret);
-                cookie::set('uid', (string)$user);
             }
             else
             {
-                var_dump($user_info);die;
+                $this->request->redirect('/error/user');
             }
-            
-            $this->request->redirect('public/index');
         }
-        else
-        {
-            $this->request->redirect('error/oauth');
-        }
+
+        $session->set('uid', $user->uid);
+        $session_model = new Model_Session;
+        $session_model->create_or_write($session->id(), array(
+            'uid' => $user->uid,
+        ));
+
+        $this->request->redirect('/home');
     }
 }

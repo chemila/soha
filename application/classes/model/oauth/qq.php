@@ -31,7 +31,7 @@ class Model_OAuth_QQ extends Model_OAuth {
 
         if(isset($params['unique_id']))
         {
-            $this->params = array(
+            $this->params += array(
                 'name' => $params['unique_id'],
             );
             $url = $this->domain.'/api/user/other_info'; 
@@ -40,7 +40,7 @@ class Model_OAuth_QQ extends Model_OAuth {
         {
             $url = $this->domain.'/api/user/info';
         }
-        
+
         return $url;
     }
 
@@ -49,6 +49,11 @@ class Model_OAuth_QQ extends Model_OAuth {
         $tmp = json_decode($response, true);
         $data = $tmp['data'];
         unset($tmp);
+
+        if(empty($data))
+        {
+            die($response);
+        }
 
         return array(
             'suid' => $data['name'],

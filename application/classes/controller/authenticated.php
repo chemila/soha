@@ -4,7 +4,6 @@ class Controller_Authenticated extends Controller {
 
     public function before()
     {
-        Cookie::delete('uid');
         $config = Core::config('auth.'.$this->request->controller);
 
         isset($config['skipped']) or $config['skipped'] = array();
@@ -20,33 +19,40 @@ class Controller_Authenticated extends Controller {
             }
         }
 
+        $this->cache = cache::instance('memcache');
+
         return parent::before();
     }
 
     protected function authenticate()
     {
         // Check session or cookie whether user info exists
-        $uid = Cookie::get('uid', false);
-        $name = Cookie::get('name', false);
+        $session = Session::instance();
 
-        if($uid and $name)
+        if($uid = $session->get('uid'))
         {
-            $this->user = $this->current_user($uid, $name);
+            $session_model = new Model_Session;
+            $data = $session_model->read($session->id());
+
+            if( ! $data)
+                return false;
+
+            if($uid !== $data['uid'])
+                return false;
+
+            $this->user = new Model_User($uid);
+
             return true;
         }
 
         return false;
     }
 
-    protected function current_user($uid, $name)
-    {
-        return new Model_User($uid, $name);
-    }
-
     public function action_forbidden()
     {
         // TODO: response oauth page with infomation about 
         // why oauth, and what's going on
-        $this->request->response = view::factory('oauth');
+        //$this->request->response = view::factory('oauth');
+        $this->request->redirect('/auth');
     }
 }

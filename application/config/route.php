@@ -16,6 +16,11 @@ return array
         'patterns' => array(),
         'defaults' => array('controller' => 'test', 'action' => 'index'),
     ),
+    'auth' => array(
+        'uri' => '(<controller>(/<action>(/<source>)))',
+        'patterns' => array('source' => '\w+'),
+        'defaults' => array('controller' => 'auth', 'action' => 'index'),
+    )
     'default' => array(
         'uri' => '(<controller>(/<action>))',
         'patterns' => array(),

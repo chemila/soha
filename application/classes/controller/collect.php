@@ -1,206 +1,153 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Collect extends Controller {
-    const BASE_URL =  'http://query.yahooapis.com/v1/public/yql';
+class Controller_Collect extends Controller_Admin {
 
-	public function action_index()
-	{
-		$this->request->response = 'hey u!';
-	}
-
-    public function action_yql()
+    public function action_list()
     {
-        set_time_limit(0);
-        $count = 0;
+        set_time_limit(300);
+        $type = arr::get($_GET, 'type', 1);
+        $snoopy = new snoopy;
 
-        foreach(Core::config('yql') as $src => $setting)
+        if(1 == $type)
         {
-            for($i = 1; $i <= $setting['max']; $i ++)
+            $page = 'http://service.t.sina.com.cn/pub/top/starfans?&p=:page';
+        }
+        elseif(4 == $type)
+        {
+            $page = 'http://weibo.com/pub/top/grass?t=0&&p=:page';
+        }
+        else
+        {
+            die('invalid type');
+        }
+
+        $model = Model_Collect::instance('list');
+
+        for($i = 1; $i <= 40; $i ++)
+        {
+            $url = strtr($page, array(':page' => $i));
+
+            $snoopy->fetch($url);
+            if( ! $snoopy->results) 
+                break;
+
+            $document = phpQuery::newDocumentHTML($snoopy->results, 'utf-8');
+            $lis = phpQuery::pq('div.ctfanList li.list', $document);
+            $data = array();
+
+            foreach($lis as $li)
             {
-                $url = strtr($setting['url'], array(':page' => $i));
-                $yql_query = "select * from html where url='{$url}' and xpath='{$setting['xpath']}'";
-                $yql_query_url = self::BASE_URL . "?q=" . urlencode($yql_query) . "&format=json";
-                $response = file_get_contents($yql_query_url);
+                $head_pic = phpQuery::pq('div.headpic img', $li)->attr('src'); 
+                $tmp = parse_url($head_pic, PHP_URL_PATH);
+                list($uid, $others) = explode('/', trim($tmp, '/'), 2); 
+                unset($tmp, $others);
+                $data['uid'] = $uid;
+                $data['src'] = 'sina';
+                $domain = phpQuery::pq('div.name a', $li)->attr('href');
+                $data['url'] = $domain;
+                $data['category'] = $type;
+                $data['name'] = trim(parse_url($domain, PHP_URL_PATH), '/');
+                $data['nick'] = phpQuery::pq('div.name', $li)->text();
+                $data['rank'] = phpQuery::pq('div.fans', $li)->text();
+                $data['info'] = phpQuery::pq('div.reason', $li)->text();
 
-                if( ! $response) 
-                    break;
+                $model->insert($data);
+            }
+        }
+    }
 
-                $data = json_decode($response, true);
+    public function action_star()
+    {
+        set_time_limit(300);
+        $model = Model_Collect::instance('list');
+        $source = arr::get($_GET, 'source', false);
 
-                if(empty($data) or 0 == $data['query']['count'])
-                    break;
+        if(!$source)
+            die('input source first, like: sina, qq, sohu, 163');
+        
+        $total = $model->count_all();
+        $perpage = 100;
+        $output = 0;
 
-                $count += $this->parse_data($data, $src);
+        for($i = 1; $i <= ceil($total/$perpage); $i ++)
+        {
+            $rs = $model->all($i, $perpage, $source);
+            
+            if( ! $rs)
+                break;
+
+            foreach($rs as $record)
+            {
+                $user_info = $this->fetch_user($record);
+
+                if( ! $user_info)
+                    continue;
+
+                $user = new Model_User;
+
+                if( ! $user->check_exist($user_info['suid'], $user_info['source']))
+                {
+                    if($user->create($user_info, true))
+                    {
+                        $output ++;
+                        $model->mark($record['id']);
+                    }
+                }
+                else
+                {
+                    $star = new Model_User_Star($user->uid);
+
+                    if($star->update($user_info))
+                    {
+                        $output ++;
+                        $model->mark($record['id']);
+                    }
+                }
             }
         }
 
-        $this->request->response = 'count: '. $count;
+        die($output);
     }
 
-    public function action_query_qq()
+
+    /**
+     * From collect_list data
+     * TO user data
+     */
+    public function fetch_user($record)
     {
-        $snoopy = new Snoopy();
-        $snoopy->rawheaders['Cookie'] = 'gv_pvid=6481536790; pgv_flv=10.0; pgv_r_cookie=113688660328; o_cookie=628555; pt2gguin=o1951067666; showModel=list; FTN5K=5ee9f8b1; uin_cookie=628555; euin_cookie=07B7B4346EB082C55A27AABA958215C691B2014D22BCF1EE; ptui_qstatus=1; pgv_info=ssid=s2087519082; uin=o1951067666; skey=@A7a9VrBWz; ptisp=cnc; luin=o1951067666; lskey=00010000500c3f8a806be49951162e34720ac01a5a627f86075a1095197b7cea6c32ad8d1c9d8416f4d2e997; mb_reg_from=8; ptui_loginuin2=cnxuda@gmail.com';
-
-        if( ! $snoopy->fetch('http://t.qq.com/p/rank')) {
-            die('cant access');
-        }
-
-        $document = phpQuery::newDocumentHTML($snoopy->results);
-        $this->parse_qq_top($document);
-    }
-
-    public function action_query_qq_all()
-    {
-        $snoopy = new Snoopy();
-        $snoopy->rawheaders['Cookie'] = 'gv_pvid=6481536790; pgv_flv=10.0; pgv_r_cookie=113688660328; o_cookie=628555; pt2gguin=o1951067666; showModel=list; FTN5K=5ee9f8b1; uin_cookie=628555; euin_cookie=07B7B4346EB082C55A27AABA958215C691B2014D22BCF1EE; ptui_qstatus=1; pgv_info=ssid=s2087519082; uin=o1951067666; skey=@A7a9VrBWz; ptisp=cnc; luin=o1951067666; lskey=00010000500c3f8a806be49951162e34720ac01a5a627f86075a1095197b7cea6c32ad8d1c9d8416f4d2e997; mb_reg_from=8; ptui_loginuin2=cnxuda@gmail.com';
-
-        foreach(array(101, 102, 104, 105, 106, 110, 288,) as $i) {
-            if( ! $snoopy->fetch('http://t.qq.com/people?more='.$i)) {
-                continue;
-            }
-
-            $document = phpQuery::newDocumentHTML($snoopy->results);
-            $this->parse_qq($document, $i);
-        }
-    }
-
-    public function action_query_sohu()
-    {
-        $categories = array(
-            1102 => '影视明星', 1103 => '歌手', 1105 => '导演编剧', 1109 => '主持人', 1934 => '曲艺',
-            1114 => '娱乐记者', 1110 => '娱评人', 1107 => '网络红人', 1104 => '音乐人', 1113 => '乐评人',
-            1112 => '影人', 1126 => '影视剧', 1122 => '公司机构', 1121 => '电视栏目', 1116 => '娱乐媒体',
-            1222 => '娱乐主编', 1120 => '电视媒体',
+        $data = array();
+        $source = $record['src'];
+        $default = array(
+            'category' => 1,
+            'tag' => $record['category'],
         );
 
-        $snoopy = new Snoopy();
+        $session = session::instance();
 
-        for($i = 1; $i <= 10; $i ++) {
-            foreach($categories as $cid => $category) {
-                $url =sprintf('http://t.sohu.com/star/group.jsp?1=1&gid=%d&type=0&cid=525&next_cursor=0&pageNo=%d', $cid, $i); 
-                if( ! $snoopy->fetch($url)) {
-                    continue;
-                }
+        $token = OAuth_Token::session_factory('access', $source);
 
-                $document = phpQuery::newDocumentHTML($snoopy->results);
-                $this->parse_sohu($document, $category);
-            }
-        }
-    }
-
-    private function parse_sohu($document, $category) {
-        $lis = phpQuery::pq($document)->find('div[class="apc fanlist"] ul li[vid]');
-
-        if( ! $lis) {
-            return false;
-        }
-
-        $data = array();
-        $model = new Model_Collect_List;
-
-        foreach($lis as $li) {
-            $data['uid'] = phpQuery::pq($li)->attr('vid');
-            $data['url'] = phpQuery::pq($li)->find('b[class="nm"]>a')->attr('href');
-
-            $host = parse_url($data['url'], PHP_URL_HOST);
-            if(preg_match('/^([a-z0-9_]+).t.sohu.com$/', $host, $match)) {
-                $data['name'] = $match[1];
-            }
-
-            $data['nick'] = iconv('gbk', 'utf-8', phpQuery::pq($li)->find('b[class="nm"]>a')->html());
-            $data['src'] = 'sohu';
-            $data['rank'] = phpQuery::pq($li)->find('div[class="col_fun"]')->html();
-            $data['info'] = phpQuery::pq($li)->find('b[class="nm"]>i')->attr('title');
-            $data['category'] = $category;
-            
-            $model->insert($data);
-        }
-    }
-
-    private function parse_data($data, $src)
-    {
-        if( ! $data['query']['count'])
-            return false;
-
-        $result = array();
-        $tag = Core::config('yql.' . $src . '.tag');
-        $items = $data['query']['results'][$tag];
-        $model = new Model_Collect_List;
-        $count = 0;
-
-        foreach($items as $item)
+        if( ! $token)
         {
-            switch($src)
-            {
-                case 'sina_star':
-                case 'sina_grass':
-                    $result['url'] = $item['div'][2]['a']['href'];
-                    $result['nick'] = $item['div'][2]['a']['content'];
-                    $result['uid'] = trim(parse_url($result['url'], PHP_URL_PATH), '/'); 
-                    $result['name'] = $result['uid'];
-                    $result['src'] = $src;
-                    $result['rank'] = $item['div'][4]['p'];
-                    $result['info'] = @$item['div'][3]['p'];
-                    $result['category'] = @Core::config('yql.'.$src.'.category') or '明星';
-                    
-                    break;
-                default:
-                    break;
-            }
+            $this->request->redirect('/auth');
+        }
 
-            if( ! $result['uid'])
-                break;
+        $oauth = new OAuth($source, $token);
+
+        $model_oauth = Model_OAuth::factory($oauth);
+        try
+        {
+            $user_info = $model_oauth->user_info(array('unique_id' => $record['uid']));
+            sleep(4);
             
-            $model->insert($result);
-            $count ++;
+            if( ! $user_info)
+                return false;
+
+            return $default + $user_info;
         }
-
-        return $count;
-    }
-
-    private function parse_qq($document, $i) {
-        $lis = phpQuery::pq($document)->find('li.mhover');
-
-        if( ! $lis) return false;
-
-        $data = array();
-        $model = new Model_Collect_List;
-
-        foreach($lis as $li) {
-            $data['uid'] = trim(phpQuery::pq($li)->find('a:eq(1)')->attr('href'), '/');     
-            $data['nick'] = phpQuery::pq($li)->find('a:eq(1)')->attr('title');     
-            $data['name'] = $data['uid'];
-            $data['url'] = 'http://t.qq.com/'.$data['uid'];
-            $data['src'] = 'qq';
-            $data['rank'] = 0;
-            $data['category'] = ($i == 288) ? '草根' : '明星';
-
-            $model->insert($data);
-        }
-    }
-
-    private function parse_qq_top($document) {
-        $lis = phpQuery::pq($document)->find('div.topListBox ol li');
-
-        if( ! $lis) return false;
-
-        $data = array();
-        $model = new Model_Collect_List;
-        $cnt = 0;
-
-        foreach($lis as $li) {
-            $cnt ++;
-
-            $data['uid'] = trim(phpQuery::pq($li)->find('span.userName a')->attr('href'), '/');     
-            $data['nick'] = phpQuery::pq($li)->find('span.userName a')->text();     
-            $data['name'] = $data['uid'];
-            $data['url'] = 'http://t.qq.com/'.$data['uid'];
-            $data['src'] = 'qq';
-            $data['rank'] = phpQuery::pq($li)->find('span.topData')->text();
-            $data['category'] = $cnt > 50 ? '草根' : '明星';
-
-            $model->insert($data);
+        catch(Exception $e)
+        {
+            return false;
         }
     }
 } // End Welcome
