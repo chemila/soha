@@ -14,10 +14,11 @@ jQuery(document).ready(function() {
         <!--start: header top--> 
         <!--{include file="header/top.php"}--> 
 		<ul class="nav">
-			<li><a href="#">微博明星(999999)</a></li>
-			<li><a href="#">行业大腕(999999)</a></li>
-			<li><a href="#">草根红人(999999)</a></li>
-			<li><a href="#" class="current">我关注的(999999)</a></li>
+            <!--
+			<li><a href="/public/industry">行业大腕(<!--{$stars_count_tag[2].cnt}-->)</a></li>
+			<li><a href="/public/grass">草根红人(<!--{$stars_count_tag[4].cnt}-->)</a></li>
+            -->
+			<li><a href="/home">我关注的</a></li>
 		</ul>
 	</div>
 	<div class="main">

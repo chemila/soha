@@ -1,8 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Public extends Controller {
-    public $view;
-    public $cache;
+class Controller_Public extends Controller_Authenticated {
 
     public function action_index()
     {
@@ -24,7 +22,7 @@ class Controller_Public extends Controller {
         $this->request->response = $this->view->render();
     }
 
-    protected function get_star_caches($tag = 1)
+    protected function get_star_caches()
     {
         $model_star = new model_user_star;
 

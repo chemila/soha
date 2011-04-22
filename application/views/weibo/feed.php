@@ -2,14 +2,14 @@
 <li class="MIB_linedot_l" id="mid_221110315125335821">
     <!--user head image, namecard attr bind loading namecard event--> 
     <div class="head_pic">
-        <a namecard="true" uid="<!--{$weibo.uid}-->" href="<!--{$weibo.domain_name}-->" >
+        <a namecard="true" uid="<!--{$weibo.uid}-->" href="<!--{$weibo.uid}-->" >
             <img src="/media/img/img.png">
         </a> 
     </div>
     <div class="MIB_feed_c">
         <p class="sms" mid="<!--{$weibo.id}-->" type="3">
             <!--weibo author info: uid, domain_name, name, verified etc-->
-            <a  namecard="true" uid="<!--{$weibo.uid}-->" href="<!--{$weibo.domain_name}-->" title="<!--{$weibo.name}-->"><!--{$weibo.name}--><img class="small_icon vip" dynamic-src="http://img.t.sinajs.cn/t3/style/images/common/transparent.gif" title="新浪认证" alt=""/></a>：<!--{$weibo.content}-->
+            <a  namecard="true" uid="<!--{$weibo.uid}-->" href="<!--{$weibo.uid}-->" title="<!--{$weibo.uid}-->"><!--{$weibo.uid}--><img class="small_icon vip" dynamic-src="http://img.t.sinajs.cn/t3/style/images/common/transparent.gif" title="新浪认证" alt=""/></a>：<!--{$weibo.content}-->
         </p>
         <div class="MIB_assign">
             <div class="MIB_asarrow_l"></div>
@@ -17,7 +17,7 @@
             <div class="MIB_assign_c MIB_txtbl">
                 <!--start forward weibo--> 
                 <p class="source" mid="221110315125335821" type="2"> 
-                    <!--{$weibo.name}--></a>：<!--{$weibo.original_content}-->
+                    <!--{$weibo.uid}--></a>：<!--{$weibo.original_content}-->
                     <span class="source_att MIB_linkbl">
                         <a href="/1998321847/wr4klidqWo"><strong lang="CL1005">原文转发</strong><strong rid="201110315123201828" type="rttCount">(<!--{$weibo.forward_count}-->)</strong></a>
                     <span class="MIB_line_l">|</span><a href="/1998321847/wr4klidqWo"><strong lang="CC0603">原文评论</strong><strong rid="201110315123201828" type="commtCount">(<!--{$weibo.comment_count}-->)</strong></a>
@@ -47,7 +47,7 @@
             </div>
             <!--start: forward, favorite, and comment goes here--> 
             <div class="rt">
-                <a onClick="" href="javascript::void())"><strong lang="CD0023">转发</strong></a>
+                <a onClick="location.href='/mblog/forward/<!--{$weibo.id}-->'" href="javascript::void())"><strong lang="CD0023">转发</strong></a>
                 <strong type="rttCount" rid="221110415327173016" id="num_221110415327173016">(27)</strong>
                 <span class="MIB_line_l">|</span>
                 <a onclick="App.addfavorite_miniblog('221110415327173016');" href="javascript:void(0);"><strong lang="CL1003">收藏</strong></a>

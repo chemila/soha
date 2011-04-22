@@ -28,10 +28,10 @@ class Controller_Home extends Controller_Authenticated {
         // Parse parameters
         $model_star = new model_user_star;
 
-        if( ! $stars = $this->cache->get('star:attention:'.$this->uid))
+        if( ! $stars = $this->cache->get('star:attention:'.$this->user->uid))
         {
-            $stars = $model_star->followed_by($this->uid);
-            $this->cache->set('star:attention:'.$this->uid, $stars, 24*3600);
+            $stars = $model_star->followed_by($this->user->uid);
+            $this->cache->set('star:attention:'.$this->user->uid, $stars, 24*3600);
         }
 
         if( ! $stars_count_all = $this->cache->get('star:count:all'))

@@ -2,19 +2,13 @@
 
 class Controller_Message extends Controller_Authenticated
 {
-	//
 	public function action_index()
 	{
 		$model_message = new Model_Message();
 		
-		$data = array(
-					"uid" =>$this->user->uid
-					);
-					
+		$data = array("uid" => $this->user->uid);
 		$messages = $model_message->get_all_received_list($data);
-		
 		$view = new View_Smarty("smarty:message/index");
-		
 		$view->messages = $messages;
 
         $this->request->response = $view->render();

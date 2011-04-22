@@ -136,11 +136,6 @@ class Model_User_Star extends Model_User {
             ->as_array();
     }
 
-    public function count_attention($uid)
-    {
-        return 100;
-    }
-
     public function followed_by($uid)
     {
 

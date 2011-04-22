@@ -2,6 +2,10 @@
 
 class Controller_Setting extends Controller_Authenticated {
 
+    public function action_index()
+    {
+        $this->request->response = 'TODO';
+    }
 
     public function action_get_personality()
     {

@@ -1,20 +1,21 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_User extends Model {
+class Model_User extends ORM {
+    protected $_has_one = array(
+        'setting' => array(
+            'model' => 'setting',
+            'foreign_key' => 'sid',
+        ),
+        'block' => array(
+            'model' => 'block',
+            'foreign_key' => 'uid',
+        ),
+    );
     const CATEGORY_DEFAULT = 0;
     const CATEGORY_STAR    = 1;
 
+    protected $_primary_key = 'uid';
     protected $_data = array();
-
-    public function __construct($uid = NULL, Array $data = NULL)
-    {
-        $this->uid = $uid;
-
-        if($data)
-        {
-            $this->_data = $data;
-        }
-    }
 
     public function init($refresh = false) {
         if( ! $this->uid)
@@ -213,5 +214,14 @@ class Model_User extends Model {
         }
 
         return array('uid' => $this->uid) + $this->_data;
+    }
+
+    public function action_setting()
+    {
+        $user = $this->user;
+        $setting = $user->setting;
+
+        $setting->data = Serialize(array('test' => 'hello'));
+        $setting->save();
     }
 }

@@ -11,24 +11,34 @@
  */
 return array
 (
+    'default' => array(
+        'uri' => '(public(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'public', 'action' => 'index'),
+    ),
+    'auth' => array(
+        'uri' => '(auth(/<action>(/<source>)))',
+        'patterns' => array('source' => '\w+'),
+        'defaults' => array('controller' => 'auth', 'action' => 'index'),
+    ),
+    'setting' => array(
+        'uri' => '(setting(/<action>(/<id>)))',
+        'patterns' => array('id' => '\d+'),
+        'defaults' => array('controller' => 'setting', 'action' => 'index'),
+    ),
+    'weibo' => array(
+        'uri' => '(<controller>(/<action>(/<id>)))',
+        'patterns' => array('id' => '\d+'),
+        'defaults' => array('controller' => 'weibo', 'action' => 'index'),
+    ),
     'test' => array(
         'uri' => 'test(/<action>(/<id>))',
         'patterns' => array(),
         'defaults' => array('controller' => 'test', 'action' => 'index'),
     ),
-    'auth' => array(
-        'uri' => '(<controller>(/<action>(/<source>)))',
-        'patterns' => array('source' => '\w+'),
-        'defaults' => array('controller' => 'auth', 'action' => 'index'),
-    )
-    'default' => array(
-        'uri' => '(<controller>(/<action>))',
-        'patterns' => array(),
-        'defaults' => array('controller' => 'public', 'action' => 'index'),
-    ),
-    'setting' => array(
-        'uri' => '(<controller>(/<action>(/<id>)))',
+    'favorite' => array(
+        'uri' => '(favorite(/<action>(/<id>)))',
         'patterns' => array('id' => '\d+'),
-        'defaults' => array('controller' => 'setting', 'action' => 'index'),
+        'defaults' => array('controller' => 'favorite', 'action' => 'index'),
     )
 );

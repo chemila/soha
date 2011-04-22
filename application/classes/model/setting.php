@@ -1,11 +1,18 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Setting extends Model {
-    private $_table_name = 'setting';
+class Model_Setting extends ORM {
+    protected $_has_one = array(
+        'user' => array(
+            'model' => 'user',            
+            'foreign_key' => 'uid',
+        ),       
+    );
 
     public function __construct(Model_User $user)
     {
         $this->user = $user;
+
+        parent::__construct();
     }
 
     public function get($category, $attr = NULL)

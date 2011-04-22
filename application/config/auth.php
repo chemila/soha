@@ -11,4 +11,11 @@ return array(
     'home' => array(
         'required' => array('index'),   
     ),
+    'public' => array(
+        'skipped' => array(),   
+    ),
+    'message' => array(
+        'skipped' => array(),   
+        'required' => array('index'),   
+    ),
 );
