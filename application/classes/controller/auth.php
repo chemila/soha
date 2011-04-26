@@ -1,6 +1,8 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Auth extends Controller {
+    const COOKIE_NAME = 'su';
+    const COOKIE_LIFETIME = 2592000;
 
     public function action_index()
     {
@@ -58,9 +60,9 @@ class Controller_Auth extends Controller {
 
         $user = new Model_User;
 
-        if( ! $user->check_exist($user_info['suid'], $user_info['source']))
+        if( ! $uid = $user->check_exist($user_info['suid'], $user_info['source']))
         {
-            if($user->create($user_info))
+            if($uid = $user->create($user_info))
             {
                 $user->save_token($access_token->token, $access_token->secret);
             }
@@ -70,10 +72,12 @@ class Controller_Auth extends Controller {
             }
         }
 
-        $session->set('uid', $user->uid);
+        //$session->set('uid', $uid);
+        Cookie::set(self::COOKIE_NAME, sprintf('sid=%s;uid=%s', $session->id(), $uid), self::COOKIE_LIFETIME);
+
         $session_model = new Model_Session;
         $session_model->create_or_write($session->id(), array(
-            'uid' => $user->uid,
+            'uid' => $uid,
         ));
 
         $this->request->redirect('/home');

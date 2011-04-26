@@ -10,11 +10,7 @@ class Model_Comment extends ORM {
     );
 
     protected $_has_one = array(
-        'author' => array(
-            'model' => 'user',
-            'foreign_key' => 'uid',
-        ),       
-        'reply_to' => array(
+        'root' => array(
             'model' => 'comment',
             'foreign_key' => 'comment_to',
         ),

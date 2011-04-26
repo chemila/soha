@@ -47,8 +47,9 @@ class Model_API_User extends Model_API
      * @array()
      * return bool
      */
-    public function update($data)
+    public function update($uid, $data)
     {
+        $data = array('uid' => $uid) + $data;
         $response = $this->post('/user/modifyuserinf.php', $data);
         
         if( $this->failed($response) )
@@ -66,7 +67,7 @@ class Model_API_User extends Model_API
     public function get_user_info($data)
     {
     	$response = $this->post('/user/getuserinfo.php', $data);
-    	
+
         if( $this->failed($response) )
         {
             return false;
@@ -392,6 +393,75 @@ class Model_API_User extends Model_API
     public function list_block($data)
     {
     	$response = $this->post('/user/getblocklist.php', $data);
+
+        if( $this->failed($response) )
+        {
+            return false;
+        }
+
+        return $response['result'];
+    }
+    
+    /**
+     * 列出 某人   黑名单总数
+     * @param int $uid
+     * return bool
+     */
+    public function count_block($data)
+    {
+    	$response = $this->post('/user/getblockcount.php', $data);
+
+        if( $this->failed($response) )
+        {
+            return false;
+        }
+
+        return $response['result'];
+    }
+    
+    /**
+     * 列出 所有 粉丝
+     * @param int $uid
+     * return bool
+     */
+    public function fans_list($data)
+    {
+    	$response = $this->post('/user/getfanslist.php', $data);
+
+        if( $this->failed($response) )
+        {
+            return false;
+        }
+
+        return $response['result'];
+    }
+    
+    /**
+     * 删除  粉丝
+     * @param int $uid
+     * @param int $fuid
+     * return bool
+     */
+    public function fans_del($data)
+    {
+    	$response = $this->post('/user/deletefans.php', $data);
+
+        if( $this->failed($response) )
+        {
+            return false;
+        }
+
+        return $response['result'];
+    }
+    
+    /**
+     * 获取 某人的 UID
+     * @param string $nick
+     * return bool
+     */
+    public function get_uid($data)
+    {
+    	$response = $this->post('/user/getuid.php', $data);
 
         if( $this->failed($response) )
         {

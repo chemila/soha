@@ -1,14 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Favorite extends Model
+class Model_Favorite extends ORM
 {
-	const TABLE_NAME = 'favorite';
-	
-	public function __construct(Model_User $user)
-	{
-		$this->user = $user;
-	}
-	
 	public function add_favorite($wid)
 	{
 		$to_insert = array(
@@ -25,21 +18,27 @@ class Model_Favorite extends Model
 	
     public function del_favorite($id)
     {
-        return DB::delete(self::TABLE_NAME)
-            ->where('id', '=', $id)
-            ->where('uid', '=', $this->user->uid)
-            ->execute($this->_db);
+    	return $this->delete($id);
     }
 	
-    public function list_favorite($page = 1, $limit = 18, $tag = 1)
+    public function list_favorite($uid, $page = 1, $limit = 18, $tag = 1)
     {
-        return DB::select('*')->from(self::TABLE_NAME)
-        	->where('uid', '=', $this->user->uid)
-            ->order_by('id', 'desc')
-            ->limit($limit)
-            ->offset($page - 1)
-            ->execute($this->_db)
-            ->as_array();
+    	$my_favorite = $this->where("uid", "=", $uid)->order_by("id", "desc")->limit($limit)->find_all()->as_array();
+        
+        $model_weibo = Model::factory("weibo");
+        
+        $my_favorite_weibo_row = array();
+        for ($i=0; $i<count($my_favorite); $i++)
+        {
+        	$my_favorite_weibo_row[$i] = $model_weibo->where("id", "=", $my_favorite[$i]['wid'])->find()->as_array();
+			$my_favorite_weibo_row[$i]['favorite_id'] = $my_favorite[$i]['id'];
+        	if(!empty($my_favorite_weibo_row[$i]['media_data'])) 
+        	{
+        		$my_favorite_weibo_row[$i]['media_data'] = unserialize($my_favorite_weibo_row[$i]['media_data']);
+        	}
+        }
+        
+        return $my_favorite_weibo_row;
     }
 }
 

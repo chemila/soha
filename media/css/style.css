@@ -128,3 +128,26 @@ a:hover { text-decoration:underline }
 .blog_search p a.fb{ color:#444444 !important}
 
 .blog_main .MIB_feed .MIB_feed_c{ float:none !important; width:auto !important}
+
+
+.help_center{ background-color:#fff;}
+.help_center .h_bg{ padding:20px 34px;}
+.help_center .num_bg{ color:#FFF; font-size:16px; font-family:Arial, Helvetica, sans-serif; font-weight:bold; display:block; background:url(../img/helpbg01.png) -106px -39px no-repeat; width:32px; height:21px; line-height:21px; padding-left:7px; float:left;}
+.help_center li{ border-bottom:1px dashed #e4e4e4; overflow:auto; zoom:1; line-height:20px; padding:15px 0 12px 10px;}
+.help_center li .text{ margin-left:50px; color:#777777;}
+.help_center li h3{ font-size:14px; font-weight:bold;; padding-bottom:5px; color:#000;}
+
+.tl { text-align: left }
+.tc { text-align: center }
+.tr { text-align: right }
+.bc { margin-left: auto; margin-right: auto }
+.fl { float: left; display: inline }
+.fr { float: right; display: inline }
+.vm { vertical-align: middle; }
+.vt { vertical-align: top }
+.pr { position: relative }
+.pa { position: absolute }
+.abs-right { position: absolute; right: 0 }
+.abs-left { position: absolute; left: 0 }
+.hidden { visibility: hidden }
+.none { display: none }

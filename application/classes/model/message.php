@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Message extends Model
+class Model_Message extends ORM
 {
 	public function __construct()
 	{
@@ -28,7 +28,7 @@ class Model_Message extends Model
 		return $response;
 	}
 	
-	public function delete($data)
+	public function del($data)
 	{
 		$response = Model_API::factory("message")->delete_message($data);
 		
@@ -45,6 +45,13 @@ class Model_Message extends Model
 	public function get_collect($data)
 	{
 		$response = Model_API::factory("message")->get_collect($data);
+		
+		return $response;
+	}
+	
+	public function get_uid($data)
+	{
+		$response = Model_API::factory("user")->get_uid($data);
 		
 		return $response;
 	}

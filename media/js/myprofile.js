@@ -4295,18 +4295,15 @@ App.BindAtToTextarea = (function() {
     })();
 scope.loginKit = function() {
         var b = document.cookie + ";";
-        var j = ["SUP", "=([^;]*)?;"].join("");
-        var a = ["(\\?|&)", "uid", "=([^&]*)(&|$)"].join("");
+        console.info(b);
+        var j = ["uid", "=([^;]*)?;"].join("");
         var h = b.match(new RegExp(j, "i"));
         h = (h) ? h[1] || "" : "";
         h = unescape(h);
-        var f = h.match(new RegExp(a));
-        f = (f) ? f[2] || "" : "";
-        var g = scope["$oid"];
+        //var g = scope["$oid"];
         return {
-            uid: f,
-            isLogin: !! f,
-            isAdmin: f && g && (f == g)
+            uid: h,
+            isLogin: !! h,
         }
     };
 scope.$isLogin = function() {

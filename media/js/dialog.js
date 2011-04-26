@@ -9,7 +9,6 @@ App.dialog01 = function(b,c) {
             return false
         }
         
-        
         Utils.Io.Ajax.request("/favorite/aj_add.php", {
             POST: {
                 mid: b

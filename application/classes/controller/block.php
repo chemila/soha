@@ -7,12 +7,16 @@ class Controller_Block extends Controller_Authenticated {
         $model_block = new Model_Block();
 
         $data = array(
-        				"uid"=>$this->user->uid
-        			);
+        		"uid"=>$this->user->uid
+        );
+        
+       
         
         $blocks = $model_block->all_block_by_user($data);
 
         $view = new View_Smarty('smarty:block/index');
+        $view->block_count = $model_block->count_block($data);
+        $view->user_info = $this->public_user_info();
 
         $view->blocks = $blocks;
 
@@ -65,20 +69,28 @@ class Controller_Block extends Controller_Authenticated {
 
     public function action_delete()
     {
-    	if( $_POST )
-    	{
-    	    $model_block = new Model_Block();
-    		$data = array(
-    						"uid" =>$this->user->uid,
-    						"fuids" =>$_POST['fuids']
-    					);
-    		
-    		return $model_block->delete_block($data);
-    	}
-    	else 
+    	$fuids = $this->request->param("id");
+    	if(empty($fuids))
     	{
     		$this->request->redirect('/block');
     	}
+    	
+    	$model_block = new Model_Block();
+    	$data = array(
+    				"uid" =>$this->user->uid,
+    				"fuids" =>$fuids
+    	);
+    		
+    	$model_block->delete_block($data);
+ 
+    	$this->request->redirect('/block');
+    }
+    
+    public function public_user_info()
+    {
+    	$user_info = Model_API::factory('user')->get_user_info(array("uid"=>$this->user->uid));
+		
+		return $user_info;
     }
 }
 

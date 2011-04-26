@@ -35,7 +35,7 @@ body { font:12px/1.5 \5b8b\4f53, sans-serif }
 .unl { text-decoration: underline }
 .no_unl { text-decoration: none }
 /*POSITION
--------------------------------------------------------------- */
+-------------------------------------------------------------- 
 .tl { text-align: left }
 .tc { text-align: center }
 .tr { text-align: right }
@@ -50,7 +50,7 @@ body { font:12px/1.5 \5b8b\4f53, sans-serif }
 .abs-left { position: absolute; left: 0 }
 .hidden { visibility: hidden }
 .none { display: none }
-
+*/
 /* TODO: optmize the size
 -------------------------------------------------------------*/
 .star_list { height: 400px;}

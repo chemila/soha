@@ -34,6 +34,14 @@ class Model_Block extends Model {
     	return Model_API::factory("user")->delete_block($data);
     }
     
+    public function count_block($data)
+    {
+    	if(empty($data['uid']))
+    		return false;
+    		
+    	return Model_API::factory("user")->count_block($data);
+    }
+    
     public function get_all_friend($data)
     {
     	$this->_data = Model_API::factory('user')->list_friend($data);

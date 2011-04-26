@@ -85,23 +85,17 @@ class Controller_Collect extends Controller_Admin {
 
                 $user = new Model_User;
 
-                if( ! $user->check_exist($user_info['suid'], $user_info['source']))
+                if( ! $uid = $user->check_exist($user_info['suid'], $user_info['source']))
                 {
-                    if($user->create($user_info, true))
-                    {
-                        $output ++;
-                        $model->mark($record['id']);
-                    }
+                    $uid = $user->create($user_info);
                 }
-                else
-                {
-                    $star = new Model_User_Star($user->uid);
 
-                    if($star->update($user_info))
-                    {
-                        $output ++;
-                        $model->mark($record['id']);
-                    }
+                $star = new Model_Star($uid);
+
+                if($star->insert_or_update($user_info))
+                {
+                    $output ++;
+                    $model->mark($record['id']);
                 }
             }
         }

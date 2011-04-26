@@ -4,7 +4,6 @@ class Controller_Authenticated extends Controller {
     public $user;
     public $cache;
     public $view;
-    public $mq;
 
     public function before()
     {
@@ -24,7 +23,6 @@ class Controller_Authenticated extends Controller {
         }
 
         $this->cache = cache::instance('memcache');
-        $this->mq = queue::instance();
 
         return parent::before();
     }
@@ -32,25 +30,30 @@ class Controller_Authenticated extends Controller {
     protected function authenticate()
     {
         // Check session or cookie whether user info exists
-        $session = Session::instance();
+        $su = Cookie::get(Controller_Auth::COOKIE_NAME, false);
+        if( ! $su)
+            return false;
 
-        if($uid = $session->get('uid'))
-        {
-            $session_model = new Model_Session;
-            $data = $session_model->read($session->id());
+        preg_match('~^sid=(\w+);uid=(\d+)$~', $su, $match);
 
-            if( ! $data)
-                return false;
+        if( ! $match)
+            return false;
 
-            if($uid !== $data['uid'])
-                return false;
+        $sid = $match[1];
+        $uid = $match[2];
 
-            $this->user = new Model_User($uid);
+        $session_model = new Model_Session;
+        $data = $session_model->read($sid);
 
-            return true;
-        }
+        if( ! $data or ! isset($data['uid']))
+            return false;
 
-        return false;
+        if($uid !== $data['uid'])
+            return false;
+
+        $this->user = new Model_User($uid);
+
+        return true;
     }
 
     public function action_forbidden()

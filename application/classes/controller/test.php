@@ -3,7 +3,7 @@
 class Controller_Test extends Controller {
 	public function action_index()
 	{
-        var_dump($_SERVER);
+        var_dump(request::detect_uri());
 		$this->request->response = 'hey u!';
 	}
 
@@ -123,12 +123,6 @@ class Controller_Test extends Controller {
         var_dump($config);
     }
 
-    public function action_user()
-    {
-        $user = new Model_User;
-        var_dump($user->get_source_code('sina'));
-    }
-
     public function action_arr()
     {
 
@@ -145,5 +139,30 @@ class Controller_Test extends Controller {
         $collect = Model_Collect::instance('list');
 
         var_dump($collect->find_all()->as_array());
+    }
+
+    public function action_user()
+    {
+        $user = new Model_User(1003321);
+
+        $user->load();
+        $user->nick = 'test';
+        $info = array(
+            'nick' => 'fuqiang',
+            'domain_name' => 'set_chemila',
+        );
+        $user->values($info);
+        $star = new Model_Star;
+        $star->uid = $user->pk();
+        $star->extend($user);
+        var_dump($star->as_array());
+    }
+
+    public function action_cookie()
+    {
+        session_start();
+        Cookie::set('su', '123321312;'.session_id(), 2592000);
+        //Cookie::set('su', $uid.';'.$session->id(), 2592000);
+        var_dump(Cookie::get('su'));
     }
 } // End Welcome

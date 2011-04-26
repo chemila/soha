@@ -34,4 +34,20 @@ class Model_Attention extends Model
 		
 		return $response;
 	}
+	
+	
+	public function get_fans($data)
+	{
+		$response = Model_API::factory("user")->fans_list($data);
+		
+		return $response;
+	}
+	
+	
+	public function delete_fans($data)
+	{
+		$response = Model_API::factory("user")->fans_del($data);
+		
+		return $response;
+	}
 }

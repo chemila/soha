@@ -13,7 +13,7 @@ jQuery(document).ready(function() {
         <!--start: header top--> 
         <!--{include file="header/top.php"}--> 
 		<ul class="nav">
-			<li><a href="/public" class="current">微博明星(<!--{$stars_count_all[0].cnt}-->)</a></li>
+			<li><a href="/public" class="current">微博明星(<!--{$stars_count_all}-->)</a></li>
             <!--
 			<li><a href="/public/industry">行业大腕(<!--{$stars_count_tag[2].cnt}-->)</a></li>
 			<li><a href="/public/grass">草根红人(<!--{$stars_count_tag[4].cnt}-->)</a></li>

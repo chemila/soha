@@ -234,7 +234,9 @@ abstract class Cache {
 	protected function _sanitize_id($id)
 	{
 		// Change slashes and spaces to underscores
-		return $this->_config['key_prefix'].str_replace(array('/', '\\', ' '), '_', $id);
+        $prefix = arr::get($this->_config, 'key_prefix', '');
+
+		return $prefix.str_replace(array('/', '\\', ' '), '_', $id);
 	}
 }
 // End Cache
