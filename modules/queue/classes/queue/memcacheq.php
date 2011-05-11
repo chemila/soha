@@ -197,9 +197,11 @@ class Queue_Memcacheq extends Queue
         $response = $this->_sendCommand('stats queue', array('END'));
 
         foreach ($response as $i => $line) {
-            $this->_queues[] = str_replace('STAT ', '', $line);
+            //FIXME: $line like 'STAT weibo 46/38', so remove trailing
+            //$tmp = str_replace('STAT ', '', $line);
+            list($name, $total, $rest) =  sscanf($line, 'STAT %s %d/%d');
+            $this->_queues[] = $name;
         }
-
         return $this->_queues;
     }
 

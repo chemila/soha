@@ -4,9 +4,14 @@ class Controller_Message extends Controller_Authenticated
 {
 	public function action_index()
 	{
-		$model_message = Model_Message::factory("message");
+		$page = Arr::get($_GET, "page", 1);
 		
-		$data = array("uid" => $this->user->uid);
+		$model_message = Model::factory("message");
+		
+		$data = array(
+			"uid" => $this->user->uid,
+			"page" => $page
+		);
 		
 		$messages_count = $model_message->get_collect($data);
 		
@@ -17,6 +22,7 @@ class Controller_Message extends Controller_Authenticated
 		
 		$view->messages_count = $messages_count;
 		
+		$view->count = $messages_count['revcount'];
 		
 		$view->user_info = $this->public_user_info();
 
@@ -35,7 +41,8 @@ class Controller_Message extends Controller_Authenticated
 		if(!is_numeric($fuid))
 		{
 			$nick = Arr::get($_POST, "nick");
-			$fuid = $model_message->get_uid(array("nick"=>$nick)) ;
+			$fuid_arr = $model_message->get_uid(array("nick"=>$nick)) ;
+			$fuid = Arr::get($fuid_arr, "uid");
 		}
 		
 		$content = Arr::get($_POST, "content");
@@ -67,10 +74,26 @@ class Controller_Message extends Controller_Authenticated
 	{
 		$model_message = new Model_Message();
 		
-		$msg_id = $this->request->param("id");
+		$msg_id = Arr::get($_POST, "uid", '');
+		$isblack = Arr::get($_POST, "isblack", '');
+		
 		if(empty($msg_id))
 		{
-			$this->request->redirect('/message');
+			die(json_encode(array("code"=>"E00002")));
+		}
+		
+		/*
+		 * 勾选了把此人 写入 黑名单
+		 */
+		if($isblack == "OK")
+		{
+			$me_data = array("uid"=>$this->user->uid, "msg_id"=>$msg_id);
+			$model_message_api = Model_API::factory("message");
+			$relation_arr = $model_message_api->get_relation_to_fuid($me_data);
+			$fuid = $relation_arr[0]['uid'];
+			
+			$model_user_api = Model_API::factory("user");
+			$model_user_api->add_block(array("uid"=>$this->user->uid, "fuids"=>$fuid));
 		}
 					
 		$data = array(
@@ -81,11 +104,11 @@ class Controller_Message extends Controller_Authenticated
 		$response = $model_message->del($data);
 		if($response)
 		{
-			$this->request->redirect('/message');
+			die(json_encode(array("code"=>"A00006")));
 		}
 		else 
 		{
-			$this->request->redirect('/error/message');
+			die(json_encode(array("code"=>"CC2702")));
 		}
 	}
 	

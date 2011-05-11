@@ -1,12 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Message extends ORM
-{
-	public function __construct()
-	{
-		
-	}
-	
+class Model_Message {
 	public function get_all_sended_msg($data)
 	{
 		$response = Model_API::factory("message")->get_sended($data);
@@ -52,6 +46,13 @@ class Model_Message extends ORM
 	public function get_uid($data)
 	{
 		$response = Model_API::factory("user")->get_uid($data);
+		
+		return $response;
+	}
+	
+	public function get_relation_from_id($data)
+	{
+		$response = Model_API::factory("message")->get_relation_to_fuid($data);
 		
 		return $response;
 	}

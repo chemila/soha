@@ -1,10 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Weibo extends ORM {
+class Model_Weibo extends Model_QORM {
     const TYPE_DEFAULT = 0;
     const TYPE_IMAGE = 1;
     const TYPE_VIDEO = 2;
     const CACHE_VERSION_PREFIX = 'v';
+    const CACHE_KEY = 'weibo';
+
+    protected $_table_name = 'weibo';
 
     protected $_has_one = array(
         'root' => array(
@@ -26,27 +29,27 @@ class Model_Weibo extends ORM {
     {
         if($type == self::TYPE_DEFAULT)        
         {
-            $classname = 'plaintext';
+            $classname = 'Model_Weibo_Plaintext';
         }
         elseif($type == self::TYPE_IMAGE)
         {
-            $classname = 'image';
+            $classname = 'Model_Weibo_Image';
         }
         elseif($type == self::TYPE_VIDEO)
         {
-            $classname = 'video';
+            $classname = 'Model_Weibo_Video';
         }
         else
         {
-            $classname = 'mixed';
+            $classname = 'Model_Weibo_Mixed';
         }
         
         return new $classname($id);
     }
 
-    public function star_news($page = 1, $limit = 18, $tag = 1)
+    public function star_news($page = 1, $limit = 20, $tag = 1)
     {
-        $records = $this->select('*')
+        $records = $this->where('user_category', '=', 1)
             ->order_by('timeline', 'desc')
             ->limit($limit)
             ->offset($page - 1)
@@ -59,12 +62,9 @@ class Model_Weibo extends ORM {
         foreach($records as & $weibo)
         {
             $weibo['media'] = unserialize($weibo['media_data']);
-            self::extend_with_user($weibo);
 
-            if($weibo['rid'])
-            {
-                self::extend_with_root($weibo);
-            }
+            self::extend_with_user($weibo);
+            self::extend_with_root($weibo);
         }
 
         return $records;
@@ -94,17 +94,18 @@ class Model_Weibo extends ORM {
     public function is_root()
     {
         if( ! $this->loaded())
-            throw new Model_Weibo_Exception('Load this model first');
+        {
+            $this->_load();
+        }
 
         return empty($this->rid);
     }
 
     public function increse_forward()
     {
-        if( ! $this->loaded())
-            throw new Model_Weibo_Exception('Load this model first');
+        $this->_load();
 
-        $this->forward_count += 1;
+        $this->forward_count ++;
         return $this->save();
     }
 
@@ -149,7 +150,7 @@ class Model_Weibo extends ORM {
             'type' => $root->type,
             'src' => $root->src,
             'timeline' => $root->timeline,
-            'media' => unserialize($root->media_data),
+            'media_data' => $root->media_data,
         );
 
         self::extend_with_user($weibo['root']);
@@ -165,11 +166,12 @@ class Model_Weibo extends ORM {
         throw new Model_Weibo_Exception('Not implemented method :method', array(':method' => __FUNCTION__));
     }
 
-    public function get_comments($page, $limit = 10)
+    public function get_comments($page = 1, $limit = 10)
     {
         $comments = $this->comments
             ->limit($limit)
             ->offset($page - 1)
+            ->order_by('id', 'desc')
             ->find_all()
             ->as_array();
        
@@ -181,26 +183,82 @@ class Model_Weibo extends ORM {
         return $comments;
     }
 
-    public function save_sync()
+    
+    public function get_user()
     {
-        $mq = Queue::instance();
-        $mq->create('weibo');
-        
-        $version = $this->get_current_version();
-        $this->cache_version = self::CACHE_VERSION_PREFIX.$version;
-        $mq->send($version, $this->as_array());
+        $user = new Model_User($this->uid);
 
-        return $version;
+        $user->load();
+        return $user;
     }
 
-    public function get_current_version()
+    public function list_by_user($uid, $page = 1, $limit = 10, & $count = NULL)
     {
-        $cache = Cache::instance();
+        $records = $this->where('uid', '=', $uid)
+            ->limit($limit)
+            ->offset($page - 1)
+            ->order_by('id', 'desc')
+            ->find_all()
+            ->as_array();
 
-        $version = $cache->get('weibo:version', time());
-        $version ++;
+        $count = $this->count_last_query();
 
-        $cache->set('weibo:version', $version);
-        return $version;
+        foreach($records as & $record)
+        {
+            self::extend_with_user($record);
+            self::extend_with_root($record);
+        }
+
+        return $records;
+    }
+
+    public function get_from_ids(Array $wids)
+    {
+        $result = array();
+
+        foreach($wids as $wid)
+        {
+            $weibo = new self($wid);
+            $data = $weibo->as_array();
+
+            self::extend_with_user($data);
+            self::extend_with_root($data);
+
+            $result[] = $data;
+        }
+
+        return $result;
+    }
+
+    public function ats()
+    {
+        $pattern = '~@([^\s:：]+)~iu';
+        $ats = array();
+        
+        if(preg_match_all($pattern, $this->content, $match))
+        {
+            $user = new Model_User;
+
+            foreach($match[1] as $nick)
+            {
+                try
+                {
+                    $ats[] = $user->get_uid($nick);
+                }
+                catch(Exception $e){}
+            }
+        }
+
+        return $ats;
+    }
+
+    public function extend()
+    {
+        $data = $this->as_array();
+
+        self::extend_with_user($data);
+        self::extend_with_root($data);
+
+        return $data;
     }
 }

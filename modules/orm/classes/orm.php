@@ -1353,6 +1353,7 @@ class ORM {
                 // Remove OFFSET from the SQL
                 $sql = preg_replace('/\sOFFSET\s+\d+/i', '', $sql);
             }
+
             // Get the total rows from the last query executed
             $result = DB::query(
                 Database::SELECT,

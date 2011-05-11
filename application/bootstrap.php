@@ -64,7 +64,8 @@ Core::modules(array(
     'phpQuery'   => MODPATH.'phpQuery',     // php end jquery functionlity
     'orm'        => MODPATH.'orm',
     'smarty'     => MODPATH.'smarty',
-    'queue'     => MODPATH.'queue',
+    'queue'      => MODPATH.'queue',
+    'cron'      => MODPATH.'cron',
 ));
 
 /**

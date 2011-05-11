@@ -46,6 +46,7 @@ function check_confirm()
 							我关注的人</label>
 					</dd>
 				</dl>
+				<!-- 
 				<dl>
 					<dt><span class="fb f14">地理位置信息</span> <a href="#">【这是什么？】</a></dt>
 					<dd>发布微博时，是否允许微博保存并显示你所处的地理位置信息，包括所有的第三方工具、客户端。<br>
@@ -62,6 +63,7 @@ function check_confirm()
 					</dd>
 					<dd>你可以<a href="#">删除过去所有微博中保存的地理位置信息</a>，删除后不可回复。</dd>
 				</dl>
+				
 				<dl>
 					<dt><span class="fb f14">搜索</span> 允许别人通过一下信息搜索到我</dt>
 					<dd>
@@ -75,9 +77,9 @@ function check_confirm()
 							手机号码</label>
 					</dd>
 				</dl>
-				
+				 -->
 				<div class="btn tc">
-					<input name="" type="submit">
+					<input name="" type="submit" value="">
 				</div>
 				
 				<!--设置 end--> 

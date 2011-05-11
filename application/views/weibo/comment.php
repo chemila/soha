@@ -24,27 +24,16 @@
             </div>
         </div>
         <ul class="PL_list oddline">
-            <!--list all comments below--> 
+            <!--{if $count > 0}-->  
             <!--{foreach from=$comments item=comment}--> 
-            <li onmouseout="App.hideExtendBtn(this);return false" onmouseover="App.showExtendBtn(this);return false" cacheid="8" class="MIB_linedot3"> <a href="/home/profile/<!--{$comment.uid}-->"><img src="<!--{$comment.user.portrait}-->" title="<!--{$comment.user.nick}-->" class="picborder_l lf" uid="<!--{$comment.uid}-->" namecard="true"></a>
-                <!--delete comment if self--> 
-                <div onclick="scope.deleteCommentByRid('1779849751', '1069205631', '221110415327173016', '202110415342216996', 'miniblog2', 1, 1)" title="删除" style="visibility: hidden; " class="icon_closel rt">x</div>
-                <!--comment content-->
-                <div class="txt">
-                    <!--comment author info--> 
-                    <div class="txtinfo"> <a href="/home/profile/<!--{$comment.uid}-->" uid="<!--{$comment.uid}-->" namecard="true"><!--{$comment.user.nick}--></a><!--{$comment.content}--><span class="MIB_txtbl">(<!--{$comment.created_at|date_format:"%Y-%m-%d %H:%M:%S"}-->)</span> 
-                    </div>
-                    <!--actions: delete reply etc.-->
-                    <p class="MIB_more MIB_linkbl"> <a class="lose" onclick="scope.replyByCid(&quot;1779849751&quot;, &quot;1069205631&quot;, &quot;221110415327173016&quot;, &quot;202110415342216996&quot;, &quot;自己也该学着成熟了&quot;, &quot;Array&quot;, &quot;miniblog2&quot;, 1, 1);" href="javascript:;">回复</a> </p>
-                </div>
-                <span class="clear"></span> 
-            </li>
+               <!--{include file='weibo/comment_reply.php' comment=$comment weibo=$weibo}-->  
             <!--{/foreach}--> 
+            <!--{/if}--> 
         </ul>
         <!--list more comments if available--> 
-        <!--{if $count_more > 0}--> 
+        <!--{if $count > 10}--> 
         <div class="list_head MIB_linedot3 moreheight"> 
-            后面还有<span><!--{$count_more}--></span>条评论，
+            后面还有<span><!--{$count - 10}--></span>条评论，
             <a href="/weibo/show/<!--{$weibo.id}-->">点击查看<em>&gt;&gt;</em> </a> 
         </div>
         <!--{/if}--> 

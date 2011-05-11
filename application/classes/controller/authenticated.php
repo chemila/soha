@@ -31,6 +31,7 @@ class Controller_Authenticated extends Controller {
     {
         // Check session or cookie whether user info exists
         $su = Cookie::get(Controller_Auth::COOKIE_NAME, false);
+
         if( ! $su)
             return false;
 
@@ -62,5 +63,15 @@ class Controller_Authenticated extends Controller {
         // why oauth, and what's going on
         //$this->request->response = view::factory('oauth');
         $this->request->redirect('/auth');
+    }
+
+    public function action_after()
+    {
+        if(isset($this->view))
+        {
+            $this->view->current_user = $this->user->as_array();
+        }
+
+        return parent::after();
     }
 }

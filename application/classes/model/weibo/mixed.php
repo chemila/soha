@@ -12,7 +12,7 @@ class Model_Weibo_Mixed extends Model_Weibo {
 
     public function set_media_data(Array $data)
     {
-        if( ! isset($data['image']) or ! isset($data[['video']]))
+        if( ! isset($data['image']) or ! isset($data['video']))
         {
             throw new Model_Weibo_Exception('Set media data failed, image and video are required');
         }

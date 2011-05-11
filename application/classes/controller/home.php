@@ -7,55 +7,81 @@ class Controller_Home extends Controller_Authenticated {
 
     public function action_index()
     {
-        $page = $this->request->param('page', 1);
+        $page = max(1, $this->request->param('page', Arr::get($_GET, 'page', 1)));
 
         // Init view cache modules etc.
         $this->view = new View_Smarty('smarty:home/index');
-        $this->get_star_caches();
 
-        $model_weibo = new model_weibo;
-        $stars_news = $model_weibo->star_news($page, 20);
-        $hot_commented = $model_weibo->hot_commented($page, 20);
-        $this->user->load();
+        $weibo = new Model_Weibo;
+        $this->init_user();
 
-        $this->view->stars_news = $stars_news;
-        $this->view->hot_commented = $hot_commented;
-        $this->view->user = $this->user->as_array();
-        $this->view->followers = $this->user->attention_list();
-        $this->view->friends = $this->user->friends_list();
-        $this->view->followers_of_friends = $this->user->followers_of_friends();
-        $this->view->inbox = $this->user->inbox();
+        $inbox = $this->user->inbox(20, $page - 1);
+
+        $this->view->feeds = $weibo->get_from_ids($inbox);
+        $this->view->count = $this->user->inbox_count();
 
         $this->request->response = $this->view->render();
     }
 
-    protected function get_star_caches()
-    {
-        // Parse parameters
-        $model_star = new model_star;
-
-        if( ! $stars = $this->cache->get('star:attention:'.$this->user->pk()))
-        {
-            $stars = $model_star->followed_by($this->user->pk());
-            $this->cache->set('star:attention:'.$this->user->pk(), $stars, 24*3600);
-        }
-
-        if( ! $stars_count_all = $this->cache->get('star:count:all'))
-        {
-            $stars_count_all = $model_star->count_all();
-            $this->cache->set('star:count:all', $stars_count_all, 3600);
-        }
-
-        $this->view->stars = $stars;
-        $this->view->stars_count_all = $stars_count_all;
-    }
-
-
     public function action_profile($uid = NULL)
     {
         $uid = $this->request->param('uid', $uid);
+        $page = $this->request->param('page', Arr::get($_GET, "page", 1));
+        
+        $this->view = new View_Smarty('smarty:home/profile');
+        $user = $uid ? new Model_User($uid) : $this->user;
 
-        $user = new Model_User($uid);
+        $this->init_user($user);
+        $weibo = new Model_Weibo;
+
+        $outbox = $user->outbox(20, $page - 1);
+        
+        if($uid && $uid != $this->user->pk())
+        {
+        	$this->view->show_attention_button = 1;
+        	$this->view->followed = $this->user->is_followd_by($user->pk());
+        }
+        else 
+        {
+        	$this->view->show_attention_button = 0;
+        }
+
+        $this->view->domain = $_SERVER['HTTP_HOST'];
+        $this->view->feeds = $weibo->get_from_ids($outbox);
+        $this->view->count = $user->outbox_count();
+
+        $this->request->response = $this->view->render();
+    }
+
+    public function action_atme()
+    {
+        $page = max(1, $this->request->param('page', Arr::get($_GET, 'page', 1)));
+
+        $this->view = new View_Smarty('smarty:home/index');
+        $weibo = new Model_Weibo;
+        $atme = new Model_Atme;
+
+        $this->init_user();
+
+        $atme_ids = $atme->by_user($this->user->pk());
+
+        $this->view->feeds = $weibo->get_from_ids($atme_ids);
+        $this->view->count = $atme->count_by_user($this->user->pk());
+
+        $this->request->response = $this->view->render();
+    }
+
+    protected function init_user(Model_User $user = NULL)
+    {
+        if( ! $user)
+            $user = $this->user;
+
+        $user->load();
+
+        $this->view->user = $user->as_array();
+        $this->view->followers = $user->attention_list(1);
+        $this->view->general_followers = $user->attention_list(0);
+        $this->view->friends = $user->friends_list();
+        $this->view->followers_of_friends = $user->followers_of_friends();
     }
 }
-

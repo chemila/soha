@@ -93,7 +93,7 @@ abstract class Image {
 
 		if (empty($file) OR empty($info))
 		{
-			throw new Exception('Not an image or invalid image: :file',
+			throw new CE('Not an image or invalid image: :file',
 				array(':file' => Core::debug_path($file)));
 		}
 
@@ -593,20 +593,34 @@ abstract class Image {
 		{
 			if ( ! is_writable($file))
 			{
-				throw new Exception('File must be writable: :file',
+				throw new CE('File must be writable: :file',
 					array(':file' => Core::debug_path($file)));
 			}
 		}
 		else
 		{
 			// Get the directory of the file
-			$directory = realpath(pathinfo($file, PATHINFO_DIRNAME));
+			$directory = pathinfo($file, PATHINFO_DIRNAME);
 
+            if ( ! is_dir($directory))
+            {
+                if( ! @mkdir($directory, 0777, true))
+                    throw new CE('Directory :dir create failed', array(':dir' => $directory));
+            }
+
+            if( ! is_writable(realpath($directory)))
+            {
+                if( ! @chmod($directory, 0777))
+                    throw new CE('Directory :dir must be writable', array(':dir' => $directory));
+            }
+
+            /**
 			if ( ! is_dir($directory) OR ! is_writable($directory))
 			{
-				throw new Exception('Directory must be writable: :directory',
-					array(':directory' => Core::debug_path($directory)));
+				throw new CE('Directory must be writable: :directory',
+					array(':directory' => $directory));
 			}
+            **/
 		}
 
 		// The quality must be in the range of 1 to 100

@@ -1,7 +1,8 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 abstract class Model_API
 {
-    const DOMAIN_URL = 'http://10.207.10.242/pin_user/api';
+    //const DOMAIN_URL = 'http://10.207.10.242/pin_user/api';
+    const DOMAIN_URL = 'http://dev.pin_user.com/pin_user/api';
 
     public $error = array();
     
@@ -26,7 +27,12 @@ abstract class Model_API
 	        CURLOPT_POSTFIELDS => http_build_query($query),
 	    ));
 
-        return json_decode($response, TRUE);
+        $array = json_decode($response, TRUE);
+
+        if( ! $this->failed($array))
+        {
+            return $array;
+        }
     }
 
     public function post($path, Array $data)
@@ -39,7 +45,12 @@ abstract class Model_API
 	        CURLOPT_POSTFIELDS => http_build_query($data),
 	    ));
 
-        return json_decode($response, TRUE);
+        $array = json_decode($response, TRUE);
+
+        if( ! $this->failed($array))
+        {
+            return $array;
+        }
     }
 
     public function failed($response)

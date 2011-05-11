@@ -70,11 +70,15 @@ class Upload {
 			$directory = Upload::$default_directory;
 		}
 
-		if ( ! is_dir($directory) OR ! is_writable(realpath($directory)))
+		if ( ! is_dir($directory) and ! @mkdir($directory, 0777, true))
 		{
-			throw new Exception('Directory :dir must be writable',
-				array(':dir' => Core::debug_path($directory)));
+			throw new CE('Directory :dir create failed', array(':dir' => Core::debug_path($directory)));
 		}
+
+        if( ! is_writable(realpath($directory)) and ! @chmod($directory, 0777))
+        {
+			throw new CE('Directory :dir must be writable', array(':dir' => Core::debug_path($directory)));
+        }
 
 		// Make the filename into a complete path
 		$filename = realpath($directory).DIRECTORY_SEPARATOR.$filename;

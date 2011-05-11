@@ -27,7 +27,7 @@ return array
         'defaults' => array('controller' => 'setting', 'action' => 'index'),
     ),
     'weibo' => array(
-        'uri' => '(<controller>(/<action>(/<id>)))',
+        'uri' => '(weibo(/<action>(/<id>)))',
         'patterns' => array('id' => '\d+'),
         'defaults' => array('controller' => 'weibo', 'action' => 'index'),
     ),
@@ -40,5 +40,65 @@ return array
         'uri' => '(favorite(/<action>(/<id>)))',
         'patterns' => array('id' => '\d+'),
         'defaults' => array('controller' => 'favorite', 'action' => 'index'),
-    )
+    ),
+    'message' => array(
+        'uri' => '(message(/<action>(/<id>)))',
+        'patterns' => array('id' => '\d+'),
+        'defaults' => array('controller' => 'message', 'action' => 'index'),
+    ),
+    'attention' => array(
+        'uri' => '(attention(/<action>(/<id>)))',
+        'patterns' => array('id' => '\d+'),
+        'defaults' => array('controller' => 'attention', 'action' => 'index'),
+    ),
+    'friend' => array(
+        'uri' => '(friend(/<action>(/<id>)))',
+        'patterns' => array('id' => '\d+'),
+        'defaults' => array('controller' => 'friend', 'action' => 'index'),
+    ),
+    'help' => array(
+        'uri' => '(help(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'help', 'action' => 'index'),
+    ),
+    'block' => array(
+        'uri' => '(block(/<action>(/<id>)))',
+        'patterns' => array('id' => '\d+'),
+        'defaults' => array('controller' => 'block', 'action' => 'index'),
+    ),
+	'home' => array(
+        'uri' => '(home(/<action>(/<uid>)))',
+        'patterns' => array('uid' => '\d+'),
+        'defaults' => array('controller' => 'home', 'action' => 'index'),
+    ),
+	'comment' => array(
+        'uri' => '(comment(/<action>(/<uid>)))',
+        'patterns' => array('uid' => '\d+'),
+        'defaults' => array('controller' => 'comment', 'action' => 'index'),
+    ),
+    'user' => array(
+        'uri' => '(user(/<action>(/<uid>)))',
+        'patterns' => array('uid' => '\d+'),
+        'defaults' => array('controller' => 'user', 'action' => 'index'),
+    ),
+    'cron' => array(
+        'uri' => '(cron(/<action>(/<uid>)))',
+        'patterns' => array('uid' => '\d+'),
+        'defaults' => array('controller' => 'cron', 'action' => 'index'),
+    ),
+    'person' => array(
+        'uri' => '(person(/<action>(/<uid>)))',
+        'patterns' => array('uid' => '\d+'),
+        'defaults' => array('controller' => 'person', 'action' => 'index'),
+    ),
+    'face' => array(
+        'uri' => '(face(/<action>(/<uid>)))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'face', 'action' => 'index'),
+    ),
+    'collect' => array(
+        'uri' => '(collect(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'collect', 'action' => 'index'),
+    ),
 );

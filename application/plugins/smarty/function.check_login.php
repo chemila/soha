@@ -20,7 +20,7 @@ function smarty_function_check_login($params, &$smarty)
 
         if($match)
         {
-            $result = '<a href="#">已授权</a> 您已开通微博授权应';
+            $result = '<a href="/auth/logout">退出</a> 您已开通微博授权应';
         }
     }
 

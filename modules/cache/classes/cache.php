@@ -65,7 +65,7 @@ abstract class Cache {
 	/**
 	 * @var   string     default driver to use
 	 */
-	public static $default = 'file';
+	public static $default = 'memcache';
 
 	/**
 	 * @var   Cache instances

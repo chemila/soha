@@ -215,6 +215,11 @@ class Cache_Memcache extends Cache {
 		return $this->_memcache->set($this->_sanitize_id($id), $data, $this->_flags, $lifetime);
 	}
 
+    public function increment($id, $offset = 1)
+    {
+        return $this->_memcache->increment($id, $offset);
+    }
+
 	/**
 	 * Delete a cache entry based on id
 	 * 

@@ -5,14 +5,12 @@
 <title>后台设置</title>
 <link href="/media/css/base_setting.css" rel="stylesheet" type="text/css">
 <link href="/media/css/style_setting.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="/media/js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="/media/js/jquery.jcarousel.min.js"></script>
+<link href="http://img.t.sinajs.cn/t3/style/css/common/index.css" type="text/css" rel="stylesheet" />
+<link href="http://img.t.sinajs.cn/t35/style/css/index/com_manage.css" type="text/css" rel="stylesheet" />
 </head>
-
 
 <body>
 <div id="wrap">
-
 	<div id="header">
 		<ul class="settings">
 			<li><a href="/message">私信</a></li>

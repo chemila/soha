@@ -9,7 +9,7 @@ class Model_Star extends ORM {
     const TAG_GRASS     = 4;
     const TAG_OTHERS    = 8;
 
-    public function hot($page = 1, $limit = 18)
+    public function hot($page = 1, $limit = 30)
     {
         return $this->select('*')
             ->where('uid', '!=', 0)

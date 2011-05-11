@@ -4,13 +4,14 @@ class Controller_Block extends Controller_Authenticated {
 
     public function action_index()
     {
+    	$page = $this->request->param("page", Arr::get($_GET, "page", 1));
+    	
         $model_block = new Model_Block();
 
         $data = array(
-        		"uid"=>$this->user->uid
+        		"uid"=>$this->user->uid,
+        		"page"=>$page,
         );
-        
-       
         
         $blocks = $model_block->all_block_by_user($data);
 
@@ -19,6 +20,8 @@ class Controller_Block extends Controller_Authenticated {
         $view->user_info = $this->public_user_info();
 
         $view->blocks = $blocks;
+        
+        $view->count = $view->block_count;
 
         $this->request->response = $view->render();
     }
@@ -33,20 +36,21 @@ class Controller_Block extends Controller_Authenticated {
     	{
 	    	$model_block = new Model_Block;
 	    
-	    	$data = array("uid"=>$this->user->uid,
-	    				  "fuids"=>$_POST['fuids'],
-	    				  "reason"=>$_POST['reason']
-	    				);
+	    	$data = array(
+	    			"uid"=>$this->user->uid,
+	    			"fuids"=>$_POST['fuids'],
+	    			"reason"=>$_POST['reason']
+	    	);
 	    	
 	        $result = $model_block->add_block($data);
 	        
 	        if($result)
 	        {
-	        	/* 添加成功*/
+	        	die(json_encode(array("code"=>"A00006")));
 	        }
 	        else 
 	        {
-	        	/* 添加失败 */
+	        	die(json_encode(array("code"=>"E00001")));
 	        }
     	}
     	/*
@@ -56,8 +60,8 @@ class Controller_Block extends Controller_Authenticated {
     	{
     		$model_block = new Model_Block();
     		$data = array(
-    						"uid" =>$this->user->uid
-    					);
+    				"uid" =>$this->user->uid
+    		);
     					
     		$friends = $model_block->get_all_friend($data);
     		
@@ -69,10 +73,10 @@ class Controller_Block extends Controller_Authenticated {
 
     public function action_delete()
     {
-    	$fuids = $this->request->param("id");
+    	$fuids = Arr::get($_POST, "touid", '');
     	if(empty($fuids))
     	{
-    		$this->request->redirect('/block');
+    		die(json_encode(array("code"=>"E00002")));
     	}
     	
     	$model_block = new Model_Block();
@@ -83,7 +87,7 @@ class Controller_Block extends Controller_Authenticated {
     		
     	$model_block->delete_block($data);
  
-    	$this->request->redirect('/block');
+    	die(json_encode(array("code"=>"A00006")));
     }
     
     public function public_user_info()

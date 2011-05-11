@@ -8,7 +8,6 @@
  * @license     http://www.opensource.org/licenses/isc-license.txt
  */
 
-// Path to Kohana's index.php
 $system = dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR.'index.php';
 
 if (file_exists($system))

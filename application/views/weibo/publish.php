@@ -16,16 +16,21 @@
             </div>
             <div class="OnPic">
                 <span id="publisher_image">
-                    <img title="图片" class="small_icon picnormal" dynamic-src="http://img.t.sinajs.cn/t35/style/images/index/fbqimgclose.gif" src="http://img.t.sinajs.cn/t35/style/images/index/fbqimgclose.gif"><a tabindex="3" href="####">图片</a>
-                    <!--<form target="Upfiler_file_iframe" action="http://picupload.t.sina.com.cn/interface/pic_upload.php?marks=1&amp;markstr=t.sina.com.cn/1335897434&amp;s=rdxt&amp;app=miniblog&amp;cb=http://t.sina.com.cn/upimgback.html" id="publisher_image_form" enctype="multipart/form-data" method="POST">
+                    <img title="图片" class="small_icon picnormal" dynamic-src="http://img.t.sinajs.cn/t35/style/images/index/fbqimgclose.gif" src="http://img.t.sinajs.cn/t35/style/images/index/fbqimgclose.gif">
+                    <a tabindex="3" href="####">图片</a>
+                    <!--<form target="Upfiler_file_iframe" action="" id="publisher_image_form" enctype="multipart/form-data" method="POST">
                         <input type="file" name="pic1" id="publisher_file" />
                     </form>-->
                 </span>
                 <!--<span style="display:none;" id="publisher_image_loading">请等待图片上传</span>
-                <span style="display:none;" id="publisher_perch"><a id="publisher_perch_name" href="javascript:;">温柔哦哦呜呜呜呜呜呜....jpg</a><a id="publisher_perch_delete" class="close" title="删除" href="javascript:;"><img dynamic-src="http://img.t.sinajs.cn/t35/style/images/index/fbqimgclose.gif" align="absmiddle" width="8" height="7" /></a></span>-->
+                <span style="display:none;" id="publisher_perch">
+                    <a id="publisher_perch_name" href="javascript:;"></a>
+                    <a id="publisher_perch_delete" class="close" title="删除" href="javascript:;"><img dynamic-src="http://img.t.sinajs.cn/t35/style/images/index/fbqimgclose.gif" align="absmiddle" width="8" height="7" /></a>
+                </span>-->
             </div>
             <div id="publisher_video" class="OnTit">
-                <img class="small_icon videoicon" title="视频" dynamic-src="http://img.t.sinajs.cn/t35/style/images/common/transparent.gif" src="http://img.t.sinajs.cn/t35/style/images/common/transparent.gif"><a tabindex="4" href="javascript:void(0);">视频</a>
+                <img class="small_icon videoicon" title="视频" dynamic-src="http://img.t.sinajs.cn/t35/style/images/common/transparent.gif" src="http://img.t.sinajs.cn/t35/style/images/common/transparent.gif">
+                <a tabindex="4" href="javascript:void(0);">视频</a>
             </div>
         </div>
         <div class="postBtnBg bgColorA_No"><!-- 不可点状态<div class="postBtnBg bgColorA_No"> -->
@@ -74,5 +79,5 @@
         </table>
     </div>-->
     </div>
-    </div>
+</div>
 <!--发布 end-->

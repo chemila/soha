@@ -21,7 +21,7 @@ function smarty_function_get_user($params, &$smarty)
 
     $cache = Cache::instance();
 
-    if( ! $user = Cache::get('user:'.$params['uid']))
+    if( ! $user = $cache->get('user:'.$params['uid']))
     {
         $user = new model_user($params['uid']);
         $user->load();

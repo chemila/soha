@@ -7,20 +7,31 @@ class Model_User extends Model {
     protected $_object = array();
     protected $_object_name;
     protected $_ignored_columns = array();
-	protected $_table_columns = array(
+	protected $_columns = array(
         'nick', 'domain_name', 'pass', 'email', 'friends_count', 'followers_count',
         'statuses_count', 'portrait', 'gender', 'intro', 'country', 'province', 'city', 'regip', 'regdate', 
         'lastip', 'lastvisit', 'merged', 'verified', 'location', 'status', 'category',
     );
+    protected $_table_columns = array();
 	protected $_primary_key  = 'uid';
 	protected $_changed = array();
 	protected $_saved   = FALSE;
     protected $_loaded = FALSE;
     protected $_preload_data = array();
+	// Members that have access methods
+	protected static $_properties = array(
+		'object_name', 'object_plural', 'loaded', 'saved', // Object
+		'primary_key', 'primary_val', 'table_name', 'table_columns', // Table
+		'has_one', 'belongs_to', 'has_many', 'has_many_through', 'load_with', // Relationships
+		'validate', 'rules', 'callbacks', 'filters', 'labels' // Validation
+	);
 
     public function __construct($id = NULL, Array $data = NULL)
     {
 		$this->_object_name   = strtolower(substr(get_class($this), 6));
+
+        $this->_initialize();
+        $this->clear();
 
         if ($id !== NULL)
 		{
@@ -34,6 +45,34 @@ class Model_User extends Model {
 			$this->_load_values($data);
 		}
     }
+
+    protected function _initialize()
+    {
+		foreach($this->_columns as $column)
+        {
+            $this->_table_columns[$column] = array();
+        }
+    }
+
+    /**
+	 * Unloads the current object and clears the status.
+	 *
+	 * @chainable
+	 * @return  ORM
+	 */
+	public function clear()
+	{
+		// Create an array with all the columns set to NULL
+		$values = array_combine(array_keys($this->_table_columns), array_fill(0, count($this->_table_columns), NULL));
+
+		// Replace the object and reset the object status
+		$this->_object = $this->_changed = array();
+
+		// Replace the current object with an empty one
+		$this->_load_values($values);
+
+		return $this;
+	}
 
     public function load()
     {
@@ -118,6 +157,12 @@ class Model_User extends Model {
 			return;
 		}
 
+        if('_table_column' == $column)
+        {
+            $this->_table_column = $value;
+            return;
+        }
+
 		if (array_key_exists($column, $this->_ignored_columns))
 		{
 			// No processing for ignored columns, just store it
@@ -162,8 +207,47 @@ class Model_User extends Model {
 		return (string) $this->pk();
 	}
 
-    public function pk()
+    /**
+	 * Handles pass-through to database methods. Calls to query methods
+	 * (query, get, insert, update) are not allowed. Query builder methods
+	 * are chainable.
+	 *
+	 * @param   string  method name
+	 * @param   array   method arguments
+	 * @return  mixed
+	 */
+	public function __call($method, array $args)
+	{
+		if (in_array($method, self::$_properties))
+		{
+			if ($method === 'loaded')
+			{
+				if ( ! isset($this->_object_name))
+				{
+					// Calling loaded method prior to the object being fully initialized
+					return FALSE;
+				}
+
+				$this->load();
+			}
+
+			// Return the property
+			return $this->{'_'.$method};
+		}
+		else
+		{
+			throw new Model_User_Exception('Invalid method :method called in :class',
+				array(':method' => $method, ':class' => get_class($this)));
+		}
+	}
+
+    public function pk($uid = NULL)
     {
+        if($uid)
+        {
+            $this->_object[$this->_primary_key] = $uid;
+        }
+
         return $this->_object[$this->_primary_key];
     }
 
@@ -348,19 +432,121 @@ class Model_User extends Model {
         return $result;
     }
 
-    public function inbox($page = 1, $limit = 10)
+    public function list_weibo($page = 1, $limit = 10, & $count = NULL)
     {
-        $attentions = $this->attention_list();
-        $result = array();
+        $weibo = new Model_Weibo;
 
-        foreach($attentions as $record)
-        {
-            $user = new Model_User($record['uid']);
-        }
+        return $weibo->list_by_user($this->pk(), $page, $limit, $count); 
     }
 
-    public function outbox($page = 1, $limit = 10)
+    public function is_online()
     {
-        return array();
+        return true;
+    }
+
+    public function get_fans_ids($uid = NULL)
+    {
+        $params = array('uid' => $uid ? $uid : $this->pk());
+        $records = Model_API::factory('user')->get_fans_all_uid($params);
+
+        if( ! $records)
+            return;
+
+        $result = array();
+        foreach($records as $record)
+        {
+            $result[] = $record['uid'];
+        }
+
+        return $result;
+    }
+
+    public function get_attention_ids($uid = NULL)
+    {
+        $params = array('uid' => $uid ? $uid : $this->pk());
+        return Model_API::factory('user')->get_attention_all_uid($params);
+    }
+
+    public function inbox($limit = 20, $offset = 0)
+    {
+        $inbox = new Model_Inbox;
+        $inbox_cache = new model_cache_inbox($this);
+
+        $cached = $inbox_cache->fetch($limit, $offset);
+
+        if($cached and count($cached) == $limit)
+        {
+            return $cached;
+        }
+
+        $records = $inbox->where('uid', '=', $this->pk())
+            ->limit($limit)
+            ->offset($offset)
+            ->order_by('wid', 'desc')
+            ->find_all()
+            ->as_array('wid');
+        
+        $saved = array_keys($records); 
+        $inbox_cache->add($saved);
+
+        return array_slice($cached + $saved, $offset, $limit);
+    }
+
+    public function outbox($limit = 20, $offset = 0)
+    {
+        $outbox = new Model_Outbox;
+        $outbox_cache = new Model_Cache_Outbox($this);
+        $cached = $outbox_cache->fetch($limit, $offset);
+
+        if($cached and count($cached) == $limit)
+        {
+            return $cached;
+        }
+
+        $records = $outbox->where('uid', '=', $this->pk())
+            ->limit($limit)
+            ->offset($offset*$limit)
+            ->order_by('wid', 'desc')
+            ->find_all()
+            ->as_array('wid');
+
+        $saved = array_keys($records); 
+        $outbox_cache->add($saved);
+
+        return array_slice($cached + $saved, $offset, $limit);
+    }
+
+    public function inbox_count()
+    {
+        $inbox = new Model_Inbox;
+        return $inbox->count_by_user($this->pk());
+    }
+
+    public function outbox_count()
+    {
+        $outbox = new Model_Outbox;
+        return $outbox->count_by_user($this->pk());
+    }
+
+    public function get_uid($nick)
+    {
+        $response = Model_API::factory('user')->get_uid(array('nick' => $nick));
+
+        return $response['uid'];
+    }
+
+    public function is_followd_by($fuid)
+    {
+        $response = Model_API::factory('user')->attention_exist(array(
+            'uid' => $this->pk(),
+            'fuid' => $fuid
+        ));
+
+        return $response;
+    }
+
+    public function like($key)
+    {
+        return Model_API::factory('user')->like(array('key' => $key));
     }
 }

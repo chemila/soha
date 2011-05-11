@@ -4,62 +4,93 @@ class Controller_Attention extends Controller_Authenticated
 {
 	public function action_index()
 	{
-		$model_attention = new Model_Attention();
-		
-		$data = array(
-					"uid"=>$this->user->uid
-				);
-		
-		$attention_count = $model_attention->attention_count($data);
+		$this->view = new View_Smarty('smarty:attention/index');
+		$page = Arr::get($_GET, "page", 1);
+        $uid = Arr::get($_GET, 'uid', $this->user->pk());
 				
-		$attention = $model_attention->get_attention_list($data);
+		$model_attention = new Model_Attention();
+        $this->init_user($uid);
 		
-		$view = new View_Smarty('smarty:attention/index');
+        $this->view->attentions = $model_attention->get_attention_list($uid, $page);
+        $this->view->count = $model_attention->attention_count($uid);
 
-		$view->user_info = $this->public_user_info();
-		$view->attention_count = $attention_count;
-        $view->attentions = $attention;
-
-        $this->request->response = $view->render();
+        $this->request->response = $this->view->render();
 	}
 	
 	public function action_add()
 	{
 		$model_attention = new Model_Attention();
+		$fuid = Arr::get($_POST, 'uid');
+		if(empty($fuid))
+		{
+			die(json_encode(array('code' => 'CC2510')));
+		}
 		
 		$data = array(
 					"uid"=>$this->user->uid,
-					"fuids"=>$_GET['fuids']
+					"fuids"=>$fuid
 				);
 				
-		return $model_attention->add_attention($data);
+		//return $model_attention->add_attention($data);
+		$result = $model_attention->add_attention($data);
+
+        if( ! $result)
+        {
+            die(json_encode(array('code' => 'CC2510')));
+        }
+
+        $json = array(
+            'code' => 'A00006',
+            'data' => array(),
+        );
+
+        die(json_encode($json));
 	}
 	
 	public function action_delete()
 	{
 		$model_attention = new Model_Attention();
 		
-		$fuids = $this->request->param("id");
+		$fuids = Arr::get($_POST, "touid", '');
 		
 		if(empty($fuids))
 		{
-			$this->request->redirect('/attention');
+			die(json_encode(array("code"=>"CF0406")));
 		}
 		
-		$data = array(
-					"uid"=>$this->user->uid,
-					"fuids"=>$fuids
-				);
-				
-		$response = $model_attention->delete_attention($data);
-		
-		if($response)
+		/*
+		 * 删除 粉丝
+		 */
+		$action = Arr::get($_POST, "action", '');
+		if($action == 1)
 		{
-			$this->request->redirect('/attention');
+			$isblack = Arr::get($_POST, "isblack", '');
+			$model_user_api = Model_API::factory("user");
+			$model_user_api->add_block(array("uid"=>$this->user->uid, "fuids"=>$fuids));
+			$data = array(
+				"uid"=>$this->user->uid,
+				"fuids"=>$fuids
+			);
+				
+			$response = $model_attention->delete_fans($data);
 		}
 		else 
 		{
-			$this->request->redirect('/error/attention');
+			$data = array(
+				"uid"=>$this->user->uid,
+				"fuids"=>$fuids
+			);
+			
+			$response = $model_attention->delete_attention($data);
+		}
+		
+		if($response)
+		{
+			die(json_encode(array("code"=>"A00006")));
+		}
+		else 
+		{
+			die(json_encode(array("code"=>"CF0406")));
 		}
 	}
 	
@@ -83,60 +114,36 @@ class Controller_Attention extends Controller_Authenticated
 		}
 	}
 	
-    public function public_user_info()
-    {
-    	$user_info = Model_API::factory('user')->get_user_info(array("uid"=>$this->user->uid));
-		
-		return $user_info;
-    }
-    
-    
     public function action_fans()
-    {
-    	$model_attention = new Model_Attention();
-		
-		$data = array(
-					"uid"=>$this->user->uid
-				);
-		
-		$attention_count = $model_attention->attention_count($data);
+    {		
+        $this->view = new View_Smarty('smarty:attention/fans');
+		$page = Arr::get($_GET, "page", 1);
+        $uid = Arr::get($_GET, 'uid', $this->user->pk());
 				
-		$attention = $model_attention->get_fans($data);
-		
-		$view = new View_Smarty('smarty:attention/fans');
-
-		$view->user_info = $this->public_user_info();
-		$view->attention_count = $attention_count;
-        $view->attentions = $attention;
-
-        $this->request->response = $view->render();
-    }
-    
-	public function action_delfans()
-	{
 		$model_attention = new Model_Attention();
+        $this->init_user($uid);
 		
-		$fuids = $this->request->param("id");
-		
-		if(empty($fuids))
-		{
-			$this->request->redirect('/attention/fans');
-		}
-		
-		$data = array(
-					"uid"=>$this->user->uid,
-					"fuids"=>$fuids
-				);
-				
-		$response = $model_attention->delete_fans($data);
-		
-		if($response)
-		{
-			$this->request->redirect('/attention/fans');
-		}
-		else 
-		{
-			$this->request->redirect('/error/attention');
-		}
-	}
+        $this->view->attentions = $model_attention->get_fans($uid, $page);
+        $this->view->count = $model_attention->fans_count($uid);
+
+        $this->request->response = $this->view->render();
+    }    
+
+    protected function init_user($uid = NULL)
+    {
+        if($uid == $this->user->pk())
+        {
+            $user = $this->user;
+            $this->view->show_delete = true;
+        }
+        else
+        {
+            $user = new Model_User($uid);
+            $this->view->show_delete = false;
+        }
+
+        $user->load();
+
+        $this->view->user_info = $user->as_array();
+    }
 }

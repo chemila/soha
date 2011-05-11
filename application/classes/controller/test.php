@@ -76,12 +76,11 @@ class Controller_Test extends Controller {
         $this->request->response = core::debug(json_decode($response, true));
     }
 
-    public function action_memcached()
+    public function action_mc()
     {
         $memc = cache::instance('memcache');
-        $memc->set('test', 'hello world');
 
-        $this->request->response = $memc->get('test');
+        $this->request->response = core::debug($memc->get('inbox:1005136'));
     }
 
     public function action_mq()
@@ -89,12 +88,7 @@ class Controller_Test extends Controller {
         $mq = Queue::instance();
         $mq->create('mq');
 
-        $mq->send('mq', 'nice');
-        $mq->send('mq', 'good');
-        $mq->send('mq', 'terrific');
-
-        var_dump($mq->receive('mq'));
-        var_dump($mq->receive('mq', 2));
+        $mq->send('mq', serialize(array('test' => 'terrific', 'uid' => 1003321)));
         var_dump($mq->receive('mq'));
         die;
     }
@@ -105,14 +99,6 @@ class Controller_Test extends Controller {
         $res = $sess;
 
         $this->request->response = core::debug($res);
-    }
-
-    public function action_tmp()
-    {
-        $sess = Session::instance('cookie');
-        $sess->get('test');
-
-        $this->request->response = core::debug($sess);
     }
 
     public function action_config()
@@ -164,5 +150,102 @@ class Controller_Test extends Controller {
         Cookie::set('su', '123321312;'.session_id(), 2592000);
         //Cookie::set('su', $uid.';'.$session->id(), 2592000);
         var_dump(Cookie::get('su'));
+    }
+
+    public function action_sync()
+    {
+        $weibo = new Model_Weibo_plaintext;
+
+        $weibo->content = 'test;';
+        $weibo->uid = 1003321;
+        $weibo->rid = 0;
+        $weibo->comment_count = 0;
+        $weibo->forward_count = 0;
+        $weibo->created_at = time();
+        $weibo->updated_at = time();
+        $weibo->src = 0;
+        $weibo->timeline = time();
+        
+        $version = $weibo->save_sync();
+
+        $cache = cache::instance();
+
+        $record = $cache->get('weibo:'.$version);
+        var_dump($record);
+
+    }
+
+    public function action_sync_save()
+    {
+        $mq = queue::instance();
+
+        $to_save = $mq->receive('weibo');
+
+        if( ! $to_save[0]['body'])
+        {
+            die('nothing in queue');
+            return false;
+        }
+
+        $to_save = unserialize($to_save[0]['body']);
+
+        if(is_array($to_save))
+        {
+            $weibo = new model_weibo;
+
+            $weibo->values($to_save);
+            $weibo->save();
+
+            var_dump($weibo->as_array());
+        }
+    }
+
+    public function action_cache_instance()
+    {
+        $cache = Cache::instance();
+
+        $version = Model_Weibo::get_last_version(true);
+        $weibo = Model_Weibo::cache_instance($version);
+
+        var_dump($weibo->as_array());
+    }
+
+    public function action_tmp()
+    {
+        $inbox = new model_inbox(1);
+        $res = $inbox->list_columns();
+
+        var_dump($res);
+    }
+
+    public function action_inbox()
+    {
+        $user = new model_user(1000002);
+        $inbox = $user->inbox(10, 0);
+
+        $res = $inbox;
+        var_dump($res);
+    }
+
+    public function action_outbox()
+    {
+        $user = new model_user(1000002);
+        $inbox = $user->outbox(10, 0);
+
+        $res = $inbox;
+        var_dump($res->as_array());
+    }
+
+    public function action_weibo()
+    {
+        $weibo = new model_weibo(110);
+        $res = $weibo->ats();
+        var_dump($res);
+    }
+
+    public function action_img()
+    {
+        $res = Model_Weibo_Image::get_abs_path('test.png', 'small');
+        var_dump($res);
     }
 } // End Welcome

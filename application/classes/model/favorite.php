@@ -2,18 +2,13 @@
 
 class Model_Favorite extends ORM
 {
-	public function add_favorite($wid)
-	{
-		$to_insert = array(
-            'uid' => $this->user->uid,
-            'wid' => $wid,
-            'created_at' => time()
-        );
-        
-        return DB::insert(self::TABLE_NAME)
-            ->columns(array_keys($to_insert))
-            ->values(array_values($to_insert))
-            ->execute($this->_db);
+	public function add_favorite($data)
+	{		
+		$this->uid = $data['uid'];
+		$this->wid = $data['wid'];
+		$this->created_at = time();
+		
+		$this->save();
 	}
 	
     public function del_favorite($id)
@@ -21,10 +16,10 @@ class Model_Favorite extends ORM
     	return $this->delete($id);
     }
 	
-    public function list_favorite($uid, $page = 1, $limit = 18, $tag = 1)
+    public function list_favorite($uid, $page = 1, $limit = 20, & $count)
     {
-    	$my_favorite = $this->where("uid", "=", $uid)->order_by("id", "desc")->limit($limit)->find_all()->as_array();
-        
+    	$my_favorite = $this->where("uid", "=", $uid)->order_by("id", "desc")->limit($limit)->offset($page - 1)->find_all()->as_array();
+        $count = $this->count_last_query();
         $model_weibo = Model::factory("weibo");
         
         $my_favorite_weibo_row = array();

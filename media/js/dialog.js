@@ -1,4 +1,4 @@
-App.dialog01 = function(b,c) {
+App.dialog01 = function(mid,content,url) {
         var f = Core.Events.getEvent();
         var g = f ? (f.srcElement || f.target) : null;
         var k = Core.Dom.getXY(g);
@@ -9,7 +9,7 @@ App.dialog01 = function(b,c) {
             return false
         }
         
-        Utils.Io.Ajax.request("/favorite/aj_add.php", {
+        Utils.Io.Ajax.request(url, {
             POST: {
                 mid: b
             },

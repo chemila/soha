@@ -28,14 +28,9 @@ class Model_API_User extends Model_API
         unset($user_info['friends_count'], $user_info['followers_count'], $user_info['statuses_count']);
         $response = $this->post('/user/checkin.php', $user_info);
 
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-
         if( ! Arr::get($response['result'], 'uid', false))
         {
-            throw new Model_API_Exception('Create user failed, no uid response');
+            throw new Model_API_Exception('Create user failed, no uid in response');
         }
 
         return $response['result'];
@@ -50,13 +45,8 @@ class Model_API_User extends Model_API
     public function update($uid, $data)
     {
         $data = array('uid' => $uid) + $data;
-        $response = $this->post('/user/modifyuserinf.php', $data);
-        
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-        
+        $response = $this->post('/user/modifyuserinfo.php', $data);
+
         return true;
     }
     
@@ -68,11 +58,11 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/getuserinfo.php', $data);
 
-        if( $this->failed($response) )
+        if( ! Arr::get($response['result'], 'uid', false))
         {
-            return false;
+            throw new Model_API_Exception('Load user failed, no uid in response');
         }
-        
+
         return $response['result'];
     }
     
@@ -84,12 +74,7 @@ class Model_API_User extends Model_API
     public function check_login($data)
     {
     	$response = $this->post('/user/login.php', $data);
-        	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-        	
+
         return $response['result'];
     }
     
@@ -102,11 +87,6 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/getusertype.php', $data);
     	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-        
         return $response['result'];
     }
     
@@ -117,12 +97,6 @@ class Model_API_User extends Model_API
     public function get_uid_from_username($data)
     {
     	$response = $this->get_user_info($data);
-    	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-        
         return $response['result'];
     }
     
@@ -136,12 +110,7 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/addattention.php', $data);
     	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-    	
-        return true;
+        return $response;
     }
     
     /*
@@ -152,11 +121,6 @@ class Model_API_User extends Model_API
     public function delete_attention($data)
     {
     	$response = $this->post('/user/deleteattention.php', $data);
-    	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
     	
         return true;
     }
@@ -169,11 +133,6 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/getuserattentionlist.php', $data);
     	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-    	
         return $response['result'];
     }
     
@@ -185,10 +144,17 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/getattentioncount.php', $data);
     	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
+        return $response['result'];
+    }
+    
+    /**
+     * 查询 是否存在 关注关系
+     * @param int $uid
+     * @param int $fuid
+     */
+    public function attention_exist($data)
+    {
+    	$response = $this->post('/user/getattentionexist.php', $data);
     	
         return $response['result'];
     }
@@ -203,11 +169,6 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/addfriends.php', $data);
     	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-    	
         return true;
     }
     
@@ -221,11 +182,6 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/deletefriends.php', $data);
     	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-    	
         return true;
     }
     
@@ -238,11 +194,6 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/getfriendlist.php', $data);
     	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-        
         return $response['result'];
     }
     
@@ -254,11 +205,6 @@ class Model_API_User extends Model_API
     public function count_friend($data)
     {
     	$response = $this->post('/user/getfriendcount.php', $data);
-    	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
     	
         return $response['result'];
     }
@@ -272,11 +218,6 @@ class Model_API_User extends Model_API
     public function add_fried_request($data)
     {
     	$response = $this->post('/user/addfriendsrequest.php', $data);
-    	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
     	
         return true;
     }
@@ -308,11 +249,6 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/getnewfriendsrequest.php', $data);
     	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-        
         return $response['result'];
     }
     
@@ -324,11 +260,6 @@ class Model_API_User extends Model_API
     public function reset_new_attention($data)
     {
     	$response = $this->post('/user/updateattentioncount.php', $data);
-
-        if( $this->failed($response) )
-        {
-            return false;
-        }
 
         return true;
     }
@@ -343,11 +274,6 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/updatefriendscount.php', $data);
 
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-
         return true;
     }
     
@@ -359,11 +285,6 @@ class Model_API_User extends Model_API
     public function add_block($data)
     {
     	$response = $this->post('/user/addblock.php', $data);
-
-        if( $this->failed($response) )
-        {
-            return false;
-        }
 
         return true;
     }
@@ -394,11 +315,6 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/getblocklist.php', $data);
 
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-
         return $response['result'];
     }
     
@@ -411,11 +327,6 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/getblockcount.php', $data);
 
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-
         return $response['result'];
     }
     
@@ -427,11 +338,6 @@ class Model_API_User extends Model_API
     public function fans_list($data)
     {
     	$response = $this->post('/user/getfanslist.php', $data);
-
-        if( $this->failed($response) )
-        {
-            return false;
-        }
 
         return $response['result'];
     }
@@ -446,10 +352,15 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/deletefans.php', $data);
 
-        if( $this->failed($response) )
-        {
-            return false;
-        }
+        return $response['result'];
+    }
+    
+    /*
+     * 得到 粉丝 总个数
+     */
+    public function get_fans_count($data)
+    {
+    	$response = $this->post('/user/getfanscount.php', $data);
 
         return $response['result'];
     }
@@ -463,11 +374,76 @@ class Model_API_User extends Model_API
     {
     	$response = $this->post('/user/getuid.php', $data);
 
-        if( $this->failed($response) )
+        if( ! Arr::get($response['result'], 'uid', false))
         {
-            return false;
+            throw new Model_API_Exception('Get uid faild, data: :data, response: :response', array(
+                    ':data' => core::debug($data),
+                    ':response' => core::debug($response),
+            ));
         }
 
         return $response['result'];
+    }
+    
+    /**
+     * 获取 某人是否 在线
+     * @param string $uid
+     */
+    public function get_online_by_uid($data)
+    {
+    	$response = $this->post('/user/getuseronlinestatus.php', $data);
+
+        return $response['result'];
+    }
+    
+    /*
+     * 我的粉丝 所有uid
+     * @param string $uid
+     */
+    public function get_fans_all_uid($data)
+    {
+    	$response = $this->post('/user/getfansalluid.php', $data);
+        return $response['result'];
+    }
+    
+    /*
+     * 我关注的 所有uid
+     * @param string $uid
+     */
+    public function get_attention_all_uid($data)
+    {
+    	$response = $this->post('/user/getattentionalluid.php', $data);
+
+        return $response['result'];
+    }
+    
+    
+    /*
+     * 我好友的 所有uid
+     * @param string $uid
+     */
+    public function get_friend_all_uid($data)
+    {
+    	$response = $this->post('/user/getfriendalluid.php', $data);
+
+        return $response['result'];
+    }
+
+    public function is_followd_by($data)
+    {
+        return false;
+    	$response = $this->post('/user/getfriendalluid.php', $data);
+
+        return (bool)$response['result'];
+    }
+    
+    /*
+     *  得到 类似的 nick 名称
+     */
+    public function like($data)
+    {
+    	$response = $this->post('/user/getlikenick.php', $data);
+    	 
+    	return $response['result'];
     }
 }

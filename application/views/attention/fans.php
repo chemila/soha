@@ -1,26 +1,15 @@
 <!--{include file="header_setting.php"}-->
-<script type="text/javascript">
-<!--
-function del(id)
-{
-	if(confirm("确定要删除吗?"))
-	{
-		document.location.href="/attention/delfans/"+id;
-	}
-}
-//-->
-</script>
 <div class="main">
 		<!--{include file="menu_top_setting.php"}-->
 		<div class="main_c clearfix">
 			<div class="content">
 				<div class="title">
 					<h2>我的粉丝</h2>
-					<span>（已有<!--{$attention_count[0]}-->个粉丝）</span> </div>
-				<ul class="user_list">
+					<span>（已有<!--{$count|default:0}-->个粉丝）</span> </div>
+				<ul class="user_list" id="feed_list">
 				<!--{foreach from=$attentions item=attention key=index}--> 
 					<li>
-						<div class="user_info clearfix"><a href="javascript:void(0)" onclick='del("<!--{$attention.uid}-->");' class="btn_1">删除</a> <a href="/user/<!--{$attention.uid}-->" class="user_img"><img src="<!--{$attention.portrait}-->"></a> <a href="/user/<!--{$attention.uid}-->"><!--{$attention.nick}--></a>
+						<div class="user_info clearfix"><!--{if $show_delete}--><a onclick="App.followcancel('<!--{$attention.uid}-->',this,1,'<!--{$attention.nick}-->','她');return false;" href="javascript:void(0);" class="btn_1">移除</a><!--{/if}--><a href="/home/profile/<!--{$attention.uid}-->" class="user_img"><img src="<!--{$attention.portrait}-->" uid="<!--{$attention.uid}-->" namecard="true"></a> <a href="/home/profile/<!--{$attention.uid}-->" uid="<!--{$attention.uid}-->" namecard="true"><!--{$attention.nick}--></a>
 							<p><!--{$attention.location}-->&nbsp;&nbsp;&nbsp;添加时间: <!--{$attention.datetime|date_format:"%Y-%m-%d %H:%I"}--></p>
 						</div>
 					</li>
@@ -30,7 +19,7 @@ function del(id)
                     	</li>
 				<!--{/foreach}-->
 				</ul>
-				<div class="page"> <span class="fr"><a href="#">上一页</a> 1 <a href="#">2</a> <a href="#">3</a> <a href="#">下一页</a></span> <a href="#" class="top">返回顶部</a> </div>
+				<div class="page"> <span class="fr"><!--{pagination total=$count|default:0}--></span> <a href="#" class="top">返回顶部</a> </div>
 			</div>
 <!--{include file="right_setting.php"}-->
 		</div>

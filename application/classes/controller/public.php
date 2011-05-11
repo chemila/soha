@@ -4,17 +4,18 @@ class Controller_Public extends Controller
 {
     public function action_index()
     {
-        $page = $this->request->param('page', 1);
-        $tag = arr::get($_GET, 'tag', 1);
+        $page = $this->request->param('page', Arr::get($_GET, 'page', 1));
 
         // Init view cache modules etc.
         $this->view = new View_Smarty('smarty:public/index');
-        $this->cache = Cache::instance('memcache');
         $this->get_star_caches();
 
         $model_weibo = new model_weibo;
-        $stars_news = $model_weibo->star_news($page, 2);
-        $hot_commented = $model_weibo->hot_commented($page, 2);
+
+        $stars_news = $model_weibo->star_news($page, 20);
+        $this->view->count = $model_weibo->count_last_query();
+
+        $hot_commented = $model_weibo->hot_commented($page, 20);
 
         $this->view->stars_news = $stars_news;
         $this->view->hot_commented = $hot_commented;
@@ -25,8 +26,9 @@ class Controller_Public extends Controller
     protected function get_star_caches()
     {
         $model_star = new model_star;
+        $this->cache = Cache::instance('memcache');
 
-        if( ! $stars = $this->cache->get('star:hot'))
+        if(true or ! $stars = $this->cache->get('star:hot'))
         {
             $stars = $model_star->hot();
             $this->cache->set('star:hot', $stars, 24*3600);

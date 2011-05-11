@@ -2,44 +2,29 @@
 
 class Model_API_Message extends Model_API
 {
-    public function __construct()
-    {
-    }
-
-  /**
+    /**
 　   * 发送消息   （支持批量，一次最多100个）
 　   * @param array $data
-   * @param int $data['uid'] 发送人用户ID
-   * @param string $data['fuids'] 接收人用户ID  多人 用 ,分开
-   * @param string $data['content'] 消息内容
-   * return bool
+     * @param int $data['uid'] 发送人用户ID
+     * @param string $data['fuids'] 接收人用户ID  多人 用 ,分开
+     * @param string $data['content'] 消息内容
+     * return bool
 　   */
     public function send_message($data)
     {
     	$response = $this->post('/message/sendmsg.php', $data);
-
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-
-        return true;
+        return $response['result'];
     }
     
     /**
-　   	* 删除消息内容
-　   	* @param int $uid
-    * @param int $msg_id
-    * return bool
-　     */  
+　   * 删除消息内容
+　   * @param int $uid
+     * @param int $msg_id
+     * return bool
+　   */  
     public function delete_message($data)
     {
     	$response = $this->post('/message/deletemsg.php', $data);
-
-        if( $this->failed($response) )
-        {
-            return false;
-        }
 
         return true;
     }
@@ -52,48 +37,33 @@ class Model_API_Message extends Model_API
     {
     	$response = $this->post('/message/getmsginfo.php', $data);
 
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-
         return $response['result'];
     }
     
     /**
-　   	 * 得到 某用户的 所有私信
-　   	 * @param int $uid
+　   * 得到 某用户的 所有私信
+　   * @param int $uid
 	 * @param int $pagesize
      * @param string $ord
      * return array
-　  	 */
+　  */
     public function get_message_all($data)
     {
     	$response = $this->post('/message/getreceivedmsg.php', $data);
 
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-
         return $response['result'];
     }
     
     /**
-　   	 * 获取新消息
-　   	 * @param int $uid
+     * 获取新消息
+　   * @param int $uid
 	 * @param int $pagesize
      * @param string $ord
      * return array
-　  	 */
+　  */
     public function get_new_message($data)
     {
     	$response = $this->post('/message/getnewmsg.php', $data);
-
-        if( $this->failed($response) )
-        {
-            return false;
-        }
 
         return $response['result'];
     }
@@ -107,29 +77,19 @@ class Model_API_Message extends Model_API
     {
     	$response = $this->post('/message/updatemsgcount.php', $data);
 
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-
         return true;
     }
     
     /**
-　   	 * 读取某人已发送的消息
-　   	 * @param int $uid
+　   * 读取某人已发送的消息
+     * @param int $uid
 	 * @param int $pagesize
      * @param string $ord
      * return array
-　  	 */
+     */
     public function get_sended($data)
     {
     	$response = $this->post('/message/getsendedmsg.php', $data);
-
-        if( $this->failed($response) )
-        {
-            return false;
-        }
 
         return $response['result'];
     }
@@ -142,10 +102,15 @@ class Model_API_Message extends Model_API
     {
     	$response = $this->post('/message/getcollect.php', $data);
 
-        if( $this->failed($response) )
-        {
-            return false;
-        }
+        return $response['result'];
+    }
+    
+    /*
+     * 根据 msg_id 得到 uid 和 fuid
+     */
+    public function get_relation_to_fuid($data)
+    {
+        $response = $this->post('/message/getrelationfromid.php', $data);
 
         return $response['result'];
     }

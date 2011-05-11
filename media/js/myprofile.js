@@ -3247,7 +3247,7 @@ Utils.Io.JsLoad = {};
                             p.errinfo_yzm.innerHTML = $CLTMSG.CC3301
                         }
                     },
-                    url: m || "/attention/aj_addfollow.php"
+                    url: m || "/person/addfollow"
                 };
                 p.errinfo_yzm.style.display = "none";
                 var k = function() {
@@ -4191,7 +4191,7 @@ App.BindAtToTextarea = (function() {
                                     it.initTip(reqed[key]);
                                     return
                                 }
-                                doRequest("/mblog/aj_searchat.php?atkey=" + encodeURIComponent(key), function(json) {
+                                doRequest("/person/searchat?atkey=" + encodeURIComponent(key), function(json) {
                                     it.initTip(json, key)
                                 }, select.hidden);
                                 return
@@ -4295,24 +4295,32 @@ App.BindAtToTextarea = (function() {
     })();
 scope.loginKit = function() {
         var b = document.cookie + ";";
-        console.info(b);
-        var j = ["uid", "=([^;]*)?;"].join("");
-        var h = b.match(new RegExp(j, "i"));
+        var pat = /;uid=(\d+)/;
+        var h = pat.exec(decodeURIComponent(b));
+
         h = (h) ? h[1] || "" : "";
-        h = unescape(h);
-        //var g = scope["$oid"];
         return {
             uid: h,
-            isLogin: !! h,
+            isLogin: !!h,
+            isAdmin:  false
         }
     };
 scope.$isLogin = function() {
-        return scope.loginKit().isLogin
-    };
+    return scope.loginKit().isLogin
+};
 scope.$isAdmin = function() {
         return scope.loginKit().isAdmin
-    };
+};
 App.ModForward = function(O, m, g, Q, n, s, p, o, J) {
+        if (!scope.loginKit().isLogin) {
+            App.ModLogin({
+                func: function() {
+                    Core.Events.fireEvent(g, "click");
+                }
+            });
+            return;
+        }
+
         Core.Events.stopEvent();
         if (Q && Q.getAttribute("allowforward")) {
             App.alert($SYSMSG.M02020);
@@ -4424,10 +4432,7 @@ App.ModForward = function(O, m, g, Q, n, s, p, o, J) {
             }
             setTimeout(L, 1)
         }
-        var b = "/mblog/forward.php";
-        if (scope.$eid) {
-            b = "/event/aj_forward.php"
-        }
+        var b = "/weibo/forward";
         var G = $E("mdforwardbtn_" + O);
         var t = 280;
         App.BindAtToTextarea(k, {
@@ -5864,6 +5869,8 @@ App.profile_moreact = function(p, b, n) {
         Core.Events.addEvent(document.body, h, "click")
     };
 App.grpDialog = function(k, v, m, n) {
+    //FIXME: not implement yet
+    return;
         try {
             var C = decodeURIComponent(k.name);
             var D = k.gids ? k.gids.split(",") : "";
@@ -6199,7 +6206,7 @@ $registJob("profile_moreact", function() {
         }, "mouseover")
     });
 App.followadd = function(j, l, h, g, f) {
-        h = "/attention/aj_addfollow.php";
+        h = "/person/addfollow";
         while (l.nodeName.toLowerCase(0) != "p") {
             l = l.parentNode
         }
@@ -6247,7 +6254,7 @@ App.followcancel = (function() {
             }
             var h = o == 1 ? [k, $CLTMSG.CC3102 + b + "?"].join("") : [$CLTMSG.CD0007, b, "?"].join("");
             var r = function() {
-                var x = "/attention/aj_delfollow.php";
+                var x = "/attention/delete";
                 var z = {
                     touid: m,
                     fromuid: scope.$uid
@@ -6697,7 +6704,7 @@ App.msgPublisher = function(a, f, h, b) {
         a = a || {};
         f = f || {
             limit: 600,
-            postUrl: "/message/addmsg.php",
+            postUrl: "/person/send_message",
             normClass: "btn_normal",
             disabledClass: "btn_notclick"
         };
@@ -7749,7 +7756,7 @@ App.group = function(h, a, j) {
     };
     (function() {
         var n = document,
-            k = "/face/get_face.php",
+            k = "/face",
             b = Core.Events,
             l = Core.String,
             t = b.stopEvent,
@@ -9278,100 +9285,7 @@ $registJob("login1", function() {
             }, $E("mod_password_text" + rnd), window)
         }
         App.modRegisterAndLogin = function(showType, titleKey, callBackFunction, loginInfoKey) {
-            var disableClass = "btn_notclick";
-            var enableClass = "btn_normal";
-            var options = {
-                zIndex: 1010,
-                ref: loginname,
-                wrap: login_tip,
-                offsetX: 0,
-                offsetY: 1
-            };
-            if (!$IE) {
-                options.offsetY = 10
-            }
-            App.initLoginInput(loginname);
-            if (cb && cb.initErrorTip) {
-                App.fixElement.setHTML(cb.initErrorTip, "", options)
-            }
-            function checkForm(el, errStr) {
-                if (!Core.String.trim(el.value) || (el.value == el.title && el.title)) {
-                    var oPassword = $E("mod_password_text" + rnd);
-                    if (oPassword && oPassword.style && oPassword.style.display !== "none") {
-                        oPassword.focus()
-                    }
-                    App.fixElement.setHTML(errStr, "", options);
-                    return false
-                } else {
-                    App.fixElement.hidden()
-                }
-                return true
-            }
-            login_submit.onclick = function() {
-                if (login_submit.className == disableClass) {
-                    return false
-                }
-                login_submit.className = enableClass;
-                if (!checkForm(loginname, App.getMsg({
-                    code: "M00901"
-                }))) {
-                    return false
-                }
-                if (!checkForm(password, App.getMsg({
-                    code: "M00902"
-                }))) {
-                    return false
-                }
-                App.LoginAction({
-                    name: loginname.value,
-                    pwd: password.value,
-                    remb: isremember.checked,
-                    error: function(reason, errno) {
-                        var msg = "";
-                        if (errno == "4010") {
-                            reason = App.getMsg({
-                                code: "R01011"
-                            });
-                            msg = App.getMsg("R01010", {
-                                mail: loginname.value
-                            })
-                        } else {
-                            if (errno == "101" || errno == "5") {
-                                msg = App.getMsg({
-                                    code: "R11111"
-                                })
-                            }
-                        }
-                        App.fixElement.setHTML(reason, "", options)
-                    },
-                    succ: function() {
-                        App.modRegisterOrLoginClose();
-                        if (cb) {
-                            scope.$uid = "123456";
-                            cb.func(cb.param)
-                        } else {
-                            location.reload()
-                        }
-                    }
-                })
-            };
-            App.enterSubmit({
-                parent: password.parentNode,
-                action: function() {
-                    login_submit.onclick()
-                }
-            });
-            passcardOBJ.init(loginname, {
-                overfcolor: "#999",
-                overbgcolor: "#e8f4fc",
-                outfcolor: "#000000",
-                outbgcolor: ""
-            }, $E("mod_password_text" + rnd), window)
-        };
-        App.modRegisterAndLogin = function(showType, titleKey, callBackFunction, loginInfoKey) {
-            var regurl = /open\.weibo/.test(location.href) ? "http://weibo.com/reg.php" : "/reg.php";
-            regurl += "?lang=" + scope.$lang;
-            var recoverurl = "http://login.sina.com.cn/cgi/getpwd/getpwd0.php?entry=sso";
+            var regurl = '/auth/login';
             var regTitle = $CLTMSG.CY0124;
             var loginTitle = titleKey ? $CLTMSG[titleKey] : false;
             if (titleKey == "CY0130") {
@@ -10143,120 +10057,17 @@ function _S_uaTrack(b, a) {
             }
         }
     })();
-App.ModLogin = function(l, w) {
-        var o = w || $CLTMSG.CD0038;
-        var t = /open\.t\.sina/.test(location.href) ? "http://weibo.com/reg.php" : "/reg.php";
-        t += "?lang=" + scope.$lang;
-        var a = "http://login.sina.com.cn/cgi/getpwd/getpwd0.php?entry=sso";
-        var m = (new Date()).getTime();
-        var p = '<div class="loginLayer" id="login_wrap' + m + '">            	<table>                  <tbody>				  <tr>			      	   <th scope="row"/>	                        <td id="login_tip' + m + '"></td>	                    </tr>				  <tr>                    <th scope="row">' + $CLTMSG.CD0039 + '&nbsp;&nbsp;</th>                    <td><span class="cInputBorder"><span class="cInputborderR"><input tabIndex="1" type="text" name="loginname" id="loginname' + m + '" class="inputType" style="width: 210px;"/></span></span></td>                    <td><a href="' + t + '" target="_blank">' + $CLTMSG.CD0040 + '</a></td>                  </tr>                  <tr>                    <th scope="row">' + $CLTMSG.CD0041 + '&nbsp;&nbsp;</th>                    <td><span class="cInputBorder"><span class="cInputborderR"><input tabIndex="2" type="password" name="password" id="password' + m + '" class="inputType" style="width: 210px;"/></span></span></td>                    <td><a href="' + a + '" target="_blank">' + $CLTMSG.CD0042 + '</a></td>                  </tr>                  <tr>                    <th scope="row"/>                    <td><input type="checkbox" id="isremember' + m + '"  checked="checked"/>' + $CLTMSG.CD0043 + '</td>                    <td/>                  </tr>                  <tr>                    <th scope="row"/>                    <td><a href="javascript:void(0);" id="login_submit' + m + '" class="btn_normal"><em>' + $CLTMSG.CD0044 + "</em></a></td>                    <td/>                  </tr>                </tbody></table>            </div>";
-        var k = {
-            width: 390,
-            zIndex: 1000
-        };
-        var s = new App.Dialog.BasicDialog(o, p, k);
-        var r = "btn_notclick";
-        var g = "btn_normal";
-        var j = $E("login_submit" + m);
-        var q = $E("login_tip" + m);
-        var v = $E("loginname" + m);
-        var b = $E("password" + m);
-        var h = $E("isremember" + m);
-        var f = {
-            zIndex: 1010,
-            ref: v,
-            wrap: q,
-            offsetX: 0,
-            offsetY: 1
-        };
-        if (!$IE) {
-            f.offsetY = 10
-        }
-        App.initLoginInput(v);
-        if (l && l.initErrorTip) {
-            App.fixElement.setHTML(l.initErrorTip, "", f)
-        }
-        function n(x, y) {
-            if (!Core.String.trim(x.value) || (x.value == x.title && x.title)) {
-                if (x && x.style && x.style.display !== "none") {
-                    x.focus()
-                }
-                App.fixElement.setHTML(y, "", f);
-                return false
-            } else {
-                App.fixElement.hidden()
-            }
-            return true
-        }
-        j.onclick = function() {
-            if (j.className == r) {
-                return false
-            }
-            j.className = g;
-            if (!n(v, App.getMsg({
-                code: "M00901"
-            }))) {
-                return false
-            }
-            if (!n(b, App.getMsg({
-                code: "M00902"
-            }))) {
-                return false
-            }
-            App.LoginAction({
-                name: v.value,
-                pwd: b.value,
-                remb: h.checked,
-                error: function(y, x) {
-                    var z = "";
-                    if (x == "4010") {
-                        y = App.getMsg({
-                            code: "R01011"
-                        });
-                        z = App.getMsg("R01010", {
-                            mail: v.value
-                        })
-                    } else {
-                        if (x == "101" || x == "5") {
-                            z = App.getMsg({
-                                code: "R11111"
-                            })
-                        }
-                    }
-                    App.fixElement.setHTML(y, z, f)
-                },
-                succ: function() {
-                    s.close();
-                    if (l) {
-                        scope.$uid = "123456";
-                        l.func(l.param)
-                    } else {
-                        location.reload()
-                    }
-                }
-            })
-        };
-        App.enterSubmit({
-            parent: b.parentNode,
-            action: function() {
-                j.onclick()
-            }
-        });
-        passcardOBJ.init(v, {
-            overfcolor: "#999",
-            overbgcolor: "#e8f4fc",
-            outfcolor: "#000000",
-            outbgcolor: ""
-        }, b, window);
-        return s
-    };
 App.ModLogin = function(a, b) {
+    App.confirm($CLTMSG.CX0120,{ok: function() { location.href = '/auth/login'; }, cancel: function() {}});
+        //App.modRegisterAndLogin("login", false, a)
+        /**
         if (App.modRunToRegisterOrLogin) {
             App.modRunToRegisterOrLogin("login")
         } else {
             App.modRegisterAndLogin("login", false, a)
         }
-    };
+        **/
+};
 Core.Events.getEventTarget = function(a) {
         a = a || Core.Events.getEvent();
         Core.Events.fixEvent(a);
@@ -11018,7 +10829,7 @@ App.autoSelect.prototype = {
             try {
                 if (o == "add") {
                     b();
-                    q = "/attention/aj_addfollow.php";
+                    q = "/attention/add";
                     if (t) {
                         q += ("?" + App.jsonToQuery(t))
                     }
@@ -11055,7 +10866,7 @@ App.autoSelect.prototype = {
                     })()
                 } else {
                     if (o === "remove") {
-                        q = "/attention/aj_delfollow.php";
+                        q = "/attention/delete";
                         if (scope.$pageid == "profile" && Core.Dom.getElementsByClass(document, "DIV", "roommate").length > 0) {
                             var x = Core.Dom.getElementsByClass(document, "DIV", "roommate")[0];
                             x.style.display = "none";
@@ -11667,7 +11478,7 @@ App.focusblur = function() {
                     j = "#" + n + "#" + j
                 }
             }
-            var f = "/mblog/publish.php";
+            var f = "/weibo/create";
             var m = {
                 content: j.replace(/\uff20/ig, "@"),
                 pic: h.join(","),
@@ -11728,7 +11539,8 @@ App.bindUploadImgToFile = function(l, t, m, j) {
         g.target = k;
         g.encoding = "multipart/form-data";
         g.method = "POST";
-        g.action = "http://picupload.t.sina.com.cn/interface/pic_upload.php?marks=" + (scope.$domain ? "1" : "0") + (scope.wm ? "&wm=2" : "") + "&markstr=" + (scope.$domain && encodeURIComponent(scope.$domain.replace("http://", ""))) + "&s=rdxt&app=miniblog&cb=http://weibo.com/upimgback.html&rq=http%3A%2F%2Fphoto.i.weibo.com%2Fpic%2Fadd.php%3Fapp%3D1";
+        //g.action = "http://picupload.t.sina.com.cn/interface/pic_upload.php?marks=" + (scope.$domain ? "1" : "0") + (scope.wm ? "&wm=2" : "") + "&markstr=" + (scope.$domain && encodeURIComponent(scope.$domain.replace("http://", ""))) + "&s=rdxt&app=miniblog&cb=http://weibo.com/upimgback.html&rq=http%3A%2F%2Fphoto.i.weibo.com%2Fpic%2Fadd.php%3Fapp%3D1";
+        g.action = "/weibo/upload?ret=1&path=gLbth51b";
         r.body.appendChild(h);
         l.parentNode.insertBefore(g, l);
         g.appendChild(l);
@@ -11875,7 +11687,39 @@ App.getImgSize = function(b, a) {
     (function(a) {
         a.imgURL = function(m, h) {
             h = h || "middle";
+            //FIXME: IMAGE url 
+            var t = m.split('.');
+            var p = t[0].substr(0, 2);
+            var g = {
+                ss: {
+                    middle: "&690",
+                    bmiddle: "&690",
+                    small: "&690",
+                    thumbnail: "&690",
+                    square: "&690",
+                    orignal: "&690"
+                },
+                ww: {
+                    middle: "middle",
+                    large: "large",
+                    bmiddle: "middle",
+                    small: "small",
+                    //thumbnail: "thumbnail",
+                    thumbnail: "middle",
+                    //square: "square",
+                    square: "middle",
+                    orignal: "large"
+                }
+            };
+            var l = true;
+            var j = '.' + t[1];
+            //FIXME: change domain
+            var f = "/media/upload/" + (l ? g.ww[h] : h) + '/' + p + '/' + m;
+            console.info(f);
+            return f
 
+            /**
+            h = h || "middle";
             function b(n) {
                 n = (n + "").replace(/[^a-f0-9]/gi, "");
                 return parseInt(n, 16)
@@ -11904,10 +11748,11 @@ App.getImgSize = function(b, a) {
             var k = l ? (App.crc32(m) % 4 + 1) : (b(m.substr(19, 2)) % 16 + 1);
             var f = "http://" + (l ? "ww" : "ss") + k + ".sinaimg.cn/" + (l ? g.ww[h] : h) + "/" + m + (l ? j : "") + (l ? "" : g.ss[h]);
             return f
+            */
         }
     })(App);
     (function() {
-        var m = "/face/get_face.php";
+        var m = "/face";
         var t = document,
             v = t.documentElement || {},
             n = Core.Events,
@@ -15269,6 +15114,15 @@ App.Comment = {
             })
         },
         addComment: function(h, k, g, f) {
+            if (!scope.loginKit().isLogin) {
+                App.ModLogin({
+                    func: function() {
+                        Core.Events.fireEvent(g, "click");
+                    }
+                });
+                return;
+            }
+
             var b = false;
             var j = function() {
                 if (k.locked) {
@@ -17565,7 +17419,7 @@ App.popCard = function(t) {
                 arrowPos: "",
                 activeElement: t.element || null,
                 cardtype: t.cardtype || "simple",
-                requestUrl: "/person/aj_getcard.php",
+                requestUrl: "/person/getcard",
                 cardWidth: t.width || 287,
                 cardHeight: t.height || 205,
                 awayDistanceHeight: t.awayDistanceHeight || 24,
@@ -17773,7 +17627,7 @@ App.popCard = function(t) {
                     if (a) {
                         a.abort()
                     }
-                    a = App.doRequest(H, "/person/aj_getcard.php", function(I) {
+                    a = App.doRequest(H, "/person/getcard", function(I) {
                         if (I) {
                             G.set("activeElement", F.element).setHTML(G.get("dialog").dom.card_content, I).set("direction", F.direction || "auto").show();
                             p[h + "_" + b] = I
@@ -17913,7 +17767,7 @@ App.popCard = function(t) {
                 D = D || {};
                 var J = App.regPopCard.card.get("status");
                 App.regPopCard.card.set("status", "lock");
-                var E = "/attention/aj_addfollow.php";
+                var E = "/person/addfollow";
                 var L = $IE ? "" : "fade";
                 var H = {
                     uid: I,
@@ -17974,7 +17828,7 @@ App.popCard = function(t) {
                             touid: I,
                             fromuid: scope.$uid,
                             atnId: "card"
-                        }, "/attention/aj_delfollow.php", function(N) {
+                        }, "/attention/delete", function(N) {
                             App.regPopCard.card.set("status", "");
                             var Q = N || {};
                             var R = $C("div");
@@ -17994,6 +17848,7 @@ App.popCard = function(t) {
                 }).wipe("up", true)
             }
     })();
+
 $registJob("popUpCard", function() {
         var b = {
             miniblog_invite: "normal"
@@ -18001,6 +17856,16 @@ $registJob("popUpCard", function() {
         var a = Core.Dom.getElementsByAttr(document.body, "popcontainer", "true");
         if ($E("feed_list")) {
             a.push($E("feed_list"))
+        }
+        App.bindPopCard(a, b[scope.$pageid] || "")
+    });
+$registJob("popUpCard01", function() {
+        var b = {
+            miniblog_invite: "normal"
+        };
+        var a = Core.Dom.getElementsByAttr(document.body, "popcontainer", "true");
+        if ($E("scroll_star_list")) {
+            a.push($E("scroll_star_list"))
         }
         App.bindPopCard(a, b[scope.$pageid] || "")
     });
@@ -18727,9 +18592,9 @@ $registJob("splitLoadMedia", function() {
 scope.commentConfig = {
         iInputLimitSize: 280,
         defaultPage: "0",
-        sPostUrl: "/comment/addcomment.php",
-        sDeleteAPI: "/comment/delcomment.php",
-        sDataUrl: "/comment/commentlist.php",
+        sPostUrl: "/weibo/comment_post",
+        sDeleteAPI: "/weibo/comment_delete",
+        sDataUrl: "/weibo/comment_index",
         params: {},
         ListNode: null
     };
@@ -18933,6 +18798,15 @@ scope.loadCommentByRid = function(k, j, n, o, m, f, l, g, h, q, p) {
         }
     };
 scope.deleteCommentByRid = function(h, p, q, b, o, g, m) {
+        if (!scope.loginKit().isLogin) {
+            App.ModLogin({
+                func: function() {
+                    Core.Events.fireEvent(g, "click");
+                }
+            });
+            return;
+        }
+
         var a = App.Comment.getTarget();
         var k = $E("_comment_post_" + o + "_" + q);
         var j = $E("_comment_logindiv_" + o + "_" + q);
@@ -19045,6 +18919,16 @@ scope.loadCommentByPage = function(g, n, m) {
         }
     };
 scope.replyByCid = function(b, m, t, o, q, r, p, w, k, s) {
+        if (!scope.loginKit().isLogin) {
+            App.ModLogin({
+                func: function() {
+                    Core.Events.fireEvent(g, "click");
+                }
+            });
+            return;
+        }
+
+
         w = w == 1 ? 1 : 2;
         var F;
         var D;
@@ -20509,7 +20393,7 @@ App.addfavorite_miniblog = function(b) {
             App.finishInformation();
             return false
         }
-        Utils.Io.Ajax.request("/favorite/aj_add.php", {
+        Utils.Io.Ajax.request("/favorite/add", {
             POST: {
                 mid: b
             },
@@ -20584,7 +20468,7 @@ App.deletefavorite_miniblog = function(a) {
         var h = function(s) {
             var q, p;
             var t = $E("feed_title").getElementsByTagName("em").length > 0 ? $E("feed_title").getElementsByTagName("em")[0] : null;
-            var r = "/favorite/aj_delete.php";
+            var r = "/favorite/delete";
             Utils.Io.Ajax.request(r, {
                 POST: {
                     mid: a
@@ -20595,7 +20479,7 @@ App.deletefavorite_miniblog = function(a) {
                             App.Wipe(null, s).wipe("down", false, function() {
                                 s.parentNode.parentNode.removeChild(s.parentNode)
                             });
-                            t.innerHTML = (Core.String.toInt(t.innerHTML) - 1).toString();
+                           // t.innerHTML = (Core.String.toInt(t.innerHTML) - 1).toString();
                             var v = $E("feed_list").getElementsByTagName("li").length;
                             if (v <= 1) {
                                 window.location.reload(true)
@@ -20604,6 +20488,7 @@ App.deletefavorite_miniblog = function(a) {
                             g.content(App.getMsg(w.code)).wipe("up", true).icon(1).lateClose(1500)
                         }
                     } else {
+                    	
                         g.content($CLTMSG.CC0701).wipe("up", true).icon(1).lateClose(1500)
                     }
                 },
@@ -23239,6 +23124,162 @@ $registJob("advertisement_fxl", function() {
         }, 3000)
     });
 
+/*留言 start*/
+$registJob("contactlist", function() {
+        var f = {
+            msgList: $E("msg_list"),
+            talkList: $E("talk_list")
+        };
+        try {
+            var m = {
+                delApi: "/message/delete",
+                delAllApi: "/message/delete"
+            };
+            var a = function() {
+                var q = Core.Events.getEvent();
+                var n = q.srcElement || q.target;
+                while (n.nodeType != 1) {
+                    n = n.parentNode
+                }
+                return n
+            };
+            App.reMsg = function(n, q) {
+                App.msgDialog(n, q)
+            };
+            App.delMsg = function(q, r) {
+                var n = a();
+                var s = {
+                    uid: q,
+                    rid: r
+                };
+                App.delDialog($SYSMSG.M08002, m.delApi, s, function() {
+                    window.location.reload(true)
+                }, function() {}, n, $CLTMSG.CC1904)
+            };
+            App.delMsgGroup = function(s, r) {
+                var q = a();
+                var t = {
+                    uid: s
+                };
+                var n = $SYSMSG.M08001.replace(/#{name}/, r);
+                if (Core.Array.findit(App.admin_uid_list, s) === -1) {
+                    n += "<div style='margin-top:10px;font-size: 14px;'><input style='vertical-align:-1px;margin-right:3px;' type='checkbox' id='block_user'>" + $CLTMSG.CC2701 + "</div>"
+                }
+                App.delDialog(n, m.delAllApi, t, function() {
+                    window.location.reload(true)
+                }, function(v) {
+                    if (v && v.code) {
+                        App.alert($SYSMSG[v.code], {
+                            icon: v.code == "M13004" ? 1 : 2,
+                            ok: function() {
+                                if (v.code == "M13004") {
+                                    location.reload(true)
+                                }
+                            }
+                        });
+                        if (v.code == "M13004") {
+                            setTimeout(function() {
+                                location.reload(true)
+                            }, 1500)
+                        }
+                    } else {
+                        App.alert($CLTMSG.CC2702, {
+                            icon: 2,
+                            width: 370,
+                            height: 120
+                        })
+                    }
+                }, q, $CLTMSG.CC2703)
+            };
+            var b = {
+                submit: $E("msg_publisher_submit"),
+                editor: $E("msg_publisher_editor"),
+                info: $E("msg_publisher_error"),
+                nick: $E("msg_publisher_nick")
+            };
+            if (f.msgList || f.talkList) {
+                var p;
+                var o;
+                var k;
+                if (f.msgList) {
+                    o = "up";
+                    k = "over";
+                    p = f.msgList.getElementsByTagName("li")
+                }
+                if (f.talkList) {
+                    o = null;
+                    k = null;
+                    p = f.talkList.getElementsByTagName("li")
+                }
+                var g = p.length;
+                if (g > 0) {
+                    var j = 0;
+                    for (j; j < g; j++) {
+                        (function(q, n) {
+                            if (q && n) {
+                                Core.Events.addEvent(q, function() {
+                                    if (scope.$currentMsgItem && !Core.Dom.contains(q, scope.$currentMsgItem)) {
+                                        if (o) {}
+                                        scope.$currentMsgDel.style.display = "none"
+                                    }
+                                    if (k) {}
+                                    n.style.display = "";
+                                    scope.$currentMsgItem = q;
+                                    scope.$currentMsgDel = n;
+                                    Core.Events.stopEvent()
+                                }, "mouseover")
+                            }
+                        })(p[j], Core.Dom.getElementsByClass(p[j], "span", "close")[0])
+                    }
+                    Core.Events.addEvent(document.body, function() {
+                        if (scope.$currentMsgItem && scope.$currentMsgDel) {
+                            if (o) {}
+                            scope.$currentMsgDel.style.display = "none";
+                            scope.$currentMsgDel = null;
+                            scope.$currentMsgItem = null
+                        }
+                    }, "mouseover")
+                }
+            }
+        } catch (h) {
+            console.log(h)
+        }
+        var l = function(r, q) {
+            var q = q || "msg_close";
+            var s = Core.Events.getEvent();
+            var n = App.Dom.getByClass(q, "a", r)[0];
+            if (!n) {
+                return false
+            }
+            switch (s.type) {
+            case "mouseover":
+                n.style.display = "";
+                break;
+            case "mouseout":
+                n.style.display = "none";
+                break
+            }
+        };
+        App.Dom.getBy(function(n) {
+            if (App.Dom.hasClass(n, "MIB_msg_c")) {
+                Core.Events.addEvent(n, function() {
+                    l(n)
+                }, "mouseover");
+                Core.Events.addEvent(n, function() {
+                    l(n)
+                }, "mouseout")
+            }
+            if (App.Dom.hasClass(n, "MIB_feed_c")) {
+                Core.Events.addEvent(n, function() {
+                    l(n, "close")
+                }, "mouseover");
+                Core.Events.addEvent(n, function() {
+                    l(n, "close")
+                }, "mouseout", "close")
+            }
+        }, "div", f.msgList)
+    });
+/*留言 end*/
 function main() {
         try {
             document.execCommand("BackgroundImageCache", false, true)
@@ -23266,10 +23307,98 @@ function main() {
         a.add("grouporder");
         a.add("addgroup");
         a.add("popUpCard");
+        a.add("popUpCard01");
         a.add("medal");
         a.add("webim");
         a.add("advertisement_fxl");
         a.add("missionBox");
         a.add("start_suda");
+        a.add("contactlist");
         a.start()
     };
+    
+    
+    /*black start*/
+    App.move_to_blacklist=function (b,f,a,g) {
+    	App.shielduserope("add",f,{
+    		fuid:scope.$uid,touid:b
+    	},a,g)
+    };
+    App.remove_from_blacklist=function (f,g,b,h,a) {
+    	App.shielduserope("remove",g,{
+    		fuid:scope.$uid,touid:f
+    	},b,h,a)
+    };
+    App.shielduserope=function (g,f,l,b,j,a) {
+    	if(!scope.$uid) {
+    		location.replace("/login.php?url="+encodeURIComponent(location.href));
+    		return false
+    	}var h=App.doRequest;
+    	var k={
+    	};
+    	k.type=g;
+    	k.act=a?a:"";
+    	k.url=k.type=="add"?"/block/add":"/block/delete";
+    	k.params=l;
+    	k.addcb=function (m) {
+    		var n=App.alert(k.alertHTML(b),{
+    			icon:3,hasBtn:false
+    		});
+    		setTimeout(function () {
+    			n.close();
+    			window.location.reload(true)
+    		},1000)
+    	};
+    	k.removecb=function (o,m) {
+    		if(k.act=="1") {
+    			var n=f;
+    			while(n.nodeName.toLowerCase()!="li") {
+    				n=n.parentNode
+    			}Core.Dom.removeNode(n)
+    		}window.location.reload()
+    	};
+    	k.error=function (m) {
+    		if(m.code) {
+    			App.alert({
+    				code:m.code
+    			})
+    		}else {
+    			App.alert($CLTMSG.CC0701)
+    		}
+    	};
+    	k.confimmsg=function (m) {
+    		return {
+    			des:"<div id='black_list_txt'><strong style='font-size:14px;'>"+$CLTMSG.CD0086.replace(/#\{name\}/,m)+"</strong><br><div style='margin-top:5px;'>"+$CLTMSG.CD0087.replace(/#\{sex\}/g,j)+"</div></div>"
+    		}
+    	};
+    	k.alertHTML=function (m) {
+    		return $CLTMSG.CD0088.replace(/#\{name\}/,m)
+    	};
+    	k.dialog=function (m,p,n) {
+    		var q=App.flyDialog(k.confimmsg(m),"confirm",p,{
+    			icon:1,width:400,ok:function () {
+    				if(typeofn==="function") {
+    					n()
+    				}
+    			}
+    		});
+    		var o=$E("black_list_txt").parentNode.style;
+    		o.width="270px";
+    		o.marginTop="-10px";
+    		return q
+    	};
+    	if(k.type=="add") {
+    		k.dialog(b,f,function () {
+    			h(k.params,k.url,k.addcb,k.error)
+    		},k.type)
+    	}else {
+    		App.flyDialog($CLTMSG.CD0089,"confirm",f,{
+    			icon:1,width:377,ok:function () {
+    				h(k.params,k.url,k.removecb,k.error)
+    			}
+    		})
+    	}
+    };
+    /* black  end*/
+
+    

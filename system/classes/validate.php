@@ -744,12 +744,6 @@ class Validate extends ArrayObject {
 	 */
 	public function check($allow_empty = FALSE)
 	{
-		if (Core::$profiling === TRUE)
-		{
-			// Start a new benchmark
-			$benchmark = Profiler::start('Validation', __FUNCTION__);
-		}
-
 		// New data set
 		$data = $this->_errors = array();
 

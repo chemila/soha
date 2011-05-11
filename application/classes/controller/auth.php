@@ -34,6 +34,16 @@ class Controller_Auth extends Controller {
             $this->request->redirect('/error/oauth');
         }
     }
+    
+    public function action_logout()
+    {
+    	$session = session::instance();
+    	$session->destroy();
+    	
+    	Cookie::delete(self::COOKIE_NAME);
+    	
+    	$this->request->redirect('/');
+    }
 
     public function action_oauth_callback()
     {

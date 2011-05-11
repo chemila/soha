@@ -2,14 +2,9 @@
 
 class Model_Attention extends Model
 {
-	public function __construct()
+	public function get_attention_list($uid, $page = 1)
 	{
-		
-	}
-	
-	public function get_attention_list($data)
-	{
-		$response = Model_API::factory("user")->attention_list($data);
+		$response = Model_API::factory("user")->attention_list(array('uid' => $uid, 'page' => $page));
 		
 		return $response;
 	}
@@ -28,18 +23,23 @@ class Model_Attention extends Model
 		return $response;
 	}
 	
-	public function attention_count($data)
+	public function attention_count($uid)
 	{
-		$response = Model_API::factory("user")->attention_count($data);
-		
-		return $response;
+		$response = Model_API::factory("user")->attention_count(array('uid' => $uid));
+		return $response[0];
+	}
+	
+	public function fans_count($uid)
+	{
+		$response = Model_API::factory("user")->get_fans_count(array('uid' => $uid));
+		return $response[0];
 	}
 	
 	
-	public function get_fans($data)
+	public function get_fans($uid, $page = 1)
 	{
-		$response = Model_API::factory("user")->fans_list($data);
-		
+		$response = Model_API::factory("user")->fans_list(array('uid' => $uid, 'page' => $page));
+
 		return $response;
 	}
 	

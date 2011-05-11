@@ -54,3 +54,4 @@ body { font:12px/1.5 \5b8b\4f53, sans-serif }
 /* TODO: optmize the size
 -------------------------------------------------------------*/
 .star_list { height: 400px;}
+.clear{clear:both;}
