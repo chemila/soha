@@ -16,6 +16,11 @@ return array
         'patterns' => array(),
         'defaults' => array('controller' => 'public', 'action' => 'index'),
     ),
+    'admin' => array(
+        'uri' => '(admin(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'admin', 'action' => 'index'),
+    ),
     'auth' => array(
         'uri' => '(auth(/<action>(/<source>)))',
         'patterns' => array('source' => '\w+'),
@@ -81,6 +86,11 @@ return array
         'patterns' => array('uid' => '\d+'),
         'defaults' => array('controller' => 'user', 'action' => 'index'),
     ),
+    'error' => array(
+        'uri' => '(error(/<action>(/<message>)))',
+        'patterns' => array('message' => '.+'),
+        'defaults' => array('controller' => 'error', 'action' => 'index'),
+    ),
     'cron' => array(
         'uri' => '(cron(/<action>(/<uid>)))',
         'patterns' => array('uid' => '\d+'),
@@ -100,5 +110,10 @@ return array
         'uri' => '(collect(/<action>))',
         'patterns' => array(),
         'defaults' => array('controller' => 'collect', 'action' => 'index'),
+    ),
+    'search' => array(
+        'uri' => '(search(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'search', 'action' => 'index'),
     ),
 );

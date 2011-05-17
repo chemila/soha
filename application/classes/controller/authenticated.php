@@ -43,13 +43,9 @@ class Controller_Authenticated extends Controller {
         $sid = $match[1];
         $uid = $match[2];
 
-        $session_model = new Model_Session;
-        $data = $session_model->read($sid);
+        $session = new Model_Session($uid);
 
-        if( ! $data or ! isset($data['uid']))
-            return false;
-
-        if($uid !== $data['uid'])
+        if( ! $session->sid or $sid != $session->sid)
             return false;
 
         $this->user = new Model_User($uid);
@@ -65,13 +61,8 @@ class Controller_Authenticated extends Controller {
         $this->request->redirect('/auth');
     }
 
-    public function action_after()
+    public function after()
     {
-        if(isset($this->view))
-        {
-            $this->view->current_user = $this->user->as_array();
-        }
-
         return parent::after();
     }
 }

@@ -8,22 +8,26 @@ class Model_Weibo extends Model_QORM {
     const CACHE_KEY = 'weibo';
 
     protected $_table_name = 'weibo';
-
     protected $_has_one = array(
         'root' => array(
             'model' => 'weibo',
             'foreign_key' => 'rid',
         ),
     );
-
     protected $_has_many = array(
         'comments' => array(
             'model' => 'comment',
             'foreign_key' => 'wid',
         ),       
+        'inbox' => array(
+            'model' => 'inbox',
+            'foreign_key' => 'wid',
+        ),
+        'outbox' => array(
+            'model' => 'outbox',
+            'foreign_key' => 'wid',
+        ),
     );
-
-    protected $_ignored_columns = array('user');
 
     public static function instance($type = self::TYPE_DEFAULT, $id = NULL)
     {
@@ -47,113 +51,51 @@ class Model_Weibo extends Model_QORM {
         return new $classname($id);
     }
 
-    public function star_news($page = 1, $limit = 20, $tag = 1)
+    public function extend()
     {
-        $records = $this->where('user_category', '=', 1)
-            ->order_by('timeline', 'desc')
-            ->limit($limit)
-            ->offset($page - 1)
-            ->find_all()
-            ->as_array();
+        $this->with_user();
+        $this->root->find($this->rid)->with_user();
 
-        if( ! $records)
-            return;
-
-        foreach($records as & $weibo)
-        {
-            $weibo['media'] = unserialize($weibo['media_data']);
-
-            self::extend_with_user($weibo);
-            self::extend_with_root($weibo);
-        }
-
-        return $records;
+        return $this;
     }
 
-    public function hot_commented($page = 1, $limit = 10)
+    public function with_user()
     {
-        $records = $this->select('*')
-            ->order_by('comment_count', 'desc')
+        $user = new Model_User($this->uid);
+        $this->user = $user->as_array();
+
+        return $this;
+    }
+
+    public function star_news($page = 1, $limit = 20)
+    {
+        return $this->where('user_category', '=', Model_User::CATEGORY_STAR)
             ->order_by('timeline', 'desc')
             ->limit($limit)
-            ->offset($page - 1)
-            ->find_all()
-            ->as_array();
+            ->offset(max(0, $page - 1) * $limit)
+            ->find_all();
+    }
 
-        if( ! $records)
-            return;
-
-        foreach($records as & $weibo)
-        {
-            self::extend_with_user($weibo);
-        }
-
-        return $records;
+    public function hot_commented($page = 1, $limit = 20)
+    {
+        return $this->order_by('comment_count', 'desc')
+            ->order_by('id', 'desc')
+            ->limit($limit)
+            ->offset(max(0, $page - 1) * $limit)
+            ->find_all();
     }
 
     public function is_root()
     {
-        if( ! $this->loaded())
-        {
-            $this->_load();
-        }
-
+        $this->_load();
         return empty($this->rid);
     }
 
     public function increse_forward()
     {
         $this->_load();
-
         $this->forward_count ++;
         return $this->save();
-    }
-
-    public static function extend_with_user( & $record, $cache_enable = TRUE)
-    {
-        if( ! $record['uid']) 
-            return;
-
-        $cache = Cache::instance('memcache');
-
-        if( ! $cache_enable or ! $user = $cache->get('user.'.$record['uid']))
-        {
-            $user = new Model_User($record['uid']);
-            $user->load();
-
-            $cache->set('user.'.$record['uid'], $user);
-        }
-
-        $record['user'] = array(
-            'nick' => $user->nick,
-            'portrait' => $user->portrait,
-            'verified' => $user->verified,
-        );
-    }
-
-    public static function extend_with_root( & $weibo)
-    {
-        if( ! $weibo['rid']) 
-            return;
-        
-        $root = new Model_Weibo($weibo['rid']);
-        $root->_load();
-
-        if( ! $root->loaded())
-            return;
-
-        $weibo['root'] = array(
-            'uid' => $root->uid,
-            'content' => $root->content,
-            'forward_count' => $root->forward_count,
-            'comment_count' => $root->comment_count,
-            'type' => $root->type,
-            'src' => $root->src,
-            'timeline' => $root->timeline,
-            'media_data' => $root->media_data,
-        );
-
-        self::extend_with_user($weibo['root']);
     }
 
     public function get_media_data()
@@ -166,24 +108,6 @@ class Model_Weibo extends Model_QORM {
         throw new Model_Weibo_Exception('Not implemented method :method', array(':method' => __FUNCTION__));
     }
 
-    public function get_comments($page = 1, $limit = 10)
-    {
-        $comments = $this->comments
-            ->limit($limit)
-            ->offset($page - 1)
-            ->order_by('id', 'desc')
-            ->find_all()
-            ->as_array();
-       
-        foreach($comments as & $comment)
-        {
-            self::extend_with_user($comment);
-        }
-
-        return $comments;
-    }
-
-    
     public function get_user()
     {
         $user = new Model_User($this->uid);
@@ -192,24 +116,21 @@ class Model_Weibo extends Model_QORM {
         return $user;
     }
 
-    public function list_by_user($uid, $page = 1, $limit = 10, & $count = NULL)
+    public function get_comments($page = 1, $limit = 10)
     {
-        $records = $this->where('uid', '=', $uid)
+        return $this->comments->order_by('id', 'desc')
             ->limit($limit)
-            ->offset($page - 1)
+            ->offset(max($page - 1, 0) * $limit)
+            ->find_all();
+    }
+
+    public function list_by_user($uid, $page = 1, $limit = 10)
+    {
+        return $this->where('uid', '=', $uid)
+            ->limit($limit)
+            ->offset(max(0, $page - 1) * $limit)
             ->order_by('id', 'desc')
-            ->find_all()
-            ->as_array();
-
-        $count = $this->count_last_query();
-
-        foreach($records as & $record)
-        {
-            self::extend_with_user($record);
-            self::extend_with_root($record);
-        }
-
-        return $records;
+            ->find_all();
     }
 
     public function get_from_ids(Array $wids)
@@ -219,12 +140,14 @@ class Model_Weibo extends Model_QORM {
         foreach($wids as $wid)
         {
             $weibo = new self($wid);
-            $data = $weibo->as_array();
+            $weibo->reload();
 
-            self::extend_with_user($data);
-            self::extend_with_root($data);
+            if( ! $weibo->loaded())
+            {
+                continue;
+            }
 
-            $result[] = $data;
+            $result[] = $weibo->extend()->as_array();
         }
 
         return $result;
@@ -252,13 +175,91 @@ class Model_Weibo extends Model_QORM {
         return $ats;
     }
 
-    public function extend()
+    public function save_shadow(Model_Collect_Weibo $shadow, $fake_uid)
     {
-        $data = $this->as_array();
+        $this->values($shadow->as_array());
+        $this->uid = NULL;
+        $this->id = NULL;
 
-        self::extend_with_user($data);
-        self::extend_with_root($data);
+        $star = new Model_Star(array('suid' => $shadow->uid, 'source' => $shadow->source));
 
-        return $data;
+        if($star->pk())
+        {
+            $this->uid = $star->pk();
+            $this->user_category = Model_User::CATEGORY_STAR;
+        }
+        else
+        {
+            //$this->uid = ($star->observer ? $star->observer : '1005142');
+            $this->uid = $star->get_observer($shadow->source);
+            $this->user_category = Model_User::CATEGORY_DEFAULT;
+        }
+        unset($star);
+
+        // Init count
+        $this->forward_count = 0;
+        $this->comment_count = 0;
+
+        $this->save();
+
+        if( ! $this->saved())
+            return false;
+       
+        $ats = $this->ats();
+        if($ats)
+        {
+            foreach($ats as $at)
+            {
+                $atme = new Model_Atme;
+
+                $atme->wid = $this->pk();
+                $atme->uid = $at;
+                $atme->push();
+            }
+        }
+
+        // Update user statuses_count 
+        $user = new Model_User($this->uid);
+        $user->load();
+        $user->statuses_count ++;
+        $user->save();
+
+        // Send to outbox and push into users inboxes
+		$outbox = new Model_Cache_Outbox($user);
+        $outbox->receive($this)->push($ats);
+        unset($user, $outbox);
+
+        // Update shadow wid
+        $shadow->wid = $this->pk();
+        $shadow->save();
+
+        if( ! $shadow->saved())
+            return false;
+
+        // Update shadow children wrid 
+        $children = $shadow->children->find_all();
+        unset($shadow);
+
+        if( ! $children)
+            return true;
+
+        $increase = 0;
+        foreach($children as $child)
+        {
+            if($child->wid != 0)
+                continue;
+
+            $child->rid = $this->pk();
+            
+            // Save child recursivly as well
+            $weibo_child = new self;
+            $weibo_child->save_shadow($child) and $increase ++;
+        }
+
+        $this->reload();
+        $this->forward_count += $increase;
+        $this->save();
+        
+        return $this->saved();
     }
 }

@@ -18,14 +18,6 @@ var scope = $CONFIG;
     scope.$totalnum       = "500";
     scope.groupList = []; // 关注人分组信息
     scope.dosplitload = 1;
-function login()
-{
-	document.location.href="/auth/login/"+$("#source").val();
-}
-function selFunc(){
-	$("#selText").text($("#source").val())
-}
-
 </script>
 <script type="text/javascript" src="/media/js/lang_zh.js"></script>
 <script type="text/javascript" src="/media/js/myprofile.js"></script>
@@ -39,6 +31,9 @@ setTimeout(function() {
     document.getElementsByTagName('head')[0].appendChild(css);
 }, 100);
 </script> 
+<style>
+.magic{display:none!important;}
+</style>
 </body>
 </html>
 <!--footer end-->

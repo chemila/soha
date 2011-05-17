@@ -10,7 +10,10 @@
  * @return string
  */
 function smarty_modifier_parse_content($content, $with_user = TRUE) {
+	$content = strip_tags($content);
     $pattern_face = '~\[(.+?)\]~s';
+    $content = preg_replace('~http://([\w\.&\?/=]+)~iu', '<a href="http://\\1" target="new">http://\\1</a>', $content);
+    
     if(preg_match_all($pattern_face, $content, $match))
     {
         $config = Core::config('face');
@@ -18,32 +21,37 @@ function smarty_modifier_parse_content($content, $with_user = TRUE) {
 
         foreach($match[1] as $face)
         {
-            if($config->offsetExists($face))
-            {
-                $src = $config->get($face);
-                $replace["[$face]"] = sprintf('<img src="%s" title="%s" type="face">', $src, $face);
-            }
+            $src = $config->get($face, '/media/img/face/default.gif');
+            $replace["[$face]"] = sprintf('<img src="%s" title="%s" type="face">', $src, $face);
         }
         
         $content = strtr($content, $replace);
     }
 
-    $pattern = '~@([^\s:：]+)~su';
-    if($with_user and preg_match($pattern, $content, $match))
+    $pattern = '~@([\x{4e00}-\x{9fa5}\w]+)~su';
+    if($with_user and preg_match_all($pattern, $content, $match))
     {
-        $nick = $match[1];
-        $user = New Model_User;
-
-        try
-        {
-            $uid = $user->get_uid($nick);
-
-            if($uid)
-            {
-                $content = preg_replace($pattern, sprintf('<a href="/home/profile/%d" namecard="true" uid="%d" action-type="namecard" action-data="uid=%d&amp;name=@%s&amp;reason=&amp;type=&amp;direction=auto&amp;urltype=usercard&amp;param=type###uid###name###reason">@%s</a>', $uid, $uid, $uid, $nick, $nick), $content);
-            }
-        }
-        catch(Model_API_Exception $e){}
+    	if(count($match[1]))
+    	{
+    		array_unique($match[1]);
+    		
+		    $user = New Model_User;
+    		foreach ($match[1] as $key => $nick)
+    		{
+		        $nick = strip_tags($nick);
+		
+		        try
+		        {
+		            $uid = $user->get_uid($nick);
+		        }
+		        catch(Model_API_Exception $e)
+		        {
+		            $uid = NULL;
+		        }
+		        
+		        $content = preg_replace('~@'.$nick.'~su', sprintf('<a href="/home/profile/%d" namecard="true" uid="%d">@%s</a>', $uid, $uid, $nick), $content);
+    		}
+    	}
     }
 
     return $content;

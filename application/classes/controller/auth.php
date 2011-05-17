@@ -68,28 +68,25 @@ class Controller_Auth extends Controller {
         $model_oauth = Model_OAuth::factory($oauth);
         $user_info = $model_oauth->user_info();
 
+        if( ! $user_info)
+        {
+            $this->request->redirect('/error/oauth');
+        }
+
         $user = new Model_User;
 
         if( ! $uid = $user->check_exist($user_info['suid'], $user_info['source']))
         {
-            if($uid = $user->create($user_info))
-            {
-                $user->save_token($access_token->token, $access_token->secret);
-            }
-            else
+            if( ! $uid = $user->create($user_info))
             {
                 $this->request->redirect('/error/user');
             }
         }
 
-        //$session->set('uid', $uid);
+        $user->save_token($access_token);
+        $user->save_session($session);
         Cookie::set(self::COOKIE_NAME, sprintf('sid=%s;uid=%s', $session->id(), $uid), self::COOKIE_LIFETIME);
 
-        $session_model = new Model_Session;
-        $session_model->create_or_write($session->id(), array(
-            'uid' => $uid,
-        ));
-
-        $this->request->redirect('/home');
+        $this->request->redirect('/');
     }
 }

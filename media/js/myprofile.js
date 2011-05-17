@@ -11686,6 +11686,7 @@ App.getImgSize = function(b, a) {
     })(App);
     (function(a) {
         a.imgURL = function(m, h) {
+            return m;
             h = h || "middle";
             //FIXME: IMAGE url 
             var t = m.split('.');
@@ -11704,6 +11705,7 @@ App.getImgSize = function(b, a) {
                     large: "large",
                     bmiddle: "middle",
                     small: "small",
+                    src: 'large',
                     //thumbnail: "thumbnail",
                     thumbnail: "middle",
                     //square: "square",
@@ -11711,11 +11713,10 @@ App.getImgSize = function(b, a) {
                     orignal: "large"
                 }
             };
-            var l = true;
             var j = '.' + t[1];
             //FIXME: change domain
-            var f = "/media/upload/" + (l ? g.ww[h] : h) + '/' + p + '/' + m;
-            console.info(f);
+            var f = "/media/upload/" + g.ww[h] + '/' + p + '/' + m;
+            console.info(f, m);
             return f
 
             /**
@@ -11787,7 +11788,7 @@ App.getImgSize = function(b, a) {
                         unselected: " "
                     },
                     E;
-                J = ['<li id="upload"><a href="####" onclick="this.blur();return false;">', $CLTMSG.CL0905, '</a></li><li id="figure"><a href="####" onclick="this.blur();return false;">', $CLTMSG.CL0906, "</a></li>"].join("");
+                J = ['<li id="upload"><a href="####" onclick="this.blur();return false;">', $CLTMSG.CL0905, '</a></li>', "", ""].join("");
                 return function(K, av, at, W, S) {
                         if (!y) {
                             S = S ||
@@ -17853,19 +17854,17 @@ $registJob("popUpCard", function() {
         var b = {
             miniblog_invite: "normal"
         };
+
         var a = Core.Dom.getElementsByAttr(document.body, "popcontainer", "true");
+
         if ($E("feed_list")) {
             a.push($E("feed_list"))
         }
-        App.bindPopCard(a, b[scope.$pageid] || "")
-    });
-$registJob("popUpCard01", function() {
-        var b = {
-            miniblog_invite: "normal"
-        };
-        var a = Core.Dom.getElementsByAttr(document.body, "popcontainer", "true");
         if ($E("scroll_star_list")) {
             a.push($E("scroll_star_list"))
+        }
+        if ($E("feed_comment_list")) {
+            a.push($E("feed_comment_list"))
         }
         App.bindPopCard(a, b[scope.$pageid] || "")
     });
@@ -19650,18 +19649,20 @@ App.miniblogDel = function(b, q, f) {
         var g;
         var j;
         if (scope.$feedtype == "isat") {
-            g = "/myat/delete.php";
+            g = "/weibo/delete";
             j = $CLTMSG.CC2801
         } else {
-            g = "/mblog/delete.php";
+            g = "/weibo/delete";
             j = $CLTMSG.CC2802
         }
         var k = function(r) {
             if (q) {
+                /**
                 setTimeout(function() {
                     location.href = "/mymblog.php"
                 }, 400);
                 return
+                **/
             }
             setTimeout(function() {
                 var s = $E("mid_" + b);
@@ -20371,6 +20372,7 @@ $registJob("bigpop", function() {
 Core.String.toInt = function(b, a) {
         return parseInt(b, a)
     };
+
 App.addfavorite_miniblog = function(b) {
         var f = Core.Events.getEvent();
         var g = f ? (f.srcElement || f.target) : null;
@@ -23401,4 +23403,58 @@ function main() {
     };
     /* black  end*/
 
-    
+
+App.star_sreach = function (b, e) {
+	var aparent = e.parentNode.getElementsByTagName("a");
+	var len = e.parentNode.getElementsByTagName("a").length;
+	for(var i=0;i<len;i++){aparent[i].className='';}
+        e.className = "current";
+        
+        if (b == "" || b == null) {
+            return false
+        }
+        
+        Utils.Io.Ajax.request("/search/", {
+            POST: {
+                s: b
+            },
+            onComplete: function(m) {
+                if (m) {
+                	$E("tabContent").innerHTML = m;
+                	if ($E("scroll_star_list")) {
+                		var a = Core.Dom.getElementsByAttr(document.body, "popcontainer", "true");
+                        a.push($E("scroll_star_list"));
+                        scroll();
+                    }
+                    App.bindPopCard(a, b[scope.$pageid] || "")
+                }
+            },
+            onException: function(l) {
+                console.log(l);
+            },
+            returnType: ""
+        })
+    }
+
+App.star_key_sreach = function () {
+    Utils.Io.Ajax.request("/search/key", {
+        POST: {
+            s: $E("searchTxt").value
+        },
+        onComplete: function(m) {
+            if (m) {
+            	$E("tabContent").innerHTML = m;
+            	if ($E("scroll_star_list")) {
+            		var a = Core.Dom.getElementsByAttr(document.body, "popcontainer", "true");
+                    a.push($E("scroll_star_list"));
+                    scroll();                    
+                }
+                App.bindPopCard(a, "")
+            }
+        },
+        onException: function(l) {
+            console.log(l);
+        },
+        returnType: ""
+    })
+}

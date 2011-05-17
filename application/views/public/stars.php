@@ -1,14 +1,25 @@
-<ul id="scroll_star_list" class="jcarousel-skin-tango">
-    <!--{foreach from=$stars item=star}--> 
-    <li>
-        <div class="star_info">
-            <div class="head_pic"><a namecard="true" href="/home/profile/<!--{$star.uid}-->" uid="<!--{$star.uid}-->"><img src="<!--{$star.portrait}-->/50"></a> <a href="/home/profile/<!--{$star.uid}-->"><!--{$star.nick}--></a><br>
-                粉丝：
-                <!--{$star.followers_count}--></div>
-                <!-- 
-            <p><a class="btn3" onclick="App.followadd('<!--{$star.uid}-->',this,false,false,{'location':'searchhome','refer_sort':'search','refer_flag':'search_name'});return false;" href="javascript:void(0);"><span class="addnew">+</span>加关注</a><a onclick="App.followcancel('<!--{$star.uid}-->',this,'0','<!--{$star.nick}-->','他');return false;" href="javascript:void(0);" class="btn3">取消</a></p>
-             -->
+<div class="blk_29">
+	<div class="LeftBotton" id="turn_left_recom"></div> 
+     <div class="Cont" id="ISL_Cont_1">
+        <div class="ScrCont">
+            <ul id="scroll_star_list">
+                <!--{foreach from=$stars item=chunk}-->
+                <li>
+                    <!--{foreach from=$chunk item=star}-->
+                    <div class="star_info">
+                        <div class="head_pic">
+                            <a namecard="true" href="/home/profile/<!--{$star.uid}-->" uid="<!--{$star.uid}-->"><img src="<!--{$star.portrait|fix_portrait}-->"></a>
+                            <a namecard="true" uid="<!--{$star.uid}-->" href="/home/profile/<!--{$star.uid}-->" title="<!--{$star.nick}-->"><!--{$star.nick}--></a><br>粉丝：<!--{$star.followers_count}-->
+                        </div>
+                    </div>
+                    <!--{/foreach}-->
+                </li>
+                <!--{foreachelse}-->
+                	没有你要查找的信息!
+                <!--{/foreach}-->
+            </ul>
+            <div id="List2_1"></div>
         </div>
-    </li>
-    <!--{/foreach}--> 
-</ul>
+    </div>
+    <div class="RightBotton" id="turn_right_recom"></div>
+</div>

@@ -23,7 +23,7 @@ class Model_Collect extends ORM {
         catch(Database_Exception $e)
         {
             // Maybe because of the duplicated key 
-            return FALSE;
+            return $e;
         }
     }
 
@@ -42,7 +42,7 @@ class Model_Collect extends ORM {
             ->where('status', '=', 0)
             ->where('src', '=', $source)
             ->limit($limit)
-            ->offset($page - 1)
+            ->offset(max(0, $page - 1) * $limit)
             ->execute($this->_db)
             ->as_array();
     }

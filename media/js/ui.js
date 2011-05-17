@@ -16,6 +16,11 @@ $(document).ready(function(){
 		 return false;
 	});
 	
+  $(".wrap_bg_box").click(function() {
+		$(".mod_popup").fadeIn(200);
+		 return false;
+	});
+	
 	
 });
 

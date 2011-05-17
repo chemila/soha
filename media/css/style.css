@@ -3,6 +3,7 @@ a { text-decoration:none }
 a:hover { text-decoration:underline }
 #wrap { width:950px; margin:0 auto }
 #wrap_blog { width:800px; margin:0 auto }
+.wrap_bg_box{ width:500px; height:400px;  margin:120px auto 100px auto;display:block}
 .mxk_header { height:121px; position:relative; z-index:99 }
 .mxk_header_top { line-height:30px; padding:0 10px; color:#99849E }
 .mxk_header_top a { color:#FFF !important }

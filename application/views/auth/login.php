@@ -25,6 +25,7 @@ function selFunc(){
 </script>
 
 <div id="wrap_blog">
+  <a class="wrap_bg_box" href="javascript:onclick=login();"></a>
 	<p class="add"><a href="" class="add_btn">加入我们</a></p>
 </div>
 <div class="mod_popup" style="display:none;">
@@ -34,7 +35,7 @@ function selFunc(){
 			<div class="upload_popup_t"><a href="#" class="close"></a></div>
 			<p>请选择微博帐号登录:</p>
 			<div class="select">
-				<select  onchange='selFunc()' id="source">
+				<select onchange='selFunc()' id="source">
 					<option value="sina">新浪微博</option>
 					<option value="qq">腾讯微博</option>
 					<option value="sohu">搜狐微博</option>

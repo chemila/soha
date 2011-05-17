@@ -90,6 +90,13 @@ class Model_User extends Model {
 		}
     }
 
+    public function find()
+    {
+        $this->load();
+        
+        return $this;
+    }
+
     public function loaded()
     {
         return $this->_loaded;
@@ -108,7 +115,10 @@ class Model_User extends Model {
     {
         $result = Model_API::factory('user')->create($user_info);
 
-        return $this->uid = Arr::get($result, 'uid');
+        $uid = Arr::get($result, 'uid');
+
+        if($uid)
+            return $this->pk($uid);
     }
 
     public function is_star()
@@ -129,7 +139,7 @@ class Model_User extends Model {
         if( ! $result)
             return false;
 
-        return $result;
+        return $this->pk($result);
     }
 
     public function __get($column)
@@ -354,42 +364,47 @@ class Model_User extends Model {
 		return $this;
 	}
 
+    public function save_token(OAuth_Token_Access $access_token)
+    {
+        $token = new Model_User_Token($this->pk());
+        
+        if( ! $token->token)
+        {
+            $token->uid = $this->pk();
+        }
+        $token->token = $access_token->token;
+        $token->secret = $access_token->secret;
+        $token->created_at = time();
+
+        $token->save();
+
+        return $token->saved();
+    }
+
+    public function save_session(Session $session)
+    {
+        $model = new Model_Session($this->pk());
+
+        if( ! $model->sid)
+        {
+            $model->uid = $this->pk();
+        }
+
+        $model->sid = $session->id();
+        $model->updated_at = time();
+        if(isset($session->data))
+        {
+            $model->data = $session->data;
+        }
+        $model->save();
+
+        return $model->saved();
+    }
+
     public function get_access_token()
     {
-        return DB::select('*')
-            ->from('user_token')
-            ->where('uid', '=', $this->uid)
-            ->limit(1)
-            ->execute($this->_db)
-            ->as_array();
-    }
-
-    public function save_token($token, $secret)
-    {
-        $data = array(
-            'uid' => $this->uid,
-            'token' => $token,
-            'secret' => $secret,
-            'created_at' => time(),
-            'updated_at' => time(),
-        );
-
-        return DB::insert('user_token')
-            ->columns(array_keys($data))
-            ->values(array_values($data))
-            ->execute($this->_db);
-    }
-
-    public function has_access_token()
-    {
-        $record =  DB::select('id')
-            ->from('user_token')
-            ->where('uid', '=', $this->uid)
-            ->limit(1)
-            ->execute($this->_db)
-            ->as_array();
-
-        return ! empty($record);
+        $token = new Model_User_Token($this->pk());
+        return $token->find()->as_array();
     }
 
     public function attention_list($category = 0, $page = 1, $limit = 6)
@@ -427,7 +442,7 @@ class Model_User extends Model {
             'limit' => (int)$limit,
         );
 
-        $result = Model_API::factory('user')->attention_list($params);
+        $result = Model_API::factory('user')->followers_of_followers($params);
         
         return $result;
     }
@@ -467,8 +482,9 @@ class Model_User extends Model {
         return Model_API::factory('user')->get_attention_all_uid($params);
     }
 
-    public function inbox($limit = 20, $offset = 0)
+    public function inbox($page = 1, $limit = 30)
     {
+        $offset = max(0, $page - 1) * $limit;
         $inbox = new Model_Inbox;
         $inbox_cache = new model_cache_inbox($this);
 
@@ -492,8 +508,9 @@ class Model_User extends Model {
         return array_slice($cached + $saved, $offset, $limit);
     }
 
-    public function outbox($limit = 20, $offset = 0)
+    public function outbox($page = 1, $limit = 30)
     {
+        $offset = max(0, $page - 1) * $limit;
         $outbox = new Model_Outbox;
         $outbox_cache = new Model_Cache_Outbox($this);
         $cached = $outbox_cache->fetch($limit, $offset);
@@ -505,7 +522,7 @@ class Model_User extends Model {
 
         $records = $outbox->where('uid', '=', $this->pk())
             ->limit($limit)
-            ->offset($offset*$limit)
+            ->offset($offset)
             ->order_by('wid', 'desc')
             ->find_all()
             ->as_array('wid');
@@ -535,6 +552,9 @@ class Model_User extends Model {
         return $response['uid'];
     }
 
+    /*
+     * 我是否关注了别人
+     */
     public function is_followd_by($fuid)
     {
         $response = Model_API::factory('user')->attention_exist(array(
@@ -544,9 +564,40 @@ class Model_User extends Model {
 
         return $response;
     }
+    
+    /*
+     * 别人 有没有关注我
+     */
+    public function is_followd_of($fuid)
+    {
+        $response = Model_API::factory('user')->attention_exist(array(
+            'uid' => $fuid,
+            'fuid' => $this->pk()
+        ));
+
+        return $response;
+    }
 
     public function like($key)
     {
         return Model_API::factory('user')->like(array('key' => $key));
+    }
+
+    public function extend(Model_Star $star)
+    {
+        if( ! $this->is_star())
+        {
+            return false;
+        }
+
+        $star->find();
+        $this->load();
+
+        $star_info = $star->as_array();
+        $base_info = $this->as_array();
+
+        $data = array_merge($base_info, $star_info);
+
+        return $this->_load_values($data);
     }
 }

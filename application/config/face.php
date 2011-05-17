@@ -1,6 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
 return array(
+    'default' => '/media/img/face/sweat.gif',
 	'照相机'=>'/media/img/face/camera_thumb.gif',
 	'自行车'=>'/media/img/face/zxc_thumb.gif',
 	'微风'=>'/media/img/face/wind_thumb.gif',

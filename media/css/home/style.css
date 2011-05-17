@@ -100,13 +100,21 @@ a, a:link, a:visited{ color:#000;}
 .blog_main { float:left; width:600px;  }
 
 .news{ width:560px; height:240px; padding:0 0 0 20px;}
-.news_img{ float:left; display:inline; margin-right:20px; width:192px; height:199px; padding:16px 0 0 0; text-align:center; background:url(/media/img/img_bg.png)}
-.news_neme{ float:left; width:210px; white-space:nowrap; overflow:hidden}
+.news_img{ float:left; display:inline; margin-right:20px; text-align:center;position:relative; z-index:10; width:215px; padding-top:17px; height:198px; }
+.news_img .alph_img{ width:215px; height:215px; display:block; position:absolute; left:0; top:0; background:url(/media/img/img_bg_new.png) no-repeat;}
+.news_neme{ float:left; width:310px; overflow:hidden}
 .news_neme h2{ font-family:黑体; margin:20px 0}
-.news_neme dl{ line-height:22px;}
+.news_neme dl{ line-height:22px;padding-top:10px;}
 .news_neme dl dt{ color:#92168B; font-size:14px; font-weight:700}
-.news_neme dl dd{ background:url(/media/img/dot.png) left center no-repeat; padding-left:10px;}
+.news_neme dl dd{ background:url(/media/img/dot.png) left center no-repeat; padding-left:10px;white-space: nowrap;}
 .news_neme dl dd a{ color:#999999 !important}
+.news_neme h4 {
+color: #92168B;
+font-size: 14px;
+font-weight: 700;
+padding:10px 0 5px 0;
+}
+.loc_btn_new01{ margin:23px 0 0 5px;}
 .news .btn{ float:left; padding-top:20px;}
 .news .btn li{ padding-bottom:10px}
 .news .btn li a{ color:#5D5D5D}

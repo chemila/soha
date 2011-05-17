@@ -38,7 +38,7 @@ return array(
         'required' => array('index', 'delete', 'add'),
     ),
     'weibo' => array(
-        'skipped' => array('comment_index'),
+        'skipped' => array(),
         'required' => array(),
     ),
 );

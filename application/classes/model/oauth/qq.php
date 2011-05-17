@@ -2,23 +2,22 @@
 
 class Model_OAuth_QQ extends Model_OAuth {
     public $name = 'qq';
-
     public $domain = 'http://open.t.qq.com';
 
     public function url_public_timeline()
     {
         $this->params = array(
-            'pos' => Arr::get($this->params, 'pos', 0),
-            'reqnum' => Arr::get($this->params, 'reqnum', 10),
-            'format' => Arr::get($this->params, 'format', 'json'),
+            'pos' => Arr::get($params, 'pos', 0),
+            'reqnum' => Arr::get($params, 'reqnum', 10),
+            'format' => Arr::get($params, 'format', 'json'),
         );
 
         return $this->domain.'/api/statuses/public_timeline?f=1';
     }
 
-    public function parse_public_timeline($response)
+    public function parse_public_timeline()
     {
-        return json_decode($response, true);
+        return $this->response;
     }
 
     public function url_user_info(Array $params = NULL)
@@ -44,36 +43,114 @@ class Model_OAuth_QQ extends Model_OAuth {
         return $url;
     }
 
-    public function parse_user_info($response)
+    public function parse_user_info()
     {
-        $tmp = json_decode($response, true);
-        $data = $tmp['data'];
-        unset($tmp);
+        if( ! isset($this->response['data']))
+            return;
 
-        if(empty($data))
-        {
-            die($response);
-        }
+        $this->response = $this->response['data'];
 
         return array(
-            'suid' => $data['name'],
+            'suid' => $this->response['name'],
             'source' => $this->name,
-            'nick' => $data['nick'],
-            'domain_name' => $data['name'],
-            'friends_count' => $data['idolnum'],
-            'followers_count' => $data['fansnum'],
-            'statuses_count' => $data['tweetnum'],
-            'portrait' => $data['head'],
-            'gender' => $data['sex'],
+            'nick' => $this->response['nick'],
+            'domain_name' => $this->response['name'],
+            'friends_count' => $this->response['idolnum'],
+            'followers_count' => $this->response['fansnum'],
+            'statuses_count' => $this->response['tweetnum'],
+            'portrait' => $this->response['head'],
+            'gender' => $this->response['sex'],
             /**
              * TODO: convert the *_code to names
-            'country' => $data['country_code'],
-            'province' => $data['province_code'],
-            'city' => $data['city_code'],
+            'country' => $this->response['country_code'],
+            'province' => $this->response['province_code'],
+            'city' => $this->response['city_code'],
             **/
-            'intro' => $data['introduction'],
-            'location' => $data['location'],
-            'verified' => $data['verifyinfo'],
+            'intro' => $this->response['introduction'],
+            'location' => $this->response['location'],
+            'verified' => $this->response['verifyinfo'],
         );
     }
+
+    public function url_friendships_create(Array $params)
+    {
+        if( ! isset($params['unique_id']))
+        {
+            throw new Model_OAuth_Exception('Invalid params,unique_id is required. :params', 
+                    array(':params' => core::debug($params)));
+        }
+
+        $this->params = array(
+            'format' => 'json',
+            'name' => $params['unique_id'],
+        );
+
+        //http://open.t.qq.com/api/friends/add
+        $this->request_method = self::REQUEST_METHOD_POST;
+        return $this->domain.'/api/friends/add'; 
+    }
+
+    public function parse_friendships_create()
+    {
+        return ('ok' === $this->response['msg']);
+    }
+
+    public function url_home_timeline(Array $params)
+    {
+        $this->params = array(
+            'reqnum' => Arr::get($params, 'count', 20),
+            'pageflag' => Arr::get($params, 'page', 0),
+            //'pagetime' => Arr::get($params, 'since_id', 0),
+            'format' => 'json',
+        );
+
+        //http://open.t.qq.com/api/statuses/home_timeline
+        return $this->domain.'/api/statuses/home_timeline';
+    }
+
+    public function parse_home_timeline()
+    {
+        if( ! isset($this->response['data']['info']))
+            return false;
+
+        $statuses = array();
+        foreach($this->response['data']['info'] as $data)
+        {
+            $status = $this->parse_status($data);
+
+            if($data['source'])
+            {
+                $status['root'] = $this->parse_status($data['source']);
+            }
+            $statuses[] = $status;
+        }
+        
+        return $statuses;
+    }
+
+    protected function parse_status($data)
+    {
+        $status = array(
+            'sid' => $data['id'].'',
+            'timeline' => $data['timestamp'],
+            'content' => $data['text'],
+            'source' => $this->name,
+            'uid' => $data['name'],
+        );
+
+        if( ! empty($data['image']))
+        {
+            $status['type'] = Model_Weibo::TYPE_IMAGE;
+            $status['media_data'] = serialize(array(
+                'img' => array(
+                    'src' => $data['image'][0].'/2000',
+                    'small' => $data['image'][0].'/160',
+                    'middle' => $data['image'][0].'/460',
+                ),  
+            ));
+        }
+
+        return $status;
+    }
+
 }

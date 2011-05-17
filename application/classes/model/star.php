@@ -9,15 +9,35 @@ class Model_Star extends ORM {
     const TAG_GRASS     = 4;
     const TAG_OTHERS    = 8;
 
-    public function hot($page = 1, $limit = 30)
+    public function hot($limit = 30, $page = 1)
     {
-        return $this->select('*')
-            ->where('uid', '!=', 0)
+        return $this->where('uid', '!=', 0)
+            ->order_by('followers_count', 'desc')
+            ->order_by('statuses_count', 'desc')
             ->limit($limit)
-            ->offset($page - 1)
+            ->offset(max(0, $page - 1) * $limit)
             ->find_all()
             ->as_array();
-
+    }
+    
+    public function search_key($nick, $limit=30)
+    {
+    	 return $this->where('nick', ' like ', $nick."%")
+    	 	->limit($limit)
+            ->order_by('followers_count', 'desc')
+            ->order_by('statuses_count', 'desc')
+            ->find_all()
+            ->as_array();
+    }
+    
+    public function search_en_prefix($key, $limit=120)
+    {
+    	  return $this->where('en_prefix', '=', $key)
+    	  	->limit($limit)
+            ->order_by('followers_count', 'desc')
+            ->order_by('statuses_count', 'desc')
+            ->find_all()
+            ->as_array();
     }
 
     public function extend(Model_User $user)
@@ -28,26 +48,11 @@ class Model_Star extends ORM {
         $user_info = $user->as_array();
         $base_info = $this->as_array();
 
-        $data = Arr::overwrite($base_info, $user_info);
-        return $this->values($data);
+        $data = array_merge($user_info, $base_info);
+
+        return $this->_load_values($data);
     }
 
-    public function overwrite(Model_User $user)
-    {
-        $user->load();
-        $this->_load();
-
-        $user_info = $user->as_array();
-        $base_info = $this->as_array();
-
-        $data = Arr::overwrite($user_info, $base_info);
-        return $this->values($data);
-    }
-
-    /**
-     * Insert or update star info locally
-     * 
-     */
     public function insert_or_update(Array $info)
     {
         $default = array(
@@ -91,5 +96,24 @@ class Model_Star extends ORM {
             ->limit($limit)
             ->offset($offset)
             ->find_all();
+    }
+
+    public function check_exist($suid, $src = '1')
+    {
+        return $this->where('suid', '=', $suid)
+            ->and_where('source', '=', $src)
+            ->limit(1)
+            ->find()
+            ->pk();
+    }
+
+    public function get_observer($source)
+    {
+        if($this->observer)
+            return $this->observer;
+
+        $config = Core::config('admin')->get($source);
+
+        return $config[0];
     }
 }

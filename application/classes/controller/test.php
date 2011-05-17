@@ -122,14 +122,14 @@ class Controller_Test extends Controller {
 
     public function action_orm()
     {
-        $collect = Model_Collect::instance('list');
-
-        var_dump($collect->find_all()->as_array());
+        $weibo = new Model_Weibo(10003595);
+        var_dump($weibo->root->id);
     }
 
     public function action_user()
     {
         $user = new Model_User(1003321);
+        var_dump($user->as_array());
 
         $user->load();
         $user->nick = 'test';
@@ -168,7 +168,7 @@ class Controller_Test extends Controller {
         
         $version = $weibo->save_sync();
 
-        $cache = cache::instance();
+        $cache = cache::instance('memcache');
 
         $record = $cache->get('weibo:'.$version);
         var_dump($record);
@@ -238,8 +238,8 @@ class Controller_Test extends Controller {
 
     public function action_weibo()
     {
-        $weibo = new model_weibo(110);
-        $res = $weibo->ats();
+        $weibo = new model_weibo(10003655);
+        $res = $weibo->extend()->as_array();
         var_dump($res);
     }
 
@@ -247,5 +247,127 @@ class Controller_Test extends Controller {
     {
         $res = Model_Weibo_Image::get_abs_path('test.png', 'small');
         var_dump($res);
+    }
+
+    public function action_delete()
+    {
+        $id = $_GET['id'];
+
+        $weibo = new Model_Weibo($id);
+        $weibo->delete();
+
+        var_dump($weibo->as_array());
+    }
+
+    public function action_star()
+    {
+        $star = new Model_Star(array('suid' => 1252373132, 'source' => 'sina'));
+
+        var_dump($star->pk());
+    }
+
+    public function action_trash()
+    {
+        $outbox = new Model_Outbox;
+        $res = $outbox->clear_trash();
+
+        var_dump($res);
+    }
+
+    public function action_oauth_friendship()
+    {
+        $src = Arr::get($_GET, 'src', 'sina');
+        $token = Core::config('admin')->offsetGet('oauth_'.$src);
+        $oauth = new OAuth($src, $token);
+        // Fetch userinfo accoss oauth
+        $model_oauth = Model_OAuth::factory($oauth);
+        $user_info = $model_oauth->user_info();
+        var_dump($user_info);
+        $data = $model_oauth->friendships_create(array('unique_id' => '1087482387'), 'post');
+        var_dump($data);
+    }
+
+    public function action_observe()
+    {
+        $observe = new Model_User_Observe(1002744);
+        if( !$observe->admin_id)
+        {
+            $observe->uid = 1002744;
+        }
+        $observe->admin_id = 3123;
+        $observe->source = 'sina';
+        $observe->created_at = time();
+        $observe->save();
+
+        var_dump($observe->as_array());
+    }
+
+    public function action_collect_weibo()
+    {
+        $status = array(
+            'created_at' => time(),        
+            'uid' => 1002744,
+            "text"=>"一个存储系统～～～ 姑且认为是标题党",
+            "truncated"=>false,
+            "retweeted_status"=> array(
+                'uid' => 1003321,
+                "created_at"=>time(),
+                "text"=>"一个存储系统，从高到底设计非常人性，太有爱了！（Via：http://sinaurl.cn/hb5abi）",
+                "bmiddle_pic"=>"http://ww2.sinaimg.cn/bmiddle/69b7fcafgw6dc2pwus9ekg.gif",
+                "original_pic"=>"http://ww2.sinaimg.cn/large/69b7fcafgw6dc2pwus9ekg.gif",
+                "truncated"=>false,
+                "in_reply_to_status_id"=>"",
+                "in_reply_to_screen_name"=>"",
+                "geo"=>null,
+                "favorited"=>false,
+                "thumbnail_pic"=>"http://ww2.sinaimg.cn/thumbnail/69b7fcafgw6dc2pwus9ekg.gif",
+                "in_reply_to_user_id"=>"",
+                "id"=>4117314145,
+                "source"=>"<a href=\"http://t.sina.com.cn\" rel=\"nofollow\">新浪微博</a>"
+            ),
+            "in_reply_to_status_id"=>"",
+            "in_reply_to_screen_name"=>"",
+            "geo"=>null,
+            "favorited"=>false,
+            "in_reply_to_user_id"=>"",
+            "id"=>4120818179,
+            "source"=>"<a href=\"http://t.sina.com.cn\" rel=\"nofollow\">新浪微博</a>",
+        );
+
+        $weibo = new model_collect_weibo;
+        $weibo->fetch($status, '1');
+
+        var_dump($weibo->as_array());
+    }
+
+    public function action_has_many()
+    {
+        $shadow = new model_collect_weibo(9);
+        $children = $shadow->children;
+
+        $res = $children->find_all();
+        foreach($res as $child)
+        {
+            var_dump($child->pk());
+        }
+        //var_dump($res);die;
+    }
+
+    public function action_queue_weibo()
+    {
+        $weibo_shadow = new Model_Collect_Weibo;
+        $shadows = $weibo_shadow->todo(0, 1, 2);
+
+        foreach($shadows as $shadow)
+        {
+            $weibo = new Model_Weibo;
+            $weibo->save_shadow($shadow);
+        }
+    }
+
+    public function action_queue()
+    {
+        $inbox = new Model_Inbox;
+        $inbox->pull(2);
     }
 } // End Welcome

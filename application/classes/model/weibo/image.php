@@ -10,13 +10,13 @@ class Model_Weibo_Image extends Model_Weibo {
     const MIDDLE_WIDTH = 440;
     const MIDDLE_HEIGHT = 314;
 
-    public function get_media_data()
+    public function get_media_data($type = "src")
     {
         $this->_load();
         $data = unserialize($this->media_data);
 
         return array(
-            'src' => $data['image']['src'],
+            'src' => $data['img']['src'],
         );
     }
 
@@ -52,7 +52,7 @@ class Model_Weibo_Image extends Model_Weibo {
         }
 
         $this->media_data = serialize(array(
-            'image' => array(
+            'img' => array(
                 'src' => $src,
             ),                
         ));

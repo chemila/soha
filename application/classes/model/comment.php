@@ -17,94 +17,44 @@ class Model_Comment extends Model_QORM {
         ),
     );
 
-    public function list_by_user_count($uid)
+    public function with_user()
     {
-    	$comments_count = $this
-        	->where("uid","=", $uid)
-            ->find_all()
-            ->as_array();
-        
-        return $comments_count;
+        $user = new Model_User($this->uid);
+        $this->user = $user->as_array();
+
+        return $this;
     }
-    
+
+    public function with_weibo()
+    {
+        $this->weibo->find($this->wid);
+        $this->weibo->with_user();
+
+        return $this;
+    }
+
+    public function extend()
+    {
+        $this->with_user()->with_weibo();
+
+        return $this;
+    }
+
     public function list_by_user($uid, $page = 1, $limit = 20)
     {
-        $comments = $this
-        	->where("uid","=", $uid)
-            ->offset($page - 1)
+        return $this->where("uid","=", $uid)
+            ->offset(max(0, $page - 1) * $limit)
             ->limit($limit)
-            ->order_by('created_at', 'desc')
-            ->find_all()
-            ->as_array();
-
-        foreach($comments as & $comment)
-        {
-            self::extend_with_weibo($comment);
-        }
-
-        return $comments;
+            ->order_by('id', 'desc')
+            ->find_all();
     }
 
-    public static function extend_with_weibo(& $comment) 
+    public function replyed_by_user($uid, $page = 1, $limit = 20)
     {
-        $wid = $comment['wid'];
-        
-        $weibo = new Model_Weibo($wid);
-        
-        $comment['weibo']  = array(
-            'content' => $weibo->content,
-            'user' => $weibo->get_user(array('uid', 'nick', 'portrait'))->as_array(),
-        );
-    }
-    
-    public static function extend_reply_user(& $comment) 
-    {
-        $uid = $comment['uid'];
-        
-        $user = new Model_User($uid);
-        $user->load();
-        $userinfo = $user->as_array();
-        
-        $comment['reply_user']  = array("user"=>$userinfo);
-    }
-    
-    public function list_by_wid($uid, $page = 1, $limit = 10)
-    {
-    	$comments = $this
-    		->join("weibo")
-    		->on("wid", "=", "weibo.id")
-        	->where("weibo.uid","=", $uid)
-            ->offset($page - 1)
+        return $this->where("rid","=", $uid)
+            ->offset(max(0, $page - 1) * $limit)
             ->limit($limit)
-            ->order_by('created_at', 'desc')
-            ->find_all()
-            ->as_array();
-        
-        foreach($comments as & $comment)
-        {
-            self::extend_with_weibo($comment);
-            self::extend_reply_user($comment);
-        }  
-          
-        return $comments;
-    }
-    
-    public function add_comment($data)
-    {
-		$content = Arr::get($data, "content", '');
-		$reply_uid = Arr::get($data, "reply_uid", '');
-		$wid = Arr::get($data, "wid", '');
-		
-		if(empty($content) || empty($reply_uid) || empty($wid))
-			return ;
-		
-		$this->uid = $reply_uid;
-		$this->content = $content;
-		$this->created_at = time();
-		$this->wid = $wid;
-		
-		$this->save();
-		
-		return true;
+            ->order_by('id', 'desc')
+            ->find_all();
     }
 }

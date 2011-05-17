@@ -1,20 +1,27 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Weibo extends Controller_Authenticated {
-    //TODO: implement message queue and cache to optimize the speed
 
     public function action_show()
     {
         $id = $this->request->param('id');
         $page = $this->request->param('page', Arr::get($_GET, 'page', 1));
+
         $weibo = new Model_Weibo($id);
+        $user = $weibo->get_user();
+        $this->view = new View_Smarty('smarty:weibo/show');
 
         $comments = $weibo->get_comments($page, 20);
+        $count = $weibo->count_last_query();
 
-        $this->view = new View_Smarty('smarty:weibo/comment');
-
-        $this->view->weibo = $weibo->as_array();
-        $this->view->comments = $comments;
+        $this->view->feeds = array($weibo->extend()->as_array());
+        $this->view->comments = $weibo->extend_collection($comments);
+        $this->view->user = $user->as_array();
+        $this->view->current_user = $this->user->pk();
+        $this->view->followers = $user->attention_list(1);
+        $this->view->general_followers = $user->attention_list(0);
+        $this->view->friends = $user->friends_list();
+        $this->view->followers_of_friends = $user->followers_of_friends();
 
         $this->request->response = $this->view->render();
     }
@@ -24,6 +31,11 @@ class Controller_Weibo extends Controller_Authenticated {
         $wid = Arr::get($_POST, 'mid', Arr::get($params, 'wid'));
         $content = Arr::get($_POST, 'reason', Arr::get($params, 'content'));
         $comments_to = Arr::get($_POST, 'comments_to', Arr::get($params, 'comments_to', array()));
+
+        if( ! $content or strlen($content) > 420)
+        {
+            $this->json_exit('CX0010');
+        }
 
         // TODO: forward in original platform
         $current_weibo = new Model_Weibo($wid);
@@ -36,13 +48,13 @@ class Controller_Weibo extends Controller_Authenticated {
         $weibo->content = $content;
         $weibo->created_at = time();
         $weibo->updated_at = time();
-        $weibo->rid = $current_weibo->is_root() ? $current_weibo->pk() : ((int)$current_weibo->root->pk());
+        $weibo->rid = $current_weibo->is_root() ? $current_weibo->pk() : ((int)$current_weibo->rid);
         $weibo->save();
         // TODO: save sync 
         //$cache_version = $weibo->save_sync();
         if( ! $weibo->saved())
         {
-            die(json_encode(array('code' => 'CC0701')));
+            $this->json_exit('CC0701');
         }
 
         if($ats = $weibo->ats())
@@ -51,7 +63,7 @@ class Controller_Weibo extends Controller_Authenticated {
             {
                 $atme = new Model_Atme;
 
-                $atme->wid = $weib->pk();
+                $atme->wid = $weibo->pk();
                 $atme->uid = $at;
                 $atme->push();
             }
@@ -85,7 +97,8 @@ class Controller_Weibo extends Controller_Authenticated {
         }
 
         $this->view = new View_Smarty('smarty:weibo/feed');
-        $this->view->weibo = $weibo->extend();
+        $this->view->weibo = $weibo->extend()->as_array();
+        $this->view->current_user = $this->user->pk();
 
         $json = array(
             'code' => 'A00006',
@@ -99,11 +112,11 @@ class Controller_Weibo extends Controller_Authenticated {
 
     public function action_create()
     {
-        $content = Arr::get($_REQUEST, 'content');
+        $content = Arr::get($_POST, 'content');
 
         if( ! $content or strlen($content) > 420)
         {
-            die(json_encode(array('code' => 'CC0701')));
+            $this->json_exit('CC0701');
         }
 
         $type = 0;
@@ -131,7 +144,7 @@ class Controller_Weibo extends Controller_Authenticated {
         $weibo->uid = $this->user->pk();
         $weibo->timeline = time();
         $weibo->type = $type;
-        $weibo->src = 0;
+        //$weibo->src = 0;
         $weibo->created_at = time();
         $weibo->updated_at = time();
 
@@ -142,14 +155,14 @@ class Controller_Weibo extends Controller_Authenticated {
         }
         catch(Model_Weibo_Exception $e)
         {
-            die(json_encode(array('code' => 'CC0701')));
+            $this->json_exit('CC0701');
         }
 
 		$weibo->save();
 
 		if( ! $weibo->saved())
 		{
-            die(json_encode(array('code' => 'CC0701')));
+            $this->json_exit('CC0701');
 		}
 
         if($ats = $weibo->ats())
@@ -173,7 +186,8 @@ class Controller_Weibo extends Controller_Authenticated {
         $this->user->save();
 
 		$this->view = new View_Smarty('smarty:weibo/feed');
-        $this->view->weibo = $weibo->extend();
+        $this->view->weibo = $weibo->extend()->as_array();
+        $this->view->current_user = $this->user->pk();
 
         $json = array(
             'code' => 'A00006',
@@ -188,16 +202,16 @@ class Controller_Weibo extends Controller_Authenticated {
     public function action_comment_index()
     {
         $wid = Arr::get($_REQUEST, 'resId');
-
+		$this->view = new View_Smarty('smarty:weibo/comment');
         $weibo = new Model_Weibo($wid);
         $comments = $weibo->get_comments();
         $count = $weibo->comments->count_all();
-
+        
         $comments_to = array();
 
         if( ! $weibo->is_root())
         {
-            $uid = $weibo->root->uid;
+            $uid = $weibo->root->find($weibo->rid)->uid;
             $original_user = new Model_User($uid);
             $original_user->load();
 
@@ -207,10 +221,10 @@ class Controller_Weibo extends Controller_Authenticated {
             }
         }
         
-        $this->view = new View_Smarty('smarty:weibo/comment');
+        $this->view->current_user = $this->user->pk();
 
         $this->view->weibo = $weibo->as_array();
-        $this->view->comments = $comments;
+        $this->view->comments = $weibo->extend_collection($comments);
         $this->view->comments_to = $comments_to;
         $this->view->count = $count;
 
@@ -218,7 +232,7 @@ class Controller_Weibo extends Controller_Authenticated {
             'code' => 'A00006',
             'data' => $this->view->render(),
         );
-
+		
         $this->request->response = json_encode($json);
     }
 
@@ -226,9 +240,9 @@ class Controller_Weibo extends Controller_Authenticated {
     {
         $wid = Arr::get($_POST, 'resourceId');
         $content = Arr::get($_POST, 'content');
-        $forward = Arr::get($_POST, 'forward', false);
-        $comment_to = Arr::get($_POST, 'cid');
-        $reply_to = Arr::get($_POST, 'cid', false);
+        $forward = Arr::get($_POST, 'forward');
+        $reply_to = Arr::get($_POST, 'replyUid');
+        //$comment_to = Arr::get($_POST, 'cid');
 
         $comment = new Model_Comment;
         $weibo = new Model_Weibo($wid);
@@ -248,13 +262,13 @@ class Controller_Weibo extends Controller_Authenticated {
 
         if( ! $comment->saved())
         {
-            die(json_encode(array('code' => 'CC0701')));
+            $this->json_exit('CC0701');
         }
 
         // Increase comment count at the same time
+        $weibo->reload();
         $weibo->comment_count ++;
-        // Push weibo queue
-        $weibo->push();
+        $weibo->save();
 
         //TODO: forward a weibo at the same time
         if($forward)
@@ -273,9 +287,10 @@ class Controller_Weibo extends Controller_Authenticated {
         
         $this->view = new View_Smarty('smarty:weibo/comment_reply');
 
+        $comment->user = $this->user->as_array();
         $this->view->weibo = $weibo->as_array();
         $this->view->comment = $comment->as_array();
-        $this->view->comment['user'] = $this->user->as_array();
+        $this->view->current_user = $this->user->pk();
 
         $json = array(
             'code' => 'A00006',
@@ -287,41 +302,60 @@ class Controller_Weibo extends Controller_Authenticated {
 
     public function action_comment_delete()
     {
-        $cid = Arr::get($_REQUEST, 'cid');
+        $cid = Arr::get($_REQUEST, 'commentId');
+        $uid = Arr::get($_REQUEST, 'resUid');
 
         $comment = new Model_Comment($cid);
         $code = 'CC0701';
-
-        $weibo = $comment->weibo;
-        $weibo->find();
-
-        //if($weibo->remove('comments', $comment))
-        if($comment->delete())
+        
+		$weibo = $comment->weibo;
+        
+		//if($weibo->remove('comments', $comment))
+        if($uid == $this->user->pk() and $comment->delete())
         {
+            $weibo->comment_count = max(0, $weibo->comment_count - 1);
+            $weibo->save();
+
             $code = 'A00006';
         }
 
-        $json = array(
-            'code' => $code,
-        );
-
-        die(json_encode(array('code' => $code)));
+        $this->json_exit($code);
     }
 
     public function action_delete($id = NULL)
     {
-        $wid = $this->request->param('wid', $id);
+        $wid = $this->request->param('id', Arr::get($_REQUEST, 'mid', $id));
 
-        $weibo = new Model_Weibo($wid);
-        $code = 'CC0701';
+        $code = 'A00006';
 
-        if($weibo->delete() and $weibo->comments->delete_all())
+        try
         {
-            // Remove all comments
-            $code = 'A00006';
+            $weibo = new Model_Weibo($wid);
+
+            $outbox_cache = new Model_Cache_Outbox($this->user);
+            $outbox_cache->remove($wid)->pull($weibo->ats());
+            
+            $inbox = new Model_Inbox;
+            $outbox = new Model_Outbox;
+            $atme = new Model_Atme;
+
+            $inbox->move_to_trash(array('wid' => $wid));
+            $outbox->move_to_trash(array('wid' => $wid));
+            $atme->move_to_trash(array('wid' => $wid));
+
+            $weibo->delete();
+
+            $this->user->load();
+            $this->user->statuses_count --;
+            $this->user->save();
+        }
+        catch(Exception $e)
+        {
+            echo $e->getMessage();
+            $code = 'CC0701';
         }
 
-        die(json_encode(array('code' => $code)));
+        $this->json_exit($code);
     }
 
     public function action_upload()
@@ -335,5 +369,10 @@ class Controller_Weibo extends Controller_Authenticated {
 
             $this->request->response = $this->view->render();
         }
+    }
+
+    protected function json_exit($code = 'A00006')
+    {
+        die(json_encode(array('code' => $code)));
     }
 }

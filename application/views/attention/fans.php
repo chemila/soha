@@ -9,7 +9,7 @@
 				<ul class="user_list" id="feed_list">
 				<!--{foreach from=$attentions item=attention key=index}--> 
 					<li>
-						<div class="user_info clearfix"><!--{if $show_delete}--><a onclick="App.followcancel('<!--{$attention.uid}-->',this,1,'<!--{$attention.nick}-->','她');return false;" href="javascript:void(0);" class="btn_1">移除</a><!--{/if}--><a href="/home/profile/<!--{$attention.uid}-->" class="user_img"><img src="<!--{$attention.portrait}-->" uid="<!--{$attention.uid}-->" namecard="true"></a> <a href="/home/profile/<!--{$attention.uid}-->" uid="<!--{$attention.uid}-->" namecard="true"><!--{$attention.nick}--></a>
+						<div class="user_info clearfix"><!--{if $show_delete}--><a onclick="App.followcancel('<!--{$attention.uid}-->',this,1,'<!--{$attention.nick}-->','她');return false;" href="javascript:void(0);" class="btn_1">移除</a><!--{/if}--><a href="/home/profile/<!--{$attention.uid}-->" class="user_img"><img src="<!--{$attention.portrait|fix_portrait}-->" uid="<!--{$attention.uid}-->" namecard="true"></a> <a href="/home/profile/<!--{$attention.uid}-->" uid="<!--{$attention.uid}-->" namecard="true"><!--{$attention.nick}--></a>
 							<p><!--{$attention.location}-->&nbsp;&nbsp;&nbsp;添加时间: <!--{$attention.datetime|date_format:"%Y-%m-%d %H:%I"}--></p>
 						</div>
 					</li>

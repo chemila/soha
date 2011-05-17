@@ -3,7 +3,6 @@
 <div id="wrap_blog">
     <!--{include file="header/top.php"}-->
     <div class="main_t"></div>
-    <div class="main_leftimg"></div>
 	<div class="main_blog clearfix">
         <div class="blog_sidebar">
         <!--{include file="header/user.php"}--> 
@@ -13,7 +12,9 @@
 	</div>
     <div class="MIB_600"> 
         <h2 class="new_title_ml" style="margin-top:10px;">
-            <a href="/comment/me">提到我的微博</a><b class="mb_line_r">|</b><b>发出的评论</b>
+            <a href="/comment/atme" class="current">回复我的评论</a>
+            <b class="mb_line_r">|</b>
+            <a href="/comment">发出的评论</a>
         </h2>	
     </div>
     <div class="commentsmanage MIB_linkal">
@@ -25,6 +26,7 @@
         </div>
          -->
     </div>
+    <div style="clear:both;"></div>
 	<div class="pages"><!--{pagination total=$count}--></div>
 </div>
 <!--{include file="footer.php"}--> 

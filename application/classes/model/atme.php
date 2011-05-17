@@ -11,6 +11,7 @@ class Model_Atme extends Model_QORM {
     public function by_user($uid)
     {
         $records = $this->where('uid', '=', $uid)
+            ->order_by("id", "desc")
             ->find_all()
             ->as_array('wid');
 

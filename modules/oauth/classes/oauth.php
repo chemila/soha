@@ -51,10 +51,10 @@ class OAuth extends Kohana_OAuth {
 
     public function access_token($verifier = NULL) 
     {
-        if(false and $this->access_token)
+        if($this->access_token)
             return $this->access_token;
 
-        if(false and $access_token = OAuth_Token::session_factory('access', $this->name))
+        if($access_token = OAuth_Token::session_factory('access', $this->name))
             return $this->access_token = $access_token;
 
         $request_token = OAuth_Token::session_factory('request', $this->name);

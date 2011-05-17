@@ -18,7 +18,13 @@ class Model_Favorite extends ORM
 	
     public function list_favorite($uid, $page = 1, $limit = 20, & $count)
     {
-    	$my_favorite = $this->where("uid", "=", $uid)->order_by("id", "desc")->limit($limit)->offset($page - 1)->find_all()->as_array();
+    	$my_favorite = $this->where("uid", "=", $uid)
+                ->order_by("id", "desc")
+                ->limit($limit)
+                ->offset(max(0, $page - 1) * $limit)
+                ->find_all()
+                ->as_array();
+
         $count = $this->count_last_query();
         $model_weibo = Model::factory("weibo");
         

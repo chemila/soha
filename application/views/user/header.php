@@ -1,6 +1,6 @@
 <div class="user_head">
     <div class="picborder_r fl">
-        <a href="/home/profile/<!--{$user.uid}-->"><img title="<!--{$user.nick}-->" src="<!--{$user.portrait}-->"></a>
+        <a href="/home/profile/<!--{$user.uid}-->"><img title="<!--{$user.nick}-->" src="<!--{$user.portrait|fix_portrait}-->"/></a>
     </div>
     <div class="fl">
         <p class="f14">

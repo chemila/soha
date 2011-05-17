@@ -1,11 +1,8 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Error extends Controller {
-
     public $info = array();
-
     public $title = '';
-
     public $template_dir = 'error';
 
     public function before()

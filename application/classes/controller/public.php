@@ -5,20 +5,19 @@ class Controller_Public extends Controller
     public function action_index()
     {
         $page = $this->request->param('page', Arr::get($_GET, 'page', 1));
+        $limit = 30;
 
-        // Init view cache modules etc.
         $this->view = new View_Smarty('smarty:public/index');
+        $weibo = new Model_Weibo;
         $this->get_star_caches();
 
-        $model_weibo = new model_weibo;
+        $news = $weibo->star_news($page, $limit);
+        $this->view->count = $weibo->count_last_query();
+        $this->view->perpage = $limit;
 
-        $stars_news = $model_weibo->star_news($page, 20);
-        $this->view->count = $model_weibo->count_last_query();
-
-        $hot_commented = $model_weibo->hot_commented($page, 20);
-
-        $this->view->stars_news = $stars_news;
-        $this->view->hot_commented = $hot_commented;
+        $hot = $weibo->hot_commented($page, $limit);
+        $this->view->stars_news = $weibo->extend_collection($news);
+        $this->view->hot_commented = $weibo->extend_collection($hot);
 
         $this->request->response = $this->view->render();
     }
@@ -28,9 +27,9 @@ class Controller_Public extends Controller
         $model_star = new model_star;
         $this->cache = Cache::instance('memcache');
 
-        if(true or ! $stars = $this->cache->get('star:hot'))
+        if( ! $stars = $this->cache->get('star:hot'))
         {
-            $stars = $model_star->hot();
+            $stars = $model_star->hot(90);
             $this->cache->set('star:hot', $stars, 24*3600);
         }
 
@@ -40,7 +39,7 @@ class Controller_Public extends Controller
             $this->cache->set('star:count_all', $stars_count_all, 3600);
         }
 
-        $this->view->stars = $stars;
+        $this->view->stars = array_chunk($stars, 3);
         $this->view->stars_count_all = $stars_count_all;
     }
 }

@@ -2,7 +2,7 @@
 <!--{foreach from=$comments item=comment}--> 
 <li onmouseout="App.hideExtendBtn(this);return false" onmouseover="App.showExtendBtn(this);return false" class="commentsCell MIB_linedot_l" id="<!--{$comment.id}-->">
     <div class="commentsTxt">
-        <a href="/home/profile/<!--{$comment.weibo.user.uid}-->"><img src="<!--{$comment.weibo.user.portrait}-->" uid="<!--{$comment.weibo.user.uid}-->" namecard="true" class="picborder_l"></a>
+        <a href="/home/profile/<!--{$comment.weibo.user.uid}-->"><img src="<!--{$comment.weibo.user.portrait|fix_portrait}-->" uid="<!--{$comment.weibo.user.uid}-->" namecard="true" class="picborder_l"></a>
         <div class="commentsContants">
             <p class="commentsParm MIB_txtal"><a href="/home/profile/<!--{$comment.weibo.user.uid}-->" uid="<!--{$comment.weibo.user.uid}-->" namecard="true"><!--{$comment.weibo.user.nick}--></a><!--{$comment.content|parse_content:false}-->
             <!--{$comment.created_at|date_format:"%Y-%m-%d %H:%I"}-->

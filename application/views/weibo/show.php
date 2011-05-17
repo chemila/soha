@@ -1,4 +1,5 @@
 <!--{include file="header.php"}-->
+
 <body>
 <div id="wrap_blog">
     <!--{include file="header/top.php"}--> 
@@ -11,16 +12,17 @@
         <div class="line"></div>
 	    <!--{include file="home/sidebar.php"}--> 	
     </div>
-    <div class="MIB_600"> 
-        <!--{include file="weibo/publish.php"}-->
-    </div>	
-	<h2 class="new_title_ml"><!--{$title}--><span>(<!--{$count}-->条)</span></h2>	
     <!--start: list feeds--> 
     <ul class="MIB_feed" id="feed_list">
         <!--{foreach from=$feeds item=weibo}--> 
 			<!--{include file='weibo/feed.php' weibo=$weibo current_user=$current_user|default:0}-->  	
         <!--{/foreach}--> 
     </ul>
+
     <div class="pages"><!--{pagination total=$count|default:0 perpage=$perpage|default:20}--></div>
 </div>
-<!--{include file="footer.php"}--> 
+
+<!--{include file="footer.php"}-->
+<script>
+scope.loadCommentByRid(<!--{$feeds[0].uid}-->, 'miniblog2', '', '<!--{$feeds[0].id}-->', ' ', '', '', 1, 0, 1);
+</script>

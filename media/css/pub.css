@@ -1,6 +1,6 @@
 /* publicize  */
 body{ background: #1c031f url(../img/body_bg02.jpg) center top no-repeat; overflow:hidden;}
-.add{background:url(../img/pop_btn.png) 0 0 no-repeat;_background:none; _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://www.sinaimg.cn/hs/baoyue/zt/star/img/pop_btn.png'); width:156px; height:63px; margin:630px auto 0 auto; padding:45px 0 0 13px;overflow:hidden;}
+.add{background:url(../img/pop_btn.png) 0 0 no-repeat;_background:none; _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://www.sinaimg.cn/hs/baoyue/zt/star/img/pop_btn.png'); width:156px; height:63px; margin:630px auto 0 auto; padding:45px 0 0 13px;overflow:hidden;margin-top:0}
 .add_btn{ width:135px; height:30px; display:block; text-indent:-99999px; position:relative; z-index:2;}
 .upload_popup{position:absolute; top:50%; left:50%;z-index:9999; margin:-80px 0 0 -230px; width:343px; height:195px; background:url(http://www.sinaimg.cn/hs/baoyue/zt/star/img/pop_bg02.png) no-repeat; }
 .upload_popup .upload_popup_t{ height:24px; clear:both; overflow:hidden; text-align:right;}
@@ -16,7 +16,7 @@ body{ background: #1c031f url(../img/body_bg02.jpg) center top no-repeat; overfl
 .mod_popup_bg_cover { position:absolute; left:0; top:0; z-index:9998; filter:alpha(opacity=0); opacity:0; background:#000; }
 
 .selectbox{border:0;width:120px!important;font-size:14px; line-height: 26px;height:26px;padding:0;margin:0;}
-.selBtn,.selBtn_safari{border:0;background:none;width:26px;height:26px;color:#fff;padding:0;border:0;overflow:hidden;text-indent:9999px;}
+.selBtn,.selBtn_safari,.selBtn_linux{border:0;background:none;width:26px;height:26px;color:#fff;padding:0;border:0;overflow:hidden;text-indent:9999px;}
 #2_container li{height:20px;line-height:20px;}
 div.selectbox-wrapper ul li {
 	  font-size:14px;

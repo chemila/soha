@@ -18,9 +18,9 @@
                 <!--{include file="search/input.php"}--> 				
 			</div>
             <!--start: stars list--> 
-			<div class="star_list">
-                <!--{include file="public/stars.php"}--> 
-			</div>
+            <div id="tabContent">
+            <!--{include file="public/stars.php"}--> 
+            </div>
 			<!--start: weibo list including news and hot commented-->
 			<div class="clearfix">
 				<div class="fan_comments w280bg">
@@ -29,7 +29,7 @@
 						<h2 class="fan_comments_title">粉丝热议</h2>
 					</div>
                     <!--start: hot commented weibo list-->
-					<ul class="small_list">
+					<ul class="small_list" id="feed_comment_list">
                         <!--{foreach from=$hot_commented item=weibo key=index}--> 
                             <!--{include file="weibo/hot_commented.php" weibo=$weibo index=$index}--> 
                         <!--{/foreach}-->
@@ -48,8 +48,10 @@
 				</div>
 			</div>
             <!-- pagination --> 
-            <div class="pages"><!--{pagination total=$count|default:0}--></div>
+            <div class="pages"><!--{pagination total=$count|default:0 perpage=$perpage|default:20}--></div>
 		</div>
 	<div class="main_b"></div>
 </div>
+
+<script type="text/javascript" src="/media/js/scroll.js"></script>
 <!--{include file="footer.php"}-->

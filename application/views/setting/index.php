@@ -43,7 +43,7 @@ function check_confirm()
 					<dd>
 						<label>
 							<input <!--{if $datas && $datas.message_set eq "2"}--> checked <!--{/if}--> name="message_set" type="radio" value="2" class="vm">
-							我关注的人</label>
+							关注我的人</label>
 					</dd>
 				</dl>
 				<!-- 

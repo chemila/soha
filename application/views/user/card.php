@@ -1,10 +1,10 @@
 <div>
     <dl class="name clearFix">
         <dt>
-            <a href="/home/profile/<!--{$user.uid}-->" target="_blank"><img src="<!--{$user.portrait}-->" imgtype="head" uid="<!--{$user.uid}-->" title="<!--{$user.nick}-->" class="picborder_r"></a>
+            <a href="/home/profile/<!--{$user.uid}-->" target="_blank"><img src="<!--{$user.portrait|fix_portrait}-->" imgtype="head" uid="<!--{$user.uid}-->" title="<!--{$user.nick}-->" class="picborder_r"></a>
         </dt>
         <dd class="name_card_con0">
-            <a href="/home/profile/<!--{$user.uid}-->" title="<!--{$user.nick}-->" uid="<!--{$user.uid}-->" target="_blank"><!--{$user.nick}--><!--{if $user.verified|default:false}--><img class="small_icon vip" src="http://img.t.sinajs.cn/t3/style/images/common/transparent.gif" title="新浪认证" alt="新浪认证"> <!--{/if}--></a>
+            <a href="/home/profile/<!--{$user.uid}-->" title="<!--{$user.nick}-->" uid="<!--{$user.uid}-->" target="_blank"><!--{$user.nick}--><!--{if $user.verified|default:false}--><img class="small_icon vip" src="http://img.t.sinajs.cn/t3/style/images/common/transparent.gif" > <!--{/if}--></a>
             <!--<span>(<a href="javascript:void(0)" onclick="if(parseInt(Math.random()*10000)%1000 &lt; 10){ GB_SUDA._S_uaTrack('tblog_userprofile_layer','followRemarkAdd')};App.followRemarkAdd(this,<!--{$user.uid}-->,'');return false;">设置备注</a>)</span>-->
             <p class="address"><!--{$user.location|default:'其他'}-->
                 <img src="http://img.t.sinajs.cn/miniblog2style/images/common/transparent.gif" class="small_icon man" title="<!--{$user.gender|default:'男'}-->">

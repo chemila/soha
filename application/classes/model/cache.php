@@ -55,10 +55,32 @@ class Model_Cache {
         }
         else
         {
-            $new = array_merge($original, array($value));
+            $new = array_unique(array_merge($original, array($value)));
         }
 
         return $this->set($new);
+    }
+
+    public function remove($value)
+    {
+        $original = $this->get();
+
+        if( ! $original or ! is_array($original))
+        {
+            return;
+        }
+        
+        $new = array_unique($original);
+        $key = array_search($value, $new);
+
+        if($key)
+        {
+            unset($new[$key]);
+        }
+
+        $this->set($new);
+
+        return $this;
     }
 
     public function sort()
@@ -85,21 +107,6 @@ class Model_Cache {
         }
 
         return count($this->_value);
-    }
-
-    public function remove($value)
-    {
-        $this->_value = $this->get();
-
-        foreach($this->_value as $k => $v)
-        {
-            if($v === $value)
-            {
-                unset($this->_value[$k]);
-            }
-        }
-
-        return $this;
     }
 
     public function save_sync(Array $value)

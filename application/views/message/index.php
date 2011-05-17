@@ -11,7 +11,7 @@
 				<ul class="mail_list" id="feed_list">
 				<!--{foreach from=$messages item=message key=index}--> 
 					<li>
-						<div class="user_info clearfix"><a href="/home/profile/<!--{$message.uid}-->" class="user_img"><img src="<!--{$message.portrait}-->" uid="<!--{$message.uid}-->" namecard="true"><span class="new"></span></a> <a href="/home/profile/<!--{$message.uid}-->" uid="<!--{$message.uid}-->" namecard="true">@<!--{$message.nick}-->：</a><!--{$message.content}-->
+						<div class="user_info clearfix"><a href="/home/profile/<!--{$message.uid}-->" class="user_img"><img src="<!--{$message.portrait}-->" uid="<!--{$message.uid}-->" namecard="true"></a> <a href="/home/profile/<!--{$message.uid}-->" uid="<!--{$message.uid}-->" namecard="true"><!--{$message.nick}-->：</a><!--{$message.content|parse_content}-->
 							<p class="tr">发信时间: <!--{$message.datetime|date_format:"%Y-%m-%d %H:%I"}-->&nbsp;&nbsp;&nbsp;<a class="close" onclick="App.delMsgGroup('<!--{$message.msg_id}-->','<!--{$message.nick}-->')" href="javascript:void(0);">删除</a> | <a onclick="if(parseInt(Math.random()*10000)%1000 &lt; 10){GB_SUDA._S_uaTrack('tblog_userprofile_layer','msgDialog')};App.msgDialog('<!--{$message.nick}-->',false);" href="javascript:void(0)">回复</a></p>
 						</div>
 					</li>

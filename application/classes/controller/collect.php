@@ -158,7 +158,7 @@ class Controller_Collect extends Controller_Admin {
     public $weibo_sina_password = "1qaz1qaz";
     public $weibo_sina_uid = "2125854971";
     public $weibo_sina_homepage = "http://t.sina.com.cn/2125854971";
-    public $weibo_sina_cookie = 'U_TRS2=000000c2.4162211c.4dc7582f.995381c7; Apache=1304909863140.3486; _s_upa=31; ULOGIN_IMG=13049179182385; SID=BSgz077%2FSnjTTj0jrrnTKKr07PjT7rN7n7jPNjTnojfT7jcnz0rxcnPNJj; SPRIAL=71d5787f4c17d7a557f9d554cc935374; SINA_USER=kaliy_2011_3; UOR=,api.t,; SINAGLOBAL=10.207.10.248.194311291685100761; ULV=1304917539906:7:7:4:1304909863140.3486:1304911050312; SGUP=0; vjuids=311fba009.12fc4c1f440.0.96c69297217528; vjlast=1304676136; U_TRS1=000000c2.4159211c.4dc7582f.5f3062ab; WBUP=0; RTP_VISSTATUS=TRUE; RTP_VISTAB=0; SUE=es%3D7b29fed9cdcfcfbb50fe2e77a00ae11a%26ev%3Dv1%26es2%3D8696fae3c788e558c3f1842078fde0c6%26rs0%3DnPPYXa5W3vbE92isN72CmhLLO3i7AXzVGxd3%252Bfj8xJT9yANsr02uNMTmRz%252FTrAwZhYBor0EWgoCbGEN8blhBCRMd5RcyI%252BSaVbyKHQtGSMG71S2aNxIi6UgCiyxxznxRtEiN4AOwts1CZM3lHdeIRoycPZRGVGGRESI3wX0iC9Y%253D%26rv%3D0; SUP=cv%3D1%26bt%3D1304917935%26et%3D1305004335%26lt%3D1%26uid%3D2125854971%26user%3Dkaliy_2011_2.%252A%252A%26ag%3D9%26name%3Dkaliy_2011_2%2540sina.com%26nick%3Dkaliy_2011_2%26sex%3D%26ps%3D0%26email%3Dkaliy_2011_2%2540sina.com%26dob%3D%26ln%3Dkaliy_2011_2%2540sina.com%26os%3D; ALF=1305522735; SUR=uid%3D2125854971%26user%3Dkaliy_2011_2.%252A%252A%26nick%3Dkaliy_2011_2%26email%3Dkaliy_2011_2%2540sina.com%26dob%3D%26ag%3D9%26sex%3D%26ssl%3D0; NSC_wjq_eqppm2_xfc1=ffffffff09410d7945525d5f4f58455e445a4a423660; _s_tentry=-; miniblog=3389868298.20480.0000; SinaRot//=61; un=kaliy_2011_2@sina.com; c_10000=1; WNP=2125707145%2C63; appkey=';
+    public $weibo_sina_cookie = 'UOR=login,weibo.com,; SINAGLOBAL=3255968564907.3667.1303372292106; ULV=1305200463543:7:4:3:6790693872067.658.1305200463535:1305079837156; un=kaliy_2011_2@sina.com; NSC_wjq_xfjcp.dpn_ipnfqbhf=ffffffff0941136845525d5f4f58455e445a4a423660; _s_tentry=login.sina.com.cn; Apache=6790693872067.658.1305200463535; uc=a5%7Ck4%7C13e; WNP=2125191397%2C123; WNP1=2125191397%2C123; SinaRot//=76; SUE=es%3D010335a02f2c4407e0f656077d8c98c2%26es2%3D1d8d88d6d90028b5c887c36a695b2fe2%26ev%3Dv1; SUP=cv%3D1%26bt%3D1305204547%26et%3D1305290947%26uid%3D2125854971%26user%3Dkaliy_2011_2.%252A%252A%26ag%3D9%26email%3Dkaliy_2011_2%2540sina.com%26nick%3Dkaliy_2011_2%26name%3Dkaliy_2011_2%2540sina.com%26sex%3D%26dob%3D%26ps%3D0; ALF=1305809343; SSOLoginState=1305204547';
     public $weibo_sina_max_page = 500;
     
     
@@ -304,9 +304,9 @@ class Controller_Collect extends Controller_Admin {
          }
 	}
 	
-	public function get_weibo_data_exist($weibo_id, $uid, $src=0)
+	public function get_weibo_data_exist($weibo_id, $src='sina')
 	{
-			$data_exist = DB::query(Database::SELECT, "select id from pin_collect_weibo where weibo_id='$weibo_id' and src='$src' and uid='$uid' order by timeline desc limit 1;")
+			$data_exist = DB::query(Database::SELECT, "select id from pin_weibo_shadow where sid='$weibo_id' and src='$src' order by timeline desc limit 1;")
             ->execute()
             ->as_array();
             
@@ -321,8 +321,19 @@ class Controller_Collect extends Controller_Admin {
 	 * 1  有要执行的程序 继续采集
 	 * 
 	 */
-	public function parse_sina_html($response='')
+	public function action_parse_sina_html($response='')
 	{
+		$response = Arr::get($_POST, "response");
+		
+		if(!empty($response))
+		{
+			$response = base64_decode($response);
+		}
+		else 
+		{
+			exit();
+		}
+		
 		/*
 		 * 得到视频图片的名称 在获得 图片对象
 		 */
@@ -364,21 +375,19 @@ class Controller_Collect extends Controller_Admin {
 				/*
 				 * 此微博 是否存在
 				 */
-		        $weibo_data_exist = $this->get_weibo_data_exist($weibo_id, $uid);
+//		        $weibo_data_exist = $this->get_weibo_data_exist($weibo_id);
+//				
+//				if($weibo_data_exist>0)	
+//				{
+//					continue;
+//				}
 				
-				if($weibo_data_exist>0)	
-				{
-					continue;
-				}
-				
-				$data[$i]['weibo_id'] = trim($weibo_id);
+				$data[$i]['sid'] = trim($weibo_id);
 				$data[$i]['uid'] = $uid;
 				
-				
-				
 				$user_link = phpQuery::pq($li)->find(".MIB_feed_c p a")->attr("href");
-				$data[$i]['domain_name'] = trim(substr($user_link, strrpos($user_link, "/")+1));
-				$data[$i]['name'] = trim(phpQuery::pq($li)->find(".head_pic img:first")->attr("title"));
+				//$data[$i]['domain_name'] = trim(substr($user_link, strrpos($user_link, "/")+1));
+				//$data[$i]['name'] = trim(phpQuery::pq($li)->find(".head_pic img:first")->attr("title"));
 				
 				$data[$i]['timeline'] = phpQuery::pq($li)->find('.MIB_feed_c .lf cite:first a strong')->attr("date");
 				
@@ -390,6 +399,7 @@ class Controller_Collect extends Controller_Admin {
 				$data[$i]['comment_count'] = (empty($comment_count_arr[1])?0:(int)$comment_count_arr[1]);
 	        	
 				$data[$i]['content'] = trim(phpQuery::pq($li)->find(".MIB_feed_c .sms")->html());
+				$data[$i]['content'] = substr($data[$i]['content'], strpos($data[$i]['content'], "：")+3);
 				
 				$face_img = $this->get_items($data[$i]['content'], array('<img '), array('>'));
 			
@@ -429,7 +439,7 @@ class Controller_Collect extends Controller_Admin {
 				/*
 				 * 来源
 				 */
-				$data[$i]['from'] = trim(phpQuery::pq($li)->find(".MIB_feed_c .feed_att .lf cite:last")->text());
+				//$data[$i]['from'] = trim(phpQuery::pq($li)->find(".MIB_feed_c .feed_att .lf cite:last")->text());
 				
 				/*
 				 * 获取 视频
@@ -448,11 +458,14 @@ class Controller_Collect extends Controller_Admin {
 					$vedio_data->icon = $this->domain_link_replace($vedio_data->icon);*/
 				}
 				
-				$data[$i]['media_data'] = serialize(array("image"=>array("src"=>$content_image_str), "vedio"=>$vedio_data));
+				if(!empty($content_image_str) || count($vedio_data))
+				{
+					$data[$i]['media_data'] = serialize(array("image"=>array("src"=>$content_image_str), "vedio"=>$vedio_data));
+				}
 				
 				
 				/*
-				 * 
+				 * 微博 类型
 				 */
 				if(empty($content_image_str) && count($vedio_data)<=0){
 					$data[$i]['type'] = 0;
@@ -471,7 +484,7 @@ class Controller_Collect extends Controller_Admin {
 				$original_image_str = '';
 				if(phpQuery::pq($li)->find(".MIB_feed_c > .MIB_assign")->html() != '')
 				{
-					$data[$i]['original_content'] = trim(phpQuery::pq($li)->find(".MIB_feed_c .MIB_assign .MIB_assign_c > p")->html());
+					$data[$i]['source']['content'] = trim(phpQuery::pq($li)->find(".MIB_feed_c .MIB_assign .MIB_assign_c > p")->html());
 					
 					$content_image_dom = trim(phpQuery::pq($li)->find(".MIB_feed_c .MIB_assign .MIB_assign_c .feed_preview > .feed_img")->html());
 					
@@ -489,6 +502,13 @@ class Controller_Collect extends Controller_Admin {
 							$data_image[$i][] = $original_image_str;
 						}
 					}
+					
+					$data[$i]['source']['sid'] = phpQuery::pq($li)->find(".MIB_feed_c .MIB_assign .MIB_assign_c p .source_att a:first")->attr("href");
+					if( !empty($data[$i]['source']['sid']) )
+					{
+						$data[$i]['source']['sid'] = substr($data[$i]['source']['sid'], strrpos($data[$i]['source']['sid'], "/")+1);
+					}
+					$data[$i]['source']['src'] = "sina";
 					
 					/*
 					 * 获取 视频
@@ -513,44 +533,112 @@ class Controller_Collect extends Controller_Admin {
 						}
 					}
 				
-					$data[$i]['original_media_data'] = serialize((array("image"=>array("src"=>$original_image_str), "vedio"=>$vedio_data)));
+					if( !empty($original_image_str) || count($vedio_data) )
+					{
+						$data[$i]['source']['media_data'] = serialize((array("image"=>array("src"=>$original_image_str), "vedio"=>$vedio_data)));
+					}
 					
+					$data[$i]['source']['content'] = substr($data[$i]['source']['content'], strpos($data[$i]['source']['content'], "：")+3);
+					$data[$i]['source']['content'] = ((empty($data[$i]['source']['content']))?"":preg_replace('#<span class="source_att MIB_linkbl">(.*?)</a></span>#s', "", $data[$i]['source']['content']));
 					/*
 					 * 视频 图片
 					 */
 					if(empty($original_image_str) && count($vedio_data)<=0){
-						$data[$i]['original_type'] = 0;
+						$data[$i]['source']['type'] = 0;
 					} else if(!empty($original_image_str) && count($vedio_data)<=0) {
-						$data[$i]['original_type'] = 0+1;
+						$data[$i]['source']['type'] = 0+1;
 					} else if(empty($original_image_str) && count($vedio_data)>0){
-						$data[$i]['original_type'] = 0+2;
+						$data[$i]['source']['type'] = 0+2;
 					} else {
-						$data[$i]['original_type'] = 0+1+2;
+						$data[$i]['source']['type'] = 0+1+2;
 					}
 				}
 				
-				$data[$i]['src'] = 0;
+				$data[$i]['src'] = 'sina';
 				$data[$i]['created_at'] = time();
 
 				$i ++;
-				
 			}
 		}
 		
-/*    	echo "<pre>";
+    	echo "<pre>";
 		print_R($data);
 		print_R($data_image);
 		echo "</pre>";
-		die;*/
-
+		
 		if(count($data)>0) 
 		{
 			$this->insert_weibo_data($data, $data_image, "sina");
-			return 1;
+			//return 1;
+			echo 1;
 		}
 		else 
 		{
-			return 0;
+			//return 0;
+			echo 0;
+		}
+	}
+	
+	
+	public function insert_weibo_data($data, $data_image, $src)
+	{
+		$model = new Model_Collect_Weibo();
+		//$model_image = new Model_Collect_Image();
+
+		if(count($data)>0) 
+		{
+			foreach ($data as $i => $data_value)
+			{
+				/*
+				 * is root
+				 */
+				if( !empty($data_value['source']['content']) )
+				{
+					$db_result = $model->insert($data_value['source']);
+					if($db_result instanceof Database_Exception)
+					{
+						if( strstr($db_result->__toString(), "for key 'uidx_ss'") )
+						{
+							$rid = $this->get_weibo_data_exist($data_value['sid']);
+						}
+					}
+					else
+					{
+						$rid = $db_result[0];
+					}
+				}
+
+				unset($data_value['source']);
+				$data_value['rid'] = $rid;
+				$data_value['method'] = 1;
+				$db_result = $model->insert($data_value);
+				
+				die("ksadjflasdjf");
+				/*
+				 * 把 图片链接 写入数据库
+				 */
+				/*
+				if($db_result[1] ==1)
+				{
+					$insert_id = $db_result[0];
+					
+					$data_img = array();
+					if(!empty($data_image[$i]) && count($data_image[$i])>0)
+					{
+						for ($j=0;$j<count($data_image[$i]);$j++)
+						{
+							if(!empty($data_image[$i][$j]))
+							{
+								$data_img['image_url'] = trim($data_image[$i][$j]);
+								$data_img['pin_collect_weibo_id'] = $insert_id;
+								$data_img['image_src'] = $src;
+								$model_image->insert($data_img);
+							}
+						}
+					}
+				}
+				*/
+			}
 		}
 	}
 	
@@ -736,43 +824,6 @@ class Controller_Collect extends Controller_Admin {
 		else 
 		{
 			return array();
-		}
-	}
-	
-	public function insert_weibo_data($data, $data_image, $src)
-	{
-		$model = new Model_Collect_Weibo();
-		$model_image = new Model_Collect_Image();
-
-		if(count($data)>0) 
-		{
-			foreach ($data as $i => $data_value)
-			{
-				$db_result = $model->insert($data_value);
-				
-				/*
-				 * 把 图片链接 写入数据库
-				 */
-				if($db_result[1] ==1)
-				{
-					$insert_id = $db_result[0];
-					
-					$data_img = array();
-					if(!empty($data_image[$i]) && count($data_image[$i])>0)
-					{
-						for ($j=0;$j<count($data_image[$i]);$j++)
-						{
-							if(!empty($data_image[$i][$j]))
-							{
-								$data_img['image_url'] = trim($data_image[$i][$j]);
-								$data_img['pin_collect_weibo_id'] = $insert_id;
-								$data_img['image_src'] = $src;
-								$model_image->insert($data_img);
-							}
-						}
-					}
-				}
-			}
 		}
 	}
 	###########################################################################################################################

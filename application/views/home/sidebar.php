@@ -1,6 +1,6 @@
 <div class="blog_sidebar_title">
     <div class="clearfix">
-        <h2 class="fl f14 fb">您关注的明星</h2>
+        <h2 class="fl f14 fb">关注的明星</h2>
     </div>
 </div>
 <!--关注的明星 start-->
@@ -13,7 +13,7 @@
 
 <div class="blog_sidebar_title">
     <div class="clearfix">
-        <h2 class="fl f14 fb">您关注的普通用户</h2>
+        <h2 class="fl f14 fb">关注的普通用户</h2>
     </div>
 </div>
 <!--关注的明星 start-->

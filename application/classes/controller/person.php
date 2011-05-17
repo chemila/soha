@@ -5,9 +5,27 @@ class Controller_Person extends Controller_Authenticated {
     public function action_getcard()
     {
         $fuid = Arr::get($_POST, 'uid');
+
+        if( ! $fuid)
+        {
+            die(json_encode(array(
+                'code' => 'A00006',
+                'data' => '<p class="name_card_con5">这个昵称不存在噢 :(</p>',
+            )));
+        }
         
 		$user = new Model_User($fuid);
-        $user->load();
+        try
+        {
+            $user->load();
+        }
+        catch(Model_API_Exception $e)
+        {
+            die(json_encode(array(
+                'code' => 'A00006',
+                'data' => '<p class="name_card_con5">这个昵称不存在噢 :(</p>',
+            )));
+        }
 
         $this->view = new View_Smarty('smarty:user/card');
         $this->view->user = $user->as_array();
@@ -52,7 +70,7 @@ class Controller_Person extends Controller_Authenticated {
         $user->pk($uid);
         $user->load();
 
-        if($this->user->is_followd_by($uid))
+        if( !$this->user->is_followd_of($uid) )
         {
             die(json_encode(array('code' => 'M09004')));
         }
@@ -64,19 +82,21 @@ class Controller_Person extends Controller_Authenticated {
 		);
 		$response = $message->send($data);
 		
-		if($response)
+		if($response === 0)
 		{
-            die(json_encode(array('code' => 'A00006')));
+			/* 黑名单 */
+			die(json_encode(array('code' => 'M09004')));
+		}
+		else if($response === false)
+		{
+			/* 系统错误 */
+			die(json_encode(array('code' => 'E00001')));
 		}
 		else 
 		{
-			/*
-			 * 黑名单
-			 */
-			die(json_encode(array('code' => 'M09004')));
+			/* 发送成功 */
+            die(json_encode(array('code' => 'M09003')));
 		}
-            
-        die(json_encode(array('code' => 'M09003'))); 
     }
 
     public function action_addfollow()

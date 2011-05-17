@@ -40,7 +40,7 @@
 				<ul class="mail_list" id="feed_list">
                     <!--{foreach from=$list_my_favorites item=list_my_favorite key=index}--> 
 					<li>
-						<div class="user_info clearfix"><a href="/home/profile/<!--{$list_my_favorite.uid}-->" class="user_img"><img src="<!--{get_user uid=$list_my_favorite.uid attr='portrait'}-->" uid="<!--{$list_my_favorite.uid}-->" namecard="true"></a> <a href="/home/profile/<!--{$list_my_favorite.uid}-->" uid="<!--{$list_my_favorite.uid}-->" namecard="true"><!--{$list_my_favorite.uid}-->：</a><!--{$list_my_favorite.content}-->
+						<div class="user_info clearfix"><a href="/home/profile/<!--{$list_my_favorite.uid}-->" class="user_img"><img src="<!--{get_user uid=$list_my_favorite.uid attr='portrait|fix_portrait'}-->" uid="<!--{$list_my_favorite.uid}-->" namecard="true"></a> <a href="/home/profile/<!--{$list_my_favorite.uid}-->" uid="<!--{$list_my_favorite.uid}-->" namecard="true"><!--{$list_my_favorite.uid}-->：</a><!--{$list_my_favorite.content}-->
 							<p class="claerfix">发布时间: <!--{$list_my_favorite.created_at|date_format:"%Y-%m-%d %H:%I"}-->&nbsp;&nbsp;&nbsp;<a onclick="App.deletefavorite_miniblog('<!--{$list_my_favorite.favorite_id}-->');" href="javascript:void(0);">取消<strong lang="CL1003">收藏</strong></a></p>
 						</div>
 					</li>

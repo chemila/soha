@@ -446,4 +446,14 @@ class Model_API_User extends Model_API
     	 
     	return $response['result'];
     }
+    
+    /*
+     * 得到 关注者 关注的人
+     */
+    public function followers_of_followers($data)
+    {
+    	$response = $this->post('/user/getattofatt.php', $data);
+
+        return $response['result'];
+    }
 }

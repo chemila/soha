@@ -1,9 +1,9 @@
 <?php
 /**
- * Smarty check_login plugin
+ * Smarty pagination plugin
  *
  * Type:     function
- * Name:     check_login
+ * Name:     pagination
  *
  * @param  Smarty
  * @return string  The translation (and substitution) of the string

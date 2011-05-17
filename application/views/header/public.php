@@ -7,14 +7,15 @@
 <link href="/media/css/jCarousel/skin.css" rel="stylesheet" type="text/css">
 <link href="/media/css/base.css" rel="stylesheet" type="text/cs">
 <link href="/media/css/style.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="/media/js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="/media/js/jquery.jcarousel.min.js"></script>
-<script type="text/javascript">
-jQuery(document).ready(function() {
-	jQuery('#scroll_star_list').jcarousel({
-		auto:5
-    });
-});
-</script>
+
+<style type="text/css">
+    .blk_29{zoom:1;overflow:hidden;}
+    .blk_29 .LeftBotton{ display:inline; margin:0 10px 0 23px;width:10px;height:320px;float:left;background:url(/media/css/jCarousel/prev-horizontal.png) no-repeat -3px -0px;cursor:pointer;}
+    .blk_29 .RightBotton{ display:inline; margin:0 0 0 11px;width:10px;height:320px;position:absolute;right:23px;top:45px;background:url(/media/css/jCarousel/next-horizontal.png) no-repeat -19px -0px;cursor:pointer;}
+    .blk_29 .Cont{width:870px;padding:15px 0 0 0;float:left;overflow:hidden;}
+    .blk_29 .ScrCont{width:10000000px; padding-left:8px;}
+    .blk_29 li{width:145px;float:left;text-align:left;}
+    .blk_29 #List1_1,.blk_29 #List2_1{float:left;}
+</style>
 </head>
 <body>
