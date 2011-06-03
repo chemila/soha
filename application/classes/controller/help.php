@@ -1,14 +1,12 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Help extends Controller {
+class Controller_Help extends Controller_Base {
 
     public function action_index()
     {
-        $this->view = new View_Smarty('smarty:help/index');
+        $this->init_view();
 		$this->cache = Cache::instance('memcache');
         $this->get_star_caches();
-
-        $this->request->response = $this->view->render();
     }
     
     protected function get_star_caches()

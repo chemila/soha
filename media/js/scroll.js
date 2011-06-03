@@ -134,6 +134,7 @@ function ScrollPic(scrollContId, arrLeftId, arrRightId, dotListId) {
             this.move(fill)
         };
         this.move = function(num, quick) {
+        	
             var thisMove = num / 5;
             if (!quick) {
                 if (thisMove > this.space) {
@@ -215,6 +216,7 @@ function ScrollPic(scrollContId, arrLeftId, arrRightId, dotListId) {
             }
         }
     }
+    
 var myApp = {
         $: function(objName) {
             if (document.getElementById) {
@@ -284,19 +286,17 @@ var myApp = {
         }
     };
     
-    function scroll(){
+    
         var recom = new ScrollPic();
         recom.scrollContId = "scroll_star_list";
         recom.arrLeftId = "turn_right_recom";
         recom.arrRightId = "turn_left_recom";
-        recom.frameWidth = 876;
-        recom.pageWidth = 146;
+        recom.frameWidth = 870;
+        recom.pageWidth = 145;
         recom.speed = 2;
         recom.space = 7;
         recom.autoPlay = true;
         recom.autoPlayTime = 3;
+        //console.log(recom);
         recom.initialize();
-    }
-    
-    scroll();
-  
+       

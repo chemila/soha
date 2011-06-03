@@ -3,6 +3,7 @@
 class Model_User extends Model {
     const CATEGORY_DEFAULT = 0;
     const CATEGORY_STAR    = 1;
+    const CATEGORY_ALL     = NULL;
 
     protected $_object = array();
     protected $_object_name;
@@ -10,7 +11,7 @@ class Model_User extends Model {
 	protected $_columns = array(
         'nick', 'domain_name', 'pass', 'email', 'friends_count', 'followers_count',
         'statuses_count', 'portrait', 'gender', 'intro', 'country', 'province', 'city', 'regip', 'regdate', 
-        'lastip', 'lastvisit', 'merged', 'verified', 'location', 'status', 'category',
+        'lastip', 'lastvisit', 'merged', 'verified', 'location', 'status', 'category', 'online',
     );
     protected $_table_columns = array();
 	protected $_primary_key  = 'uid';
@@ -79,22 +80,19 @@ class Model_User extends Model {
 		if ( ! $this->_loaded AND ! $this->empty_pk() AND ! isset($this->_changed[$this->_primary_key]))
 		{
 			// Only load if it hasn't been loaded, and a primary key is specified and hasn't been modified
-            $result = Model_API::factory('user')->get_user_info(array('uid' => $this->pk()));
-
-            if( ! $result)
+            try
             {
-                throw new Model_User_Exception('User does not exist uid :uid', array(':uid' => $this->pk()));
+                $result = Model_API::factory('user')->get_user_info(array('uid' => $this->pk()));
+                $this->_load_values($result);
             }
-            
-            $this->_load_values($result);
-		}
-    }
+            catch(Model_API_Exception $e)
+            {
+                $this->_loaded = FALSE;
+                $this->clear();
 
-    public function find()
-    {
-        $this->load();
-        
-        return $this;
+                return FALSE;
+            }
+		}
     }
 
     public function loaded()
@@ -277,6 +275,7 @@ class Model_User extends Model {
 
     public function as_array()
 	{
+        $this->load();
 		$object = array();
 
 		foreach ($this->_object as $key => $val)
@@ -367,58 +366,121 @@ class Model_User extends Model {
     public function save_token(OAuth_Token_Access $access_token)
     {
         $token = new Model_User_Token($this->pk());
-        
-        if( ! $token->token)
+        $token->reload();
+
+        if( ! $token->loaded())
         {
             $token->uid = $this->pk();
         }
+
         $token->token = $access_token->token;
         $token->secret = $access_token->secret;
         $token->created_at = time();
 
         $token->save();
-
         return $token->saved();
     }
 
-    public function save_session(Session $session)
+    public function save_session($sid = NULL, Array $data = NULL)
     {
-        $model = new Model_Session($this->pk());
+        $session = new Model_Session($this->pk());
+        $session->reload();
 
-        if( ! $model->sid)
+        if( ! $session->loaded())
         {
-            $model->uid = $this->pk();
+            $session->uid = $this->pk();
         }
 
-        $model->sid = $session->id();
-        $model->updated_at = time();
-        if(isset($session->data))
+        $session->sid = isset($sid) ? $sid : md5($this->pk().time().Text::random());
+        $session->updated_at = time();
+        if($data)
         {
-            $model->data = $session->data;
+            $session->data = serialize($data);
         }
-        $model->save();
 
-        return $model->saved();
+        $session->save();
+
+        if($session->saved())
+            return $session->sid;
+
+        return false;
     }
 
     public function get_access_token()
     {
         $token = new Model_User_Token($this->pk());
-        return $token->find()->as_array();
+        return $token->as_array();
     }
 
-    public function attention_list($category = 0, $page = 1, $limit = 6)
+    public function list_following($category = self::CATEGORY_ALL, $page = 1, $limit = 20)
     {
         $params = array(
             'uid' => $this->pk(),
-            'category' => (int)$category,
-            'page' => (int)$page,
-            'limit' => (int)$limit,
+            'category' => $category,
+            'page' => $page,
+            'limit' => $limit,
         );
 
-        $result = Model_API::factory('user')->attention_list($params);
-        
-        return $result;
+        return Model_API::factory('user')->attention_list($params);
+    }
+
+    public function count_following($category = self::CATEGORY_ALL)
+    {
+        $params = array(
+            'uid' => $this->pk(),
+            'category' => $category,
+        );
+		$response = Model_API::factory("user")->attention_count($params);
+
+		return $response[0];
+    }
+
+    public function add_followding($uid)
+    {
+        $params = array(
+            'uid' => $this->pk(),
+            'fuids' => $uid,
+        );
+
+		$response = Model_API::factory("user")->add_attention($params);
+
+		return $response;
+    }
+
+    public function rm_following($uid)
+    {
+        $params = array(
+            'uid' => $this->pk(),
+            'fuids' => $uid,       
+        );
+        $response = Model_API::factory("user")->delete_attention($params);
+
+		return $response;
+    }
+
+    public function list_fans($page = 1, $limit = 20)
+    {
+		return Model_API::factory("user")->fans_list(array(
+                'uid' => $this->pk(),
+                'page' => $page,
+                'limit' => $limit,
+        ));
+    }
+
+    public function count_fans()
+    {
+		$response = Model_API::factory("user")->get_fans_count(array('uid' => $this->pk()));
+		return $response[0];
+    }
+
+    public function rm_fans($uid)
+    {
+        $params = array(
+            'uid' => $this->pk(),
+        	'fuids' => $uid,
+        );
+
+		return Model_API::factory("user")->fans_del($params);
     }
 
     public function friends_list($page = 1, $limit = 6)
@@ -447,53 +509,41 @@ class Model_User extends Model {
         return $result;
     }
 
-    public function list_weibo($page = 1, $limit = 10, & $count = NULL)
-    {
-        $weibo = new Model_Weibo;
-
-        return $weibo->list_by_user($this->pk(), $page, $limit, $count); 
-    }
-
+    // TODO: implement it
     public function is_online()
     {
         return true;
     }
 
-    public function get_fans_ids($uid = NULL)
+    public function get_fans_ids()
     {
-        $params = array('uid' => $uid ? $uid : $this->pk());
-        $records = Model_API::factory('user')->get_fans_all_uid($params);
-
-        if( ! $records)
-            return;
-
-        $result = array();
-        foreach($records as $record)
+        try
         {
-            $result[] = $record['uid'];
+            $response = Model_API::factory('user')->get_fans_all_uid(array('uid' => $this->pk()));
+            return Arr::flatten($response);
         }
-
-        return $result;
+        catch(Model_API_Exception $e){}
     }
 
-    public function get_attention_ids($uid = NULL)
+    public function get_following_ids()
     {
-        $params = array('uid' => $uid ? $uid : $this->pk());
-        return Model_API::factory('user')->get_attention_all_uid($params);
+        try
+        {
+            return Model_API::factory('user')->get_attention_all_uid(array('uid' => $this->pk()));
+        }
+        catch(Model_API_Exception $e){}
     }
 
     public function inbox($page = 1, $limit = 30)
     {
-        $offset = max(0, $page - 1) * $limit;
+        $offset = ($page - 1) * $limit;
+
         $inbox = new Model_Inbox;
         $inbox_cache = new model_cache_inbox($this);
 
-        $cached = $inbox_cache->fetch($limit, $offset);
-
-        if($cached and count($cached) == $limit)
-        {
+        $cached = $inbox_cache->fetch($offset, $limit);
+        if($cached and count($cached) >= $limit)
             return $cached;
-        }
 
         $records = $inbox->where('uid', '=', $this->pk())
             ->limit($limit)
@@ -501,11 +551,35 @@ class Model_User extends Model {
             ->order_by('wid', 'desc')
             ->find_all()
             ->as_array('wid');
-        
+
+        if( ! $records)
+            return $cached;
+
         $saved = array_keys($records); 
         $inbox_cache->add($saved);
 
-        return array_slice($cached + $saved, $offset, $limit);
+        return $inbox_cache->fetch($offset, $limit);
+    }
+
+    public function inbox_since($since_id, $limit = 10)
+    {
+        $inbox = new Model_Inbox;
+        $inbox_cache = new model_cache_inbox($this);
+
+        $cached = $inbox_cache->fetch(0, $limit);
+        if( ! $cached)
+            return;
+
+        $res = array();
+        foreach($cached as $wid)
+        {
+            if($wid >= $since_id)
+            {
+                $res[] = $wid;
+            }
+        }
+
+        return $res;
     }
 
     public function outbox($page = 1, $limit = 30)
@@ -513,12 +587,10 @@ class Model_User extends Model {
         $offset = max(0, $page - 1) * $limit;
         $outbox = new Model_Outbox;
         $outbox_cache = new Model_Cache_Outbox($this);
-        $cached = $outbox_cache->fetch($limit, $offset);
 
+        $cached = $outbox_cache->fetch($offset, $limit);
         if($cached and count($cached) == $limit)
-        {
             return $cached;
-        }
 
         $records = $outbox->where('uid', '=', $this->pk())
             ->limit($limit)
@@ -527,10 +599,13 @@ class Model_User extends Model {
             ->find_all()
             ->as_array('wid');
 
+        if( ! $records)
+            return $cached;
+
         $saved = array_keys($records); 
         $outbox_cache->add($saved);
 
-        return array_slice($cached + $saved, $offset, $limit);
+        return $outbox_cache->fetch($offset, $limit);
     }
 
     public function inbox_count()
@@ -552,27 +627,21 @@ class Model_User extends Model {
         return $response['uid'];
     }
 
-    /*
-     * 我是否关注了别人
-     */
-    public function is_followd_by($fuid)
+    public function following_of($fuid)
     {
         $response = Model_API::factory('user')->attention_exist(array(
             'uid' => $this->pk(),
-            'fuid' => $fuid
+            'fuid' => $fuid,
         ));
 
         return $response;
     }
     
-    /*
-     * 别人 有没有关注我
-     */
-    public function is_followd_of($fuid)
+    public function fans_of($fuid)
     {
         $response = Model_API::factory('user')->attention_exist(array(
             'uid' => $fuid,
-            'fuid' => $this->pk()
+            'fuid' => $this->pk(),
         ));
 
         return $response;
@@ -590,7 +659,7 @@ class Model_User extends Model {
             return false;
         }
 
-        $star->find();
+        $star->reload();
         $this->load();
 
         $star_info = $star->as_array();
@@ -599,5 +668,134 @@ class Model_User extends Model {
         $data = array_merge($base_info, $star_info);
 
         return $this->_load_values($data);
+    }
+    
+	public function list_message($page = 1, $limit = 10)
+	{
+		$params = array(
+            "uid" => $this->pk(),
+            "page" => $page,
+            'limit' => $limit,
+		);
+		$response = Model_API::factory("message")->get_message_all($params);
+		
+		return $response;
+	}
+	
+	public function send_message($fuid, $content)
+	{
+		if( empty($content) || empty($fuid) )
+		{
+			return false;
+		}
+		
+		$data = array(
+            "uid" => $this->pk(),
+            "fuids" => $fuid,
+            "content" => $content
+		); 
+		
+		$response = Model_API::factory("message")->send_message($data);
+		
+		return $response;
+	}
+	
+	public function rm_message($msg_id)
+	{
+		if(empty($msg_id))
+			return false;
+			
+		$data = array(
+            "uid" => $this->pk(),
+            "msg_id" => $msg_id
+		);
+		
+		$response = Model_API::factory("message")->delete_message($data);
+		
+		return $response;
+	}
+	
+	public function count_message()
+	{
+		$data = array(
+		    "uid" => $this->pk(),
+		);
+		$response = Model_API::factory("message")->get_collect($data);
+		
+		return $response;
+	}
+	
+	
+	public function list_block($page=1)
+	{
+    	$data = array(
+            "uid" => $this->pk(),
+            "page" => $page
+    	);
+    	
+		$result = Model_API::factory('user')->list_block($data);
+		
+		return $result;
+	}
+	
+    public function add_block($fuids)
+    {
+    	if(empty($fuids))
+    		return false;
+    	
+    	$data = array(
+            "uid" => $this->pk(),
+            "fuids" => $fuids
+    	);
+    		
+    	return Model_API::factory("user")->add_block($data);
+     }
+    
+    
+    public function delete_block($fuids)
+    {
+    	if(empty($fuids))
+    		return false;
+    		
+    	$data = array(
+            "uid" => $this->pk(),
+            "fuids" => $fuids
+    	);
+    	
+    	return Model_API::factory("user")->delete_block($data);
+    }
+	
+    public function count_block()
+    {
+    	$data = array(
+            "uid" => $this->pk()
+    	);
+    	
+    	return Model_API::factory("user")->count_block($data);
+    }
+
+	public function get_unread_status()
+	{
+		$unread = new Model_Unread($this->pk());
+		$unread->reload();
+
+		if($unread->loaded())
+		{
+			return $unread->parse();
+		}
+		
+		return Model_Unread::get_default();
+	}
+
+    public function get_source()
+    {
+        return Model_API::factory('user')->get_user_source(array('uid' => $this->pk()));
+    }
+
+    public function get_setting($category, $default = false)
+    {
+        $setting = new Model_Setting(array('uid' => $this->pk(), 'category' => 0));
+
+        return $setting->get_category($category, $default);
     }
 }

@@ -1,25 +1,20 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 abstract class Model_API
 {
-    //const DOMAIN_URL = 'http://10.207.10.242/pin_user/api';
-    const DOMAIN_URL = 'http://dev.pin_user.com/pin_user/api';
-
+    public static $domain_url;
     public $error = array();
     
     public static function factory($type)
     {
         $classname = 'Model_API_'.ucfirst($type);
+        self::$domain_url = Core::config('api')->get('base_url');
 
         return new $classname;
     }
 
-    public function __construct()
-    {
-    }
-
     public function get($path, Array $query = NULL)
     {
-        $url = self::DOMAIN_URL.$path;
+        $url = self::$domain_url.$path;
 	 
 	    // Do a GET request
 	    $response = Remote::get($url, array(
@@ -37,7 +32,7 @@ abstract class Model_API
 
     public function post($path, Array $data)
     {
-        $url = self::DOMAIN_URL.$path;
+        $url = self::$domain_url.$path;
 
         // Do a GET request
 	    $response = Remote::get($url, array(

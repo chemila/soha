@@ -10,7 +10,7 @@
         <!--{include file="header/user.php"}--> 
         <!--{include file="home/nav.php"}--> 
         <div class="line"></div>
-	    <!--{include file="home/sidebar.php"}--> 	
+		<div id="user_list"><!--{include file="home/sidebar.php"}--></div>
     </div>
     <!--start: list feeds--> 
     <ul class="MIB_feed" id="feed_list">

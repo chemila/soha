@@ -46,6 +46,11 @@ abstract class Queue
 
     public function __construct(Array $config = NULL)
     {
+        if(strpos($config['server']['host'], ':'))
+        {
+            list($config['server']['host'], $config['server']['port']) = explode(':', $config['server']['host']);
+        }
+
         $this->_config = $config;
     }
 

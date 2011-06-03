@@ -1,7 +1,7 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php defined('SYSPATH') OR die('No direct access allowed.');
 
 return array(
-    'user' => array(
-        'info' => 'http://dev.pin.com/user/info.json',        
-    ),
+    'base_url' => 'http://i.t.leju.com/pin_user/api',
+    //'base_url' => 'http://dev.leju.com/pin_user/api',
 );
+ 

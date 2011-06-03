@@ -1,15 +1,15 @@
 <?php
 function smarty_modifier_fix_portrait($url, $type = 'small')
 {
-    if(empty($url))
-        return '/media/img/portrait/default.gif';
-
     $map = array(
         'small' => '50',
         'm' => '50',
         'origin' => '180',
         'large' => '180',
     );
+
+    if(empty($url))
+        return sprintf('media/img/portrait/default_%s.gif', $map[$type]);
 
     if(is_int($type))
     {
@@ -49,8 +49,20 @@ function smarty_modifier_fix_portrait($url, $type = 'small')
     //elseif(preg_match('~^http://\w+\.ydstatic\.com~', $url, $match))
     elseif(strpos($url_info['host'], "ydstatic.com"))
     {
-    	$query = str_replace("=48", "=180", $url_info['query']);
+    	if($size == 50)
+    	{
+    		$query = $url_info['query'];
+    	}
+    	else 
+    	{
+    		$size = $map['large'];
+    		$query = str_replace("=48", "=$size", $url_info['query']);
+    	}
     	$url = $url_info['scheme']."://".$url_info['host']."".$url_info['path']."?".$query;
+    }
+    else
+    {
+        $url = $url;
     }
 	
     return $url;

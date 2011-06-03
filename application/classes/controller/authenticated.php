@@ -1,12 +1,18 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Authenticated extends Controller {
+class Controller_Authenticated extends Controller_Base {
     public $user;
-    public $cache;
-    public $view;
 
     public function before()
     {
+        $header = array(
+            'Pragma' => 'no-cache',
+			'Cache-Control' => 'private, no-cache, must-revalidate, no-store',
+            'Expires' => 0,
+		);
+
+        $this->request->headers = $header + $this->request->headers;
+
         $config = Core::config('auth.'.$this->request->controller);
 
         isset($config['skipped']) or $config['skipped'] = array();
@@ -22,42 +28,31 @@ class Controller_Authenticated extends Controller {
             }
         }
 
-        $this->cache = cache::instance('memcache');
+        if($this->user)
+        {
+            $this->init_cache($this->user);
+        }
 
         return parent::before();
     }
 
     protected function authenticate()
     {
-        // Check session or cookie whether user info exists
-        $su = Cookie::get(Controller_Auth::COOKIE_NAME, false);
-
-        if( ! $su)
+        $user = $this->get_current_user();
+        if( ! $user)
             return false;
 
-        preg_match('~^sid=(\w+);uid=(\d+)$~', $su, $match);
-
-        if( ! $match)
-            return false;
-
-        $sid = $match[1];
-        $uid = $match[2];
-
-        $session = new Model_Session($uid);
-
-        if( ! $session->sid or $sid != $session->sid)
-            return false;
-
-        $this->user = new Model_User($uid);
-
+        $this->user->online = 1;
         return true;
     }
 
     public function action_forbidden()
     {
-        // TODO: response oauth page with infomation about 
-        // why oauth, and what's going on
-        //$this->request->response = view::factory('oauth');
+        if(Request::$is_ajax)
+        {
+            $this->response_json('CC2510');
+        }
+
         $this->request->redirect('/auth');
     }
 

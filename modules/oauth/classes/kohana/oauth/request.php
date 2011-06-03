@@ -11,6 +11,8 @@
  */
 class Kohana_OAuth_Request {
 
+    public static $boundary = '';
+
 	/**
 	 * Create a new request object.
 	 *
@@ -464,8 +466,25 @@ class Kohana_OAuth_Request {
 		{
 			// Send the request as a POST
 			$options[CURLOPT_POST] = TRUE;
+        
+            //FIXME: upload image
+            if($multipart = Arr::get($options, 'multipart', false))
+            {
+                unset($options['multipart']);
+                $boundary = $this->make_boundary($multipart);
 
-			if ($post = $this->as_query())
+                if( ! $boundary)
+                {
+                    return false;
+                }
+
+                array_unshift($headers, 'Expect: ');
+                array_unshift($headers, 'Content-Type: multipart/form-data; boundary='.self::$boundary);
+
+                $options[CURLOPT_HTTPHEADER] = $headers;
+                $options[CURLOPT_POSTFIELDS] = $boundary;
+            }
+            elseif($post = $this->as_query())
 			{
 				// Attach the post fields to the request
 				$options[CURLOPT_POSTFIELDS] = $post;

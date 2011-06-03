@@ -60,7 +60,6 @@ class Kohana_OAuth_Consumer {
 		}
 
 		$this->key = $options['key'];
-
 		$this->secret = $options['secret'];
 
 		if (isset($options['callback']))

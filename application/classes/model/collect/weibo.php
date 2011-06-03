@@ -78,14 +78,20 @@ class Model_Collect_Weibo extends Model_QORM {
             ->sid;
     }
 
-    public function todo($rid = 0, $page = 1, $limit = 10)
+    public function todo($limit = 10)
     {
-        $offset = max(0, $page - 1) * $limit;
-
         return $this->where('wid', '=', 0)
-            ->and_where('rid', '=', $rid)
+            ->and_where('rid', '=', 0)
             ->limit($limit)
-            ->offset($offset)
             ->find_all();
+    }
+
+    public function get_sid($wid, $source = '')
+    {
+        return $this->where('wid', '=', $wid)
+            ->and_where('source', '=', $source)
+            ->limit(1)
+            ->find()
+            ->sid;
     }
 }

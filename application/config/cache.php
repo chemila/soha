@@ -6,27 +6,8 @@ return array
 		'driver'             => 'memcache',
 		'default_expire'     => 3600,
 		'compression'        => FALSE,              // Use Zlib compression (can cause issues with integers)
-		'servers'            => array
-		(
-			array
-			(
-				'host'             => 'localhost',
-				'port'             => '11211',
-				'persistent'       => FALSE,        // Persistent connection
-				'weight'           => 1,
-				'timeout'          => 1,
-				'retry_interval'   => 15,
-				'status'           => TRUE,
-			),
-		),
-        'key_prefix'         => $_SERVER['SINASRV_MEMCACHED_KEY_PREFIX'], //key prefix
-		'instant_death'      => TRUE,               // Take server offline immediately on first fail (no retry)
-	),
-	'memcachetag' => array
-	(
-		'driver'             => 'memcachetag',
-		'default_expire'     => 3600,
-		'compression'        => FALSE,              // Use Zlib compression (can cause issues with integers)
+        'servers'            => $_SERVER['SINASRV_MEMCACHED_SERVERS'],
+        /**
 		'servers'            => array
 		(
 			array
@@ -40,17 +21,9 @@ return array
 				'status'           => TRUE,
 			),
 		),
-		'instant_death'      => TRUE,
-	),
-	'apc'      => array
-	(
-		'driver'             => 'apc',
-		'default_expire'     => 3600,
-	),
-	'xcache'   => array
-	(
-		'driver'             => 'xcache',
-		'default_expire'     => 3600,
+        **/
+        'key_prefix'         => $_SERVER['SINASRV_MEMCACHED_KEY_PREFIX'], //key prefix
+		'instant_death'      => FALSE,               // Take server offline immediately on first fail (no retry)
 	),
 	'file'    => array
 	(

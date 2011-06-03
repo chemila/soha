@@ -150,7 +150,11 @@ abstract class Kohana_OAuth_Provider {
         
         // Check response valid or not
         if( ! $response->valid_token())
-            throw new CE('Invalid response, error: '.(string)$response);
+        {
+            throw new CE('Invalid response when request token response: :response', array(
+                ':response' => Core::debug($response),            
+            ));
+        }
 
 		// Store this token somewhere useful
 		return OAuth_Token::factory('request', array(
@@ -219,10 +223,14 @@ abstract class Kohana_OAuth_Provider {
 		// Create a response from the request
 		$response = $request->execute();
 
+
         // Check response valid or not
-        // Save valid response
         if( ! $response->valid_token())
-            throw new CE('Invalid response');
+        {
+            throw new CE('Invalid response when access token response: :response', array(
+                ':response' => Core::debug($response),            
+            ));
+        }
 
 		// Store this token somewhere useful
 		return OAuth_Token::factory('access', array(
@@ -241,7 +249,7 @@ abstract class Kohana_OAuth_Provider {
 	 * @param   array                additional request parameters
 	 * @return  OAuth_Token_Access
 	 */
-	public function access($url, OAuth_Consumer $consumer, OAuth_Token_Access $token, Array $params = NULL, $method = "GET")
+	public function access($url, OAuth_Consumer $consumer, OAuth_Token_Access $token, Array $params = NULL, $method = "GET", Array $request_options = NULL)
 	{
 		// Create a new request for a request token with the required parameters
 		$request = OAuth_Request::factory('resource', $method, $url, array(
@@ -260,6 +268,6 @@ abstract class Kohana_OAuth_Provider {
 		$request->sign($this->signature, $consumer, $token);
 
 		// Create a response from the request
-		return $request->execute();
+		return $request->execute($request_options);
 	}
 } // End OAuth_Signature

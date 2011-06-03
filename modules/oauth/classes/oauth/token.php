@@ -1,24 +1,18 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 abstract class OAuth_Token extends Kohana_OAuth_Token {  
-    /**
-     * session foctory, fetch data from session
-     */
+
     public static function session_factory($name, $consumer_name = '')
     {
-		$class = 'OAuth_Token_'.$name;
-
-        $token = session::instance()->get($consumer_name.'_'.$name.'_token');
-        $secret = session::instance()->get($consumer_name.'_'.$name.'_secret');
-
-        if(empty($token) or empty($secret))
-            return false;
+        $token = session::instance()->get_once($consumer_name.'_'.$name.'_token');
+        $secret = session::instance()->get_once($consumer_name.'_'.$name.'_secret');
 
         $options = array(
             'token' => $token,
             'secret' => $secret,
         );
 
+		$class = 'OAuth_Token_'.$name;
         return new $class($options);
     }
 

@@ -9,6 +9,9 @@ abstract class Model_OAuth {
     protected $params = array();
     protected $response;
     protected $request_method = "GET";
+    protected $request_options = array();
+
+    public static $boundary = '';
 
     public static function factory(OAuth $oauth)
     {
@@ -45,7 +48,7 @@ abstract class Model_OAuth {
 
         try
         {
-            $response = $this->oauth_module->access($url,  $this->params, $this->request_method);
+            $response = $this->oauth_module->access($url,  $this->params, $this->request_method, $this->request_options);
             $this->response = json_decode($response, true);
 
             if( ! $this->response)
@@ -55,8 +58,9 @@ abstract class Model_OAuth {
         }
         catch(Exception $e)
         {
-            var_dump($e->getMessage());die;
+            echo($e->getMessage());
             return false;
         }
     }
+
 }

@@ -2,16 +2,16 @@
 <li class="MIB_linedot_l" id="mid_<!--{$weibo.id}-->">
     <!--user head image, namecard attr bind loading namecard event--> 
     <div class="head_pic">
-        <a namecard="true" uid="<!--{$weibo.uid}-->" href="/home/profile/<!--{$weibo.uid}-->" >
+        <a namecard="true" uid="<!--{$weibo.uid}-->" href="home/profile/<!--{$weibo.uid}-->" >
             <img src="<!--{$weibo.user.portrait|fix_portrait}-->">
         </a> 
     </div>
     <div class="MIB_feed_c">
         <p class="sms" mid="<!--{$weibo.id}-->" type="1">
             <!--weibo author info: uid, domain_name, name, verified etc-->
-            <a  namecard="true" uid="<!--{$weibo.uid}-->" href="/home/profile/<!--{$weibo.uid}-->" title="<!--{$weibo.user.nick}-->"><!--{$weibo.user.nick}-->
+            <a  namecard="true" uid="<!--{$weibo.uid}-->" href="home/profile/<!--{$weibo.uid}-->" title="<!--{$weibo.user.nick}-->"><!--{$weibo.user.nick}--></a>
             <!--{if $weibo.user.verified|default:false}-->  
-            <img class="small_icon vip" dynamic-src="/media/img/transparent.gif" title="新浪认证" alt=""/>
+            <img class="small_icon vip" dynamic-src="media/img/transparent.gif" title="新浪认证" alt=""/>
             <!--{/if}--> 
             </a>：<!--{$weibo.content|parse_content}-->
         </p>
@@ -22,38 +22,40 @@
             <div class="MIB_assign_t"></div>
             <div class="MIB_assign_c MIB_txtbl">
                 <p class="source" mid="<!--{$weibo.id}-->" type="2"> 
-                    <a  namecard="true" uid="<!--{$weibo.root.uid}-->" href="/home/profile/<!--{$weibo.root.uid}-->" title="<!--{$weibo.root.user.nick}-->">@<!--{$weibo.root.user.nick}-->
+                    <a  namecard="true" uid="<!--{$weibo.root.uid}-->" href="home/profile/<!--{$weibo.root.uid}-->" title="<!--{$weibo.root.user.nick}-->">@<!--{$weibo.root.user.nick}-->
                     <!--{if $weibo.root.user.verified|default:false}-->
-                        <img class="small_icon vip" dynamic-src="/media/img/transparent.gif" title="新浪认证" alt=""/>
+                        <img class="small_icon vip" dynamic-src="media/img/transparent.gif" title="新浪认证" alt=""/>
                     <!--{/if}--> 
                     </a>
                     ：<!--{$weibo.root.content|parse_content}-->
                     <span class="source_att MIB_linkbl">
-                        <a href="/weibo/show/<!--{$weibo.rid}-->"><strong lang="CL1005">原文转发</strong><strong rid="<!--{$weibo.rid}-->" type="rttCount">(<!--{$weibo.root.forward_count|default:0}-->)</strong></a>
+                        <a href="weibo/show/<!--{$weibo.rid}-->"><strong lang="CL1005">原文转发</strong><strong rid="<!--{$weibo.rid}-->" type="rttCount">(<!--{$weibo.root.forward_count|default:0}-->)</strong></a>
                     <span class="MIB_line_l">|</span>
-                        <a href="/weibo/show/<!--{$weibo.rid}-->"><strong lang="CC0603">原文评论</strong><strong rid="<!--{$weibo.rid}-->" type="commtCount">(<!--{$weibo.root.comment_count|default:0}-->)</strong></a>
+                        <a href="weibo/show/<!--{$weibo.rid}-->"><strong lang="CC0603">原文评论</strong><strong rid="<!--{$weibo.rid}-->" type="commtCount">(<!--{$weibo.root.comment_count|default:0}-->)</strong></a>
                     </span>
                 </p>
                 <!--weibo media data--> 
-                <!--{if $weibo.root.type > 0}--> 
-                <div class="feed_preview" id="prev_<!--{$weibo.rid}-->">
+                <!--{if $weibo.root.type > 0 && $weibo.root.media_data}--> 
+                <div class="feed_preview" id="prev_<!--{$weibo.id}-->">
                     <div class="feed_img">
                         <a onclick="App.scaleImg(this,'<!--{$weibo.root.media_data|to_weibo_media:'middle'}-->');" href="javascript:;"><img dynamic-src="<!--{$weibo.root.media_data|to_weibo_media:'small'}-->" class="imgicon" vimg="1"></a>
                     </div>
                     <div class="clear"></div>
                 </div>
-                <div class="MIB_assign" id="disp_<!--{$weibo.rid}-->" style="display:none;"></div>
+                <div class="MIB_assign" id="disp_<!--{$weibo.id}-->" style="display:none;"></div>
                 <!--{/if}--> 
             </div>
             <div class="MIB_assign_b"></div>
             <!--{/if}--> 
         </div>
+        <!--{if $weibo.media_data}-->
         <div class="feed_preview" id="prev_<!--{$weibo.id}-->">
             <div class="feed_img">
                 <a onclick="App.scaleImg(this,'<!--{$weibo.media_data|to_weibo_media:'middle'}-->');" href="javascript:;"><img dynamic-src="<!--{$weibo.media_data|to_weibo_media:'small'}-->" class="imgicon" vimg="1"></a>
             </div>
             <div class="clear"></div>
         </div>
+        <!--{/if}-->
         <div class="MIB_assign" id="disp_<!--{$weibo.id}-->" style="display:none;"></div>
         <div class="feed_att MIB_linkbl MIB_txtbl">
             <div class="lf">

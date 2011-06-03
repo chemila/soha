@@ -2,8 +2,18 @@
 
 class Controller_Admin extends Controller_Authenticated {
 
-    public function before()
+    protected function authenticate()
     {
-        return parent::before();
+        $res = parent::authenticate();
+
+        if( ! $res)
+            return FALSE;
+
+        return in_array($this->user->pk(), array(1003321, 1003324, 1003322));
+    }
+
+    public function action_forbidden()
+    {
+        $this->request->redirect('/');
     }
 }

@@ -784,9 +784,9 @@ var WBTopTray = (function() {
     try {
         window.external.msSiteModeClearIconOverlay()
     } catch (e) {}
-    var BOX_TEMPLATE = '<style type="text/css">@media screen and (-webkit-min-device-pixel-ratio:0){.tsina_gnb{top:8px;}.tsina_gnb ul li.on a{margin-bottom:-1px; padding:2px 5px 10px 7px;}.tsina_gnb ul.sltmenu{top:26px;}.tsina_gnb ul.sltmenu li a{margin:0 2px; padding:4px 13px 3px;}.tsina_gnb ul li em.nmTxt,.tsina_gnb ul li a{font-family:inherit;}}</style><div class="tsina_gnbarea" id="#{box}"></div><div class="small_Yellow_div"><div style="display:none" class="small_Yellow" id="#{unread_layer}"><table class="CP_w"><thead><tr><th class="tLeft"><span></span></th><th class="tMid"><span></span></th><th class="tRight"><span></span></th></tr></thead><tbody><tr><td class="tLeft"><span></span></td><td class="tMid"><a href="javascript:;" onfocus="(function(){var div = document.getElementById(\'#{unread_comm}\');var parent = div.parentNode;if(parent){parent.focus();}})();return false;" style="position:absolute;top:-9797em;" accesskey="4">新消息</a><div class="yInfo"><!--<span id="#{unread_title}"></span>--><p id="#{unread_comm}"></p><p id="#{unread_fans}"></p><p id="#{unread_msg}"></p><p id="#{unread_atme}"></p><p id="#{unread_group}"></p><p id="#{unread_notice}"></p><div id="#{unread_source}"></div></div></td><td class="tRight"><span></span></td></tr></tbody><tfoot><tr><td class="tLeft"><span></span></td><td class="tMid"><span></span></td><td class="tRight"><span></span></td></tr></tfoot></table><div class="close"><a href="javascript:void(0)" id="#{unread_layer_close}">&nbsp;</a></div></div><div id="#{once_layer}" class="eventTip" style="display:none;left:66px"></div></div>';
+    var BOX_TEMPLATE = '<style type="text/css">@media screen and (-webkit-min-device-pixel-ratio:0){.tsina_gnb{top:8px;}.tsina_gnb ul li.on a{margin-bottom:-1px; padding:2px 5px 10px 7px;}.tsina_gnb ul.sltmenu{top:26px;}.tsina_gnb ul.sltmenu li a{margin:0 2px; padding:4px 13px 3px;}.tsina_gnb ul li em.nmTxt,.tsina_gnb ul li a{font-family:inherit;}}</style><div class="tsina_gnbarea" id="#{box}" style="display:none;"></div><div class="small_Yellow_div"><div style="display:none" class="small_Yellow" id="#{unread_layer}"><table class="CP_w"><thead><tr><th class="tLeft"><span></span></th><th class="tMid"><span></span></th><th class="tRight"><span></span></th></tr></thead><tbody><tr><td class="tLeft"><span></span></td><td class="tMid"><a href="javascript:;" onfocus="(function(){var div = document.getElementById(\'#{unread_comm}\');var parent = div.parentNode;if(parent){parent.focus();}})();return false;" style="position:absolute;top:-9797em;" accesskey="4">新消息</a><div class="yInfo"><!--<span id="#{unread_title}"></span>--><p id="#{unread_comm}"></p><p id="#{unread_fans}"></p><p id="#{unread_msg}"></p><p id="#{unread_atme}"></p><p id="#{unread_group}"></p><p id="#{unread_notice}"></p><div id="#{unread_source}"></div></div></td><td class="tRight"><span></span></td></tr></tbody><tfoot><tr><td class="tLeft"><span></span></td><td class="tMid"><span></span></td><td class="tRight"><span></span></td></tr></tfoot></table><div class="close"><a href="javascript:void(0)" id="#{unread_layer_close}">&nbsp;</a></div></div><div id="#{once_layer}" class="eventTip" style="display:none;left:66px"></div></div>';
     var POP_TEMPLATE = '<a class="closeset" href="javascript:void(0);" id="#{once_close}"></a><p>${微博也可以建群啦}！</p>';
-    var TOP_TEMPLATE = '<div class="bg_gnbarea">&nbsp;</div><div class="tsina_gnb"><ul class="gnb_r"><li><a href="http://weibo.com/#{uid}/profile/" id="#{name_span}">#{name}</a> </li><li><a href="http://weibo.com/plugins/imbot/myim.php?source=toptray">${工具}</a> </li><li><a href="http://weibo.com/messages?source=toptray">${私信}</a> </li><li><a href="http://weibo.com/systemnotice">${通知}</a> </li><li><a href="http://weibo.com/setting/user?source=toptray">${设置}</a> </li><li class="line">|</li><li><a href="http://weibo.com/logout.php?backurl=/">${退出}</a> </li></ul></div>';
+    var TOP_TEMPLATE = '<div class="bg_gnbarea">&nbsp;</div><div class="tsina_gnb"><ul class="gnb_r"><li><a href="home/profile/#{uid}/" id="#{name_span}">#{name}</a> </li><li><a href="/plugins/imbot/myim.php?source=toptray">${工具}</a> </li><li><a href="message">${私信}</a> </li><li><a href="setting">${设置}</a> </li><li class="line">|</li><li><a href="auth/logout">${退出}</a> </li></ul></div>';
     var UNLOGIN_TEMPLATE = '<div class="bg_gnbarea">&nbsp;</div><div class="tsina_gnb"><ul class="gnb_l"><li><a href="http://weibo.com/?source=toptray">${微博}</a> </li><li><a href="http://weibo.com/pub/?source=toptray" id="#{square}" class="nohover">${广场}<span class="arr_d"><em class="b1">&nbsp;</em><em class="b2">&nbsp;</em><em class="b3">&nbsp;</em></span></a> <ul class="sltmenu" id="#{square_layer}" style="display:none">#{square_list}</ul></li><li><a href="http://q.weibo.com">${微群}</a> </li><li><a href="http://event.weibo.com">${活动}</a> </li><li><a href="http://vote.weibo.com?source=toptray">${投票}</a> </li><li><a href="http://weibo.com/mobile/wap?source=toptray">${手机}</a> </li><li><a href="http://weibo.com/app" id="#{application}">${应用}<!--span class="arr_d"><em class="b1">&nbsp;</em><em class="b2">&nbsp;</em><em class="b3">&nbsp;</em></span--></a> <ul class="sltmenu" id="#{application_layer}" style="display:none">#{application_list}</ul></li>#{operation}</ul><ul class="gnb_r"><li><em class="nmTxt">${还没有微博帐号}？</em> </li><li><a href="http://weibo.com/reg.php?ps=u3&lang=zh&inviteCode=#{inviteCode||default:}" target="_blank" class="reg"><span>${注册}</span></a> </li><li class="line">|</li><li><a href="http://weibo.com/login.php" target="_blank"><strong>${登录}</strong></a> </li></ul></div>';
     var SQUARE_TEMPLATE = '	<li><a href="http://weibo.com/pub/star?source=toptray">${名人堂}</a></li>    <li><a href="http://weibo.com/pub/top">${风云榜}</a></li>	<li><a href="http://weibo.com/pub/topic">${微话题}</a></li>	<li><a href="http://weibo.com/pub/news?source=toptray">${随便看看}</a></li>	<li><a href="http://weibo.com/pub/topmblog?type=re&act=day&source=toptray">${热门转发}</a></li>	<li><a href="http://weibo.com/pub/city?source=toptray">${同城微博}</a></li>	<li><a href="http://weibo.com/pub/i/fun?source=toptray">${有趣的人}</a></li>	<li><a href="http://weibo.com/pub/hottags?source=toptray">${标签找人}</a></li>	<li><a href="http://live.weibo.com">${微直播}</a></li>	<li><a href="http://talk.weibo.com">${微访谈}</a></li>	<li><a href="http://apps.weibo.com/daily">${微博日报}</a></li>    <li><a href="http://weibo.com/pub/sofa?source=toptray">${抢个沙发}</a></li>	<li><a href="http://screen.weibo.com">${大屏幕}</a></li>';
     var APP_TEMPLATE = "";
@@ -903,7 +903,7 @@ var WBTopTray = (function() {
         try {
                 var layer = getEl("unread_layer");
                 if (parseInt(popset["comment"]) && cache["comment"] > 0) {
-                    getEl("unread_comm").innerHTML = rendLanguage(cache["comment"] + '${条新评论}，<a href="http://weibo.com/comments">${查看评论}</a>', language);
+                    getEl("unread_comm").innerHTML = rendLanguage(cache["comment"] + '${条新评论}，<a href="comment">${查看评论}</a>', language);
                     total = true;
                     num += cache["comment"];
                     getEl("unread_comm").style.display = ""
@@ -911,7 +911,7 @@ var WBTopTray = (function() {
                     getEl("unread_comm").style.display = "none"
                 }
                 if (parseInt(popset["attention"]) && cache["attention"] > 0) {
-                    getEl("unread_fans").innerHTML = rendLanguage(cache["attention"] + '${位新粉丝}，<a href="http://weibo.com/' + globalUID + '/fans">${查看我的粉丝}</a>', language);
+                    getEl("unread_fans").innerHTML = rendLanguage(cache["attention"] + '${位新粉丝}，<a href="attention/fans">${查看我的粉丝}</a>', language);
                     total = true;
                     num += cache["attention"];
                     getEl("unread_fans").style.display = ""
@@ -919,7 +919,7 @@ var WBTopTray = (function() {
                     getEl("unread_fans").style.display = "none"
                 }
                 if (parseInt(popset["msg"]) && cache["msg"] > 0) {
-                    getEl("unread_msg").innerHTML = rendLanguage(cache["msg"] + '${条新私信}，<a href="http://weibo.com/messages">${查看私信}</a>', language);
+                    getEl("unread_msg").innerHTML = rendLanguage(cache["msg"] + '${条新私信}，<a href="message">${查看私信}</a>', language);
                     total = true;
                     num += cache["msg"];
                     getEl("unread_msg").style.display = ""
@@ -927,13 +927,14 @@ var WBTopTray = (function() {
                     getEl("unread_msg").style.display = "none"
                 }
                 if (parseInt(popset["atme"]) && cache["atme"] > 0) {
-                    getEl("unread_atme").innerHTML = rendLanguage(cache["atme"] + '${条微博提到我}，<a href="http://weibo.com/atme">${查看}<em>@</em>${我}</a>', language);
+                    getEl("unread_atme").innerHTML = rendLanguage(cache["atme"] + '${条微博提到我}，<a href="home/atme">${查看}<em>@</em>${我}</a>', language);
                     total = true;
                     num += cache["atme"];
                     getEl("unread_atme").style.display = ""
                 } else {
                     getEl("unread_atme").style.display = "none"
                 }
+				/**
                 if (parseInt(popset["group"]) && cache["group"] > 0) {
                     getEl("unread_group").innerHTML = rendLanguage(cache["group"] + '${条群内新消息}，<a href="http://q.weibo.com/message/proxJump.php">${查看消息}</a>', language);
                     total = true;
@@ -950,6 +951,7 @@ var WBTopTray = (function() {
                 } else {
                     getEl("unread_notice").style.display = "none"
                 }
+				**/
                 if (source && source.html) {
                     _sourceShow = true;
                     total = true;
@@ -1027,16 +1029,17 @@ var WBTopTray = (function() {
     };
     var onlineStatus = function() {
         $.core.io.jsonp({
-            "url": "http://weibo.com/public/aj_setonline.php" + "?count=" + loopNumber,
+			//TODO: online functionality goes here
+            "url": "/star/person/online?count=" + loopNumber + "&user_id=" + uid,
             "onComplete": function() {}
         })
     };
     var loopNumber = 0;
     var startBreath = function(uid, config) {
         $.core.io.jsonp({
-            "url": "http://api.t.sina.com.cn/remind/unread_count.json?source=1740131375&count=" + loopNumber + "&user_id=" + uid,
+			//TODO: remind functionality goes here
+            "url": "/star/person/remind?count=" + loopNumber + "&user_id=" + uid,
             "onComplete": function(data) {
-            	
                 var cache = {};
                 data = data["data"];
                 unreadPop(data);

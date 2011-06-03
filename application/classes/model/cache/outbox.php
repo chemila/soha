@@ -2,31 +2,28 @@
 
 class Model_Cache_Outbox extends Model_Cache {
 
-    public function __construct($user)
+    public function get($default = NULL)
     {
-        parent::__construct($user);
-        $this->_key = $this->_key_prefix.':'.$this->_user->pk();
+        $value = parent::get($default);
+        return $this->_value = empty($value) ? array() : array_unique($value);
     }
 
-    public function receive(Model_Weibo $weibo)
+    public function receive($wid)
     {
         if($this->_user->is_online())
         {
-            $this->_data[] = $weibo;
+            $this->_data[] = $wid;
 
             try
             {
-                $this->append($weibo->pk());
+                $this->append($wid);
             }
-            catch(Cache_Exception $e)
-            {
-                die($e->getMessage());
-            }
+            catch(Cache_Exception $e){}
         }
 
         $data = array(
             'uid' => $this->_user->pk(),
-            'wid' => $weibo->pk(),
+            'wid' => $wid,
             'created_at' => time(),
         );
         $this->save_sync($data);
@@ -35,21 +32,42 @@ class Model_Cache_Outbox extends Model_Cache {
     }
 
     // TODO: push to @users at the same time
-    public function push(Array $ats = NULL)
+    public function push(Array $users = NULL, $with_self = TRUE)
     {
-        $users = $this->_user->get_fans_ids($this->_user->pk());
-
-        if( ! $users)
+        // Push to self as well
+        if($with_self)
         {
-            $users = array();
+            $users[] = $this->_user->pk();
+        }
+    
+        $users = array_unique($users);
+
+        foreach($users as $uid)
+        {
+            $this->push_once($uid);
         }
 
-        // Push to self as well
-        $users[] = $this->_user->pk();
+        return $this;
+    }
 
-        if( ! empty($ats))
+    public function push_once($uid)
+    {
+        $user = new Model_User($uid);
+        $inbox = new Model_Cache_Inbox($user);
+
+        foreach($this->_data as $wid)
         {
-            $users = array_merge($users, $ats);
+            $inbox->receive($wid);
+        }
+
+        return $this;
+    }
+
+    public function pull(Array $users = NULL, $with_self = TRUE)
+    {
+        if($with_self)
+        {
+            $users[] = $this->_user->pk();
         }
 
         $users = array_unique($users);
@@ -59,59 +77,12 @@ class Model_Cache_Outbox extends Model_Cache {
             $user = new Model_User($uid);
             $inbox = new Model_Cache_Inbox($user);
 
-            foreach($this->_data as $weibo)
+            foreach($this->_data as $wid)
             {
-                $inbox->receive($weibo);
+                $inbox->remove($wid);
             }
         }
 
         return true;
-    }
-
-    public function pull(Array $ats = NULL)
-    {
-        $users = $this->_user->get_fans_ids($this->_user->pk());
-
-        if( ! $users)
-        {
-            $users = array();
-        }
-
-        // Push to self as well
-        $users[] = $this->_user->pk();
-
-        if( ! empty($ats))
-        {
-            $users = array_merge($users, $ats);
-        }
-
-        $users = array_unique($users);
-
-        foreach($users as $uid)
-        {
-            $user = new Model_User($uid);
-            $inbox = new Model_Cache_Inbox($user);
-
-            foreach($this->_data as $weibo)
-            {
-                $inbox->remove($weibo->pk());
-            }
-        }
-
-        return true;
-    }
-
-    public function fetch($limit = 40, $offset = 0)
-    {
-        $value = $this->get();
-
-        if( ! $value or ! is_array($value))
-        {
-            return array();
-        }
-
-        $this->_value = $value;
-
-        return $this->limit($offset, $limit);
     }
 }

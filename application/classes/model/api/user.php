@@ -78,28 +78,6 @@ class Model_API_User extends Model_API
         return $response['result'];
     }
     
-    /*
-     * 得到用户类型
-     * @param int $uid
-     * @return int
-     */
-    public function get_user_type($data)
-    {
-    	$response = $this->post('/user/getusertype.php', $data);
-    	
-        return $response['result'];
-    }
-    
-    /*
-     * 得到 用户的 uid
-     * @param $username
-     */
-    public function get_uid_from_username($data)
-    {
-    	$response = $this->get_user_info($data);
-        return $response['result'];
-    }
-    
     /**
      * 添加关注人（支持批量，一次最多100个）
      * @param int $uid
@@ -159,32 +137,6 @@ class Model_API_User extends Model_API
         return $response['result'];
     }
     
-    /**
-     * 添加好友（支持批量，一次最多100个）
-     * @param int $uid
-     * @param string $fuids
-     * return bool
-     */
-    public function add_friend($data)
-    {
-    	$response = $this->post('/user/addfriends.php', $data);
-    	
-        return true;
-    }
-    
-   /*
-     * 删除好友 （支持批量，一次最多100个）
-     * @param int $uid
-     * @param string $fuids
-     * return bool
-     */
-    public function delete_friend($data)
-    {
-    	$response = $this->post('/user/deletefriends.php', $data);
-    	
-        return true;
-    }
-    
     /*
      * 查询 好友列表
      * @param  int $uid
@@ -195,86 +147,6 @@ class Model_API_User extends Model_API
     	$response = $this->post('/user/getfriendlist.php', $data);
     	
         return $response['result'];
-    }
-    
-    /*
-     * 列出好友总是
-     * @param int $uid
-     * return bool
-     */
-    public function count_friend($data)
-    {
-    	$response = $this->post('/user/getfriendcount.php', $data);
-    	
-        return $response['result'];
-    }
-    
-     /**
-     * 添加好友请求（支持批量，一次最多100个）
-     * @param int $uid
-     * @param string $fuids
-     * return bool
-     */
-    public function add_fried_request($data)
-    {
-    	$response = $this->post('/user/addfriendsrequest.php', $data);
-    	
-        return true;
-    }
-    
-   /*
-     * 删除好友 请求（支持批量，一次最多100个）
-     * @param int $uid
-     * @param string $fuids
-     * return bool
-     */
-    public function delete_fried_request($data)
-    {
-    	$response = $this->post('/user/deletefriedrequest.php', $data);
-    	
-        if( $this->failed($response) )
-        {
-            return false;
-        }
-    	
-        return true;
-    }
-    
-    /*
-     * 查询 好友请求列表
-     * @param  int $uid
-     * @return array()
-     */
-    public function list_friend_request($data)
-    {
-    	$response = $this->post('/user/getnewfriendsrequest.php', $data);
-    	
-        return $response['result'];
-    }
-    
-    /**
-     * 重置新增粉丝 提示数量置0
-     * @param int $uid
-     * return bool
-     */
-    public function reset_new_attention($data)
-    {
-    	$response = $this->post('/user/updateattentioncount.php', $data);
-
-        return true;
-    }
-    
-    
-    /**
-     * 重置新好友 提示数量置0
-     * @param int $uid
-     * return bool
-     */
-    public function reset_new_friend($data)
-    {
-    	$response = $this->post('/user/updatefriendscount.php', $data);
-
-        return true;
     }
     
     /**
@@ -351,7 +223,6 @@ class Model_API_User extends Model_API
     public function fans_del($data)
     {
     	$response = $this->post('/user/deletefans.php', $data);
-
         return $response['result'];
     }
     
@@ -407,37 +278,6 @@ class Model_API_User extends Model_API
     }
     
     /*
-     * 我关注的 所有uid
-     * @param string $uid
-     */
-    public function get_attention_all_uid($data)
-    {
-    	$response = $this->post('/user/getattentionalluid.php', $data);
-
-        return $response['result'];
-    }
-    
-    
-    /*
-     * 我好友的 所有uid
-     * @param string $uid
-     */
-    public function get_friend_all_uid($data)
-    {
-    	$response = $this->post('/user/getfriendalluid.php', $data);
-
-        return $response['result'];
-    }
-
-    public function is_followd_by($data)
-    {
-        return false;
-    	$response = $this->post('/user/getfriendalluid.php', $data);
-
-        return (bool)$response['result'];
-    }
-    
-    /*
      *  得到 类似的 nick 名称
      */
     public function like($data)
@@ -455,5 +295,19 @@ class Model_API_User extends Model_API
     	$response = $this->post('/user/getattofatt.php', $data);
 
         return $response['result'];
+    }
+    
+    public function get_attention_all_uid($data)
+    {
+    	$response = $this->post('/user/getattentionalluid.php', $data);
+    	
+        return $response['result'];
+    }
+    
+    public function get_user_source($data)
+    {
+    	$response = $this->post('/user/getusersource.php', $data);
+    	
+    	return $response['result'];
     }
 }

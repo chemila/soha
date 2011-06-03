@@ -90,6 +90,13 @@ class Cache_Memcache extends Cache {
 	protected $_flags;
 
 	/**
+	 * Memcache servers
+	 *
+	 * @var Array
+	 */
+	protected $_servers;
+
+	/**
 	 * Constructs the memcache Cache object
 	 *
 	 * @param   array     configuration
@@ -108,39 +115,9 @@ class Cache_Memcache extends Cache {
 		// Setup Memcache
 		$this->_memcache = new Memcache;
 
-		// Load servers from configuration
-		$servers = Arr::get($this->_config, 'servers', NULL);
-
-		if ( ! $servers)
-		{
-			// Throw an exception if no server found
-			throw new Cache_Exception('No Memcache servers defined in configuration');
-		}
-
-		// Setup default server configuration
-		$config = array(
-			'host'             => 'localhost',
-			'port'             => 11211,
-			'persistent'       => FALSE,
-			'weight'           => 1,
-			'timeout'          => 1,
-			'retry_interval'   => 15,
-			'status'           => TRUE,
-			'failure_callback' => array($this, '_failed_request'),
-		);
-
-		// Add the memcache servers to the pool
-		foreach ($servers as $server)
-		{
-			// Merge the defined config with defaults
-			$server += $config;
-
-			if ( ! $this->_memcache->addServer($server['host'], $server['port'], $server['persistent'], $server['weight'], $server['timeout'], $server['retry_interval'], $server['status'], $server['failure_callback']))
-			{
-				throw new Cache_Exception('Memcache could not connect to host \':host\' using port \':port\'', array(':host' => $server['host'], ':port' => $server['port']));
-			}
-		}
-
+		// Init servers from configuration
+		$this->_servers = $this->init_servers();
+		
 		// Setup the flags
 		$this->_flags = Arr::get($this->_config, 'compression', FALSE) ? MEMCACHE_COMPRESSED : FALSE;
 	}
@@ -281,7 +258,7 @@ class Cache_Memcache extends Cache {
 		$host = FALSE;
 
 		// Get host settings from configuration
-		foreach ($this->_config['servers'] as $server)
+		foreach ($this->_servers as $server)
 		{
 			if ($hostname == $server['host'] and $port == $server['port'])
 			{
@@ -292,16 +269,70 @@ class Cache_Memcache extends Cache {
 
 		if ( ! $host)
 			return;
-		else
-		{
-			return $this->_memcache->setServerParams(
-				$host['host'],
-				$host['port'],
-				$host['timeout'],
-				$host['retry_interval'],
-				FALSE,
-				array($this, '_failed_request'
-				));
-		}
+
+        return $this->_memcache->setServerParams(
+            $host['host'],
+            $host['port'],
+            $host['timeout'],
+            $host['retry_interval'],
+            FALSE,
+            array($this, '_failed_request'
+        ));
 	}
+
+    public function init_servers()
+    {
+        // Load servers from configuration
+		$servers = Arr::get($this->_config, 'servers', NULL);
+
+		if ( ! $servers)
+		{
+			// Throw an exception if no server found
+			throw new Cache_Exception('No Memcache servers defined in configuration');
+		}
+
+        // Config servers like: 127.0.0.1:11211 127.0.0.1:11212
+        if( ! is_array($servers))
+        {
+            $servers_string = $servers;
+            $servers = array();
+            $array = strpos(' ', $servers_string) ? explode(' ', $servers_string) : array($servers_string);
+
+            foreach($array as $sh)
+            {
+                list($host, $port) = explode(':', $sh);
+
+                $servers[] = array(
+                    'host' => $host,
+                    'port' => $port,
+                );
+            }
+        }
+
+        // Setup default server configuration
+		$default = array(
+			'host'             => 'localhost',
+			'port'             => 11211,
+			'persistent'       => FALSE,
+			'weight'           => 1,
+			'timeout'          => 1,
+			'retry_interval'   => 15,
+			'status'           => TRUE,
+			'failure_callback' => array($this, '_failed_request'),
+		);
+
+		// Add the memcache servers to the pool
+		foreach ($servers as $server)
+		{
+			// Merge the defined config with defaults
+			$server += $default;
+
+			if ( ! $this->_memcache->addServer($server['host'], $server['port'], $server['persistent'], $server['weight'], $server['timeout'], $server['retry_interval'], $server['status'], $server['failure_callback']))
+			{
+				throw new Cache_Exception('Memcache could not connect to host \':host\' using port \':port\'', array(':host' => $server['host'], ':port' => $server['port']));
+			}
+		}
+
+        return $servers;
+    }
 }

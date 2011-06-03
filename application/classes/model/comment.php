@@ -27,7 +27,7 @@ class Model_Comment extends Model_QORM {
 
     public function with_weibo()
     {
-        $this->weibo->find($this->wid);
+        $this->weibo->reload();
         $this->weibo->with_user();
 
         return $this;

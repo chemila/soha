@@ -512,4 +512,19 @@ class Arr {
 		return $flat;
 	}
 
+    public static function search($haystack, $needle, $index = null) 
+    { 
+        $aIt = new RecursiveArrayIterator($haystack); 
+        $it = new RecursiveIteratorIterator($aIt); 
+        
+        while($it->valid()) 
+        {        
+            if (((isset($index) AND ($it->key() == $index)) OR (!isset($index))) AND ($it->current() == $needle)) 
+                return $aIt->key(); 
+            
+            $it->next(); 
+        } 
+        
+        return false; 
+    } 
 } // End arr

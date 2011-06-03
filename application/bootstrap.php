@@ -1,5 +1,4 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-
 /**
  * Set the default time zone.
  */
@@ -33,7 +32,7 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Core::init(array(
-	'base_url'   => '/',
+	'base_url'   => '/star/',
     'index_file' => 'index.php',
     'cache_dir' => $_SERVER['SINASRV_CACHE_DIR'],
     'errors' => FALSE,       
@@ -44,7 +43,7 @@ Core::init(array(
 /**
  * Attach the file write to logging. Multiple writers are supported.
  */
-Core::$log->attach(new Log_File($_SERVER['SINASRV_APPLOGS_DIR']));
+Core::$log->attach(new Log_File(Core::$cache_dir));
 
 /**
  * Attach a file reader to config. Multiple readers are supported.
@@ -60,14 +59,11 @@ Core::modules(array(
 	'image'      => MODPATH.'image',      // Image manipulation
 	'oauth'      => MODPATH.'oauth',      // OAuth authentication
 	'pagination' => MODPATH.'pagination', // Paging of results
-	'email'      => MODPATH.'email',       // Basic authentication
-    'phpQuery'   => MODPATH.'phpQuery',     // php end jquery functionlity
     'orm'        => MODPATH.'orm',
     'smarty'     => MODPATH.'smarty',
-    'queue'      => MODPATH.'queue',
-    'cron'      => MODPATH.'cron',
+    'queue'      => MODPATH.'queue',      // Queue access
+    'cron'       => MODPATH.'cron',       // Run cron job
 ));
-
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
@@ -80,8 +76,18 @@ if ( ! defined('SUPPRESS_REQUEST'))
 	 * Execute the main request. A source of the URI can be passed, eg: $_SERVER['PATH_INFO'].
 	 * If no source is specified, the URI will be automatically detected.
 	 */
-	echo Request::instance()
-		->execute()
-		->send_headers()
-		->response;
+    try
+    {
+        echo Request::instance()
+            ->execute()
+            ->send_headers()
+            ->response;
+    }
+    catch(Exception $e)
+    {
+        echo Request::factory('/error')
+        	->execute()
+            ->send_headers()
+            ->response;
+    }
 }

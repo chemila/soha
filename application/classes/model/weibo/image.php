@@ -1,7 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_Weibo_Image extends Model_Weibo {
-    public static $upload_directory = 'media/upload';
     public static $valid_types = array('jpg', 'png', 'gif', 'jpeg');
     public static $max_allowed_size = '5M';
 
@@ -10,34 +9,29 @@ class Model_Weibo_Image extends Model_Weibo {
     const MIDDLE_WIDTH = 440;
     const MIDDLE_HEIGHT = 314;
 
+    const TYPE_SMALL = 'small';
+    const TYPE_MIDDLE = 'middle';
+    const TYPE_LARGE = 'large';
+    const TYPE_ORIGIN = 'large';
+
     public function get_media_data($type = "src")
     {
-        $this->_load();
         $data = unserialize($this->media_data);
 
-        return array(
-            'src' => $data['img']['src'],
-        );
+        $array = array('src' => $data['img']['src']);
+        return Arr::get($array, $type);
     }
 
-    public static function get_relative_path($filename, $type = 'large')
+    public static function get_path($filename, $type = self::TYPE_ORIGIN)
     {
-        return self::$upload_directory.DIRECTORY_SEPARATOR.$type.DIRECTORY_SEPARATOR.substr($filename, 0, 2).DIRECTORY_SEPARATOR;
+        return $type.DIRECTORY_SEPARATOR.substr($filename, 0, 2).DIRECTORY_SEPARATOR;
     }
 
-    public static function get_abs_path($filename, $type = 'large')
+    public static function get_file($file, $type = self::TYPE_ORIGIN)
     {
-        return DOCROOT.self::get_relative_path($filename, $type);
-    }
-
-    public static function get_relative_file($filename, $type = 'large')
-    {
-        return self::get_relative_path($filename, $type).$filename;
-    }
-
-    public static function get_abs_file($filename, $type = 'large')
-    {
-        return self::get_abs_path($filename, $type).$filename;
+        // $file like: /path/to/image/large/12/12fdasf132131.png
+        // $path like: large/12/
+        return str_replace(array('/large/', '/middle/', '/small/'), "/$type/", $file);
     }
 
     public function set_media_data(Array $data)
@@ -68,44 +62,61 @@ class Model_Weibo_Image extends Model_Weibo {
 	    $array->rule($key, 'Upload::type', array(self::$valid_types));
 	    $array->rule($key, 'Upload::size', array(self::$max_allowed_size));
 	    $array->rule($key, 'Upload::valid');
-
-        if ($array->check())
+        if ( ! $array->check())
         {
-            // Upload is valid, save it
-            $filename = md5(microtime().rand());
-            $ext = strtolower(pathinfo($data[$key]['name'], PATHINFO_EXTENSION));
-            $file = $filename.'.'.$ext;
-            $directory = self::get_abs_path($filename);
-
-            if(Upload::save($data[$key], $file, $directory))
-            {
-                self::resize($file);
-                return $file;
-            }
-        } 
-        else
-        {
-            return $array->errors();
+            return false;
         }
+
+        $config = Core::config('upload');
+        $tmp_file = $data[$key]['tmp_name'];
+        $filename = md5(microtime().rand()).'.'.strtolower(pathinfo($data[$key]['name'], PATHINFO_EXTENSION));
+        $path = self::get_path($filename);
+
+        $small = self::resize($tmp_file, self::TYPE_SMALL);
+        $middle = self::resize($tmp_file, self::TYPE_MIDDLE);
+
+        if( ! $small or ! $middle)
+            return false;
+
+        if($file = Model_Upload::save($data[$key], $filename, $path))
+        {
+            $file_small = self::get_file($file, self::TYPE_SMALL);
+            $file_middle  = self::get_file($file, self::TYPE_MIDDLE);
+
+            if( ! $small->save($file_small) OR ! $middle->save($file_middle))
+                return false;
+
+            $url_original = Model_Upload::rsync_save($file, self::get_path($filename, self::TYPE_ORIGIN));
+            $url_small = Model_Upload::rsync_save($file_small, self::get_path($filename, self::TYPE_SMALL));
+            $url_middle = Model_Upload::rsync_save($file_middle, self::get_path($filename, self::TYPE_MIDDLE));
+
+            if($url_original and $url_middle and $url_small)
+                return $url_small;
+        } 
     }
 
-    public static function resize($filename)
+    public static function resize($file, $type)
     {
-        $image1 = Image::factory(self::get_abs_file($filename));
-        $image2 = Image::factory(self::get_abs_file($filename));
+        $size = array(
+            self::TYPE_SMALL => array(
+                'width' => self::SMALL_WIDTH,
+                'height' => self::SMALL_HEIGHT,
+            ),       
+            self::TYPE_MIDDLE => array(
+                'width' => self::MIDDLE_WIDTH,
+                'height' => self::MIDDLE_HEIGHT,
+            ),
+        );
+        $image = Image::factory($file);
         
         try
         {
-            $image1->resize(self::SMALL_WIDTH, self::SMALL_HEIGHT, Image::INVERSE)
-                   ->save(self::get_abs_file($filename, 'small'));
-            $image2->resize(self::MIDDLE_WIDTH, self::MIDDLE_HEIGHT, Image::INVERSE)
-                   ->save(self::get_abs_file($filename, 'middle'));
+            $image->resize($size[$type]['width'], $size[$type]['height'], Image::INVERSE);
+            return $image;
         }
         catch(CE $e)
         {
             return false;
         }
-
-        return true;
     }
 }

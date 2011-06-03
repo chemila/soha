@@ -38,7 +38,11 @@ return array(
         'required' => array('index', 'delete', 'add'),
     ),
     'weibo' => array(
-        'skipped' => array(),
+        'skipped' => array('show', 'comment_index'),
+        'required' => array(),
+    ),
+    'person' => array(
+        'skipped' => array('getcard'),
         'required' => array(),
     ),
 );

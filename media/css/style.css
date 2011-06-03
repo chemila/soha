@@ -30,13 +30,14 @@ a:hover { text-decoration:underline }
 .star_list{height:110px!important;overflow:hidden;}
 .star_info { width:145px; height:80px; margin-top:10px;}
 .star_info img { float:left; display:inline; margin-right:5px; width:55px; height:55px; padding:4px; border:1px solid #DBDBDB }
-.star_info div { height:70px; color:#BFBFBF; line-height:20px; }
+.star_info div { height:70px; color:#BFBFBF; line-height:20px; overflow:hidden;}
 .star_info div a { color:#000 !important }
 .star_info p { width:145px; height:18px; padding-top:2px; }
 .star_info p a { float:left; display:inline; margin-right:5px; width:45px; height:18px; line-height:18px; text-align:center; color:#FFF!important; background:url(../img/bg.png) }
 .star_info p a.btn1 { background-position:-146px -83px }
 .star_info p a.btn2 { background-position:-146px -64px }
 .star_info p a.btn3 { background-position:-146px -102px; color:#938787!important }
+.text_name_cut{ display:block; width:70px; white-space:nowrap; overflow:hidden;}
 /*pages*/
 .pages { text-align:right; padding:10px 30px }
 .pages a { margin:0 4px; color:#7A7A7A!important }

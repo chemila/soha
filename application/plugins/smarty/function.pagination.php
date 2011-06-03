@@ -13,11 +13,11 @@ function smarty_function_pagination($params, &$smarty)
     $total = Arr::get($params, 'total', 0);
     $perpage = Arr::get($params, 'perpage', 20);
     $key = Arr::get($params, 'key', 'page');
+    $tpl = Arr::get($params, 'tpl', 'pagination');
 
-    // Check session or cookie whether user info exists
     $page = Pagination::factory(array(
         'total_items' => $total, 
-        'view' => 'pagination',
+        'view' => $tpl,
         'items_per_page' => $perpage,
         'current_page' => array(
             'source' => 'query_string',

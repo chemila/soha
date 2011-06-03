@@ -5,11 +5,18 @@ class Controller_Cron extends Controller {
     public function before()
     {
         //TODO: Do check client ip, protocal, is client first
+        if( ! in_array(Request::$client_ip, array('127.0.0.1', '60.28.113.123')))
+        {
+            $this->request->action = 'forbidden';
+            return false;
+        }
+
         return parent::before();
     }
 
     public function action_run()
     {
+        set_time_limit(60);
         // Setting cron jobs here
         Cron::set('queue_inbox', array('* * * * *', array($this, 'queue_inbox')));
         Cron::set('queue_inbox_trash', array('* * * * *', array($this, 'queue_inbox_trash')));
@@ -17,9 +24,11 @@ class Controller_Cron extends Controller {
         Cron::set('queue_outbox_trash', array('* * * * *', array($this, 'queue_outbox_trash')));
         Cron::set('queue_atme', array('* * * * *', array($this, 'queue_atme')));
         Cron::set('queue_atme_trash', array('* * * * *', array($this, 'queue_atme_trash')));
-        Cron::set('collect_weibo_oauth', array('*/10 * * * *', array($this, 'collect_weibo_oauth')));
+        Cron::set('queue_unread', array('* */2 * * *', array($this, 'queue_unread')));
+        Cron::set('collect_weibo_oauth', array('*/5 * * * *', array($this, 'collect_weibo_oauth')));
         Cron::set('queue_weibo', array('* * * * *', array($this, 'queue_weibo')));
-        Cron::set('observe_star', array('* */2 * * *', array($this, 'observe_star')));
+        //Cron::set('observe_star', array('* */2 * * *', array($this, 'observe_star')));
+        Cron::set('queue_weibo_publish', array('* * * * *', array($this, 'queue_weibo_publish')));
 	    Cron::run();
     }
 
@@ -28,7 +37,7 @@ class Controller_Cron extends Controller {
         try
         {
             $inbox = new Model_Inbox;
-            $inbox->pull(500);
+            $inbox->pull(200);
         }
         catch(Exception $e){}
     }
@@ -38,7 +47,7 @@ class Controller_Cron extends Controller {
         try
         {
             $inbox = new Model_Inbox;
-            $inbox->clear_trash();
+            $inbox->clear_trash(30);
         }
         catch(Exception $e) {}
     }
@@ -48,7 +57,7 @@ class Controller_Cron extends Controller {
         try
         {
             $outbox = new Model_Outbox;
-            $outbox->pull(500);
+            $outbox->pull(200);
         }
         catch(Exception $e) {}
     }
@@ -58,7 +67,7 @@ class Controller_Cron extends Controller {
         try
         {
             $outbox = new Model_Outbox;
-            $outbox->clear_trash();
+            $outbox->clear_trash(30);
         }
         catch(Exception $e){}
     }
@@ -68,7 +77,7 @@ class Controller_Cron extends Controller {
         try
         {
             $atbox = new Model_Atme();
-            $atbox->pull();
+            $atbox->pull(200);
         }
         catch(Exception $e) {}
     }
@@ -78,7 +87,7 @@ class Controller_Cron extends Controller {
         try
         {
             $atme = new Model_Atme;
-            $atme->clear_trash();
+            $atme->clear_trash(30);
         }
         catch(Exception $e) {}
     }
@@ -99,9 +108,12 @@ class Controller_Cron extends Controller {
                 $since_id = $weibo->last_id($source);
 
                 $data = $model_oauth->home_timeline(array(
-                    'count' => 200,
+                    'count' => 50,
                     'since_id' => $since_id,
                 ));
+
+                if( ! $data)
+                    continue;
 
                 foreach($data as $status)
                 {
@@ -109,16 +121,16 @@ class Controller_Cron extends Controller {
                     {
                         $weibo->fetch($status, $source);
                     }
-                    catch(Database_Exception $e){}
+                    catch(Database_Exception $e) {}
                 }
             }
         }
     }
 
-    public function queue_weibo($page = 1)
+    public function queue_weibo()
     {
         $weibo_shadow = new Model_Collect_Weibo;
-        $shadows = $weibo_shadow->todo(0, $page, 100);
+        $shadows = $weibo_shadow->todo(120);
 
         foreach($shadows as $shadow)
         {
@@ -133,8 +145,6 @@ class Controller_Cron extends Controller {
 
         foreach($config as $source => $admin_ids)
         {
-            if($source != 'qq')
-                continue;
             $model_star = new Model_Star;
             $stars = $model_star->where('source', '=', $source)
                      ->and_where('observer', '=', 0)
@@ -167,12 +177,44 @@ class Controller_Cron extends Controller {
         }
     }
 
+	public function queue_unread()
+	{
+		try
+        {
+            $unread = new Model_Unread();
+            $unread->pull(200);
+        }
+        catch(Exception $e) {}
+	}
+
+    public function queue_weibo_publish()
+    {
+		try
+        {
+            $weibo = new Model_Weibo();
+            $weibo->pull(60, true);
+        }
+        catch(Exception $e) {}
+    }
+
     public function action_test()
     {
-        //$this->observe_star();
-        //$this->collect_weibo_oauth();
-        //$this->queue_weibo();
+        /**
+        $this->observe_star();
+        $this->collect_weibo_oauth();
+        $this->queue_weibo();
         $this->queue_inbox();
         $this->queue_outbox();
+        $this->queue_inbox_trash();
+        $this->queue_unread();
+        $this->queue_weibo();
+        $this->queue_weibo_publish();
+        **/
+        $this->queue_weibo_publish();
+    }
+
+    public function action_forbidden()
+    {
+        die('forbidden');
     }
 }

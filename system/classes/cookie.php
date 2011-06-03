@@ -12,7 +12,7 @@ class Cookie {
 	/**
 	 * @var  integer  Number of seconds before the cookie expires
 	 */
-	public static $expiration = 0;
+	public static $expiration = 86400;
 
 	/**
 	 * @var  string  Restrict the path that the cookie is available to

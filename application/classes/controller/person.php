@@ -4,73 +4,64 @@ class Controller_Person extends Controller_Authenticated {
 
     public function action_getcard()
     {
-        $fuid = Arr::get($_POST, 'uid');
+        $uid = Arr::get($_POST, 'uid');
 
-        if( ! $fuid)
+        if( ! $uid)
         {
-            die(json_encode(array(
-                'code' => 'A00006',
-                'data' => '<p class="name_card_con5">这个昵称不存在噢 :(</p>',
-            )));
+            $this->response_json('A00006', '<p class="name_card_con5">这个昵称不存在噢 :(</p>');
         }
-        
-		$user = new Model_User($fuid);
+
+		$user = new Model_User($uid);
+        $current_user = $this->get_current_user();
+
+        if($current_user instanceof Model_User)
+        {
+        	$followed = $current_user->following_of($user->pk());
+            $is_self = $current_user->pk() == $user->pk();
+        }
+        else 
+        {
+        	$followed = false;
+        	$is_self = false;
+        }
+
         try
         {
             $user->load();
         }
         catch(Model_API_Exception $e)
         {
-            die(json_encode(array(
-                'code' => 'A00006',
-                'data' => '<p class="name_card_con5">这个昵称不存在噢 :(</p>',
-            )));
+            $this->response_json('A00006', '<p class="name_card_con5">这个昵称不存在噢 :(</p>');
         }
 
-        $this->view = new View_Smarty('smarty:user/card');
+        $this->init_view('card', 'user');
+
         $this->view->user = $user->as_array();
-        //TODO: check user relations
-        $this->view->followed = $this->user->is_followd_by($user->pk());
+        $this->view->followed = $followed;
+        $this->view->is_self = $is_self;
 
-        $json = array(
-            'code' => 'A00006',
-            'data' => $this->view->render(),
-        );
-
-        die(json_encode($json));
+        $this->response_json('A00006', $this->view->render());
     }
 
     public function action_send_message()
     {
-		$nick = urldecode(Arr::get($_POST, "name"));
+		$uid = urldecode(Arr::get($_POST, "uid"));
 		$content = urldecode(Arr::get($_POST, "content"));
 
-        if(empty($nick) or empty($content))
+        if(empty($uid) or empty($content))
 		{
-            die(json_encode(array('code' => 'M06006')));
+            $this->response_json('M06006');
 		}
 		
-		$message = new Model_Message();
-        $user = new Model_User;
-
-        try
-        {
-            $uid = $user->get_uid($nick);
-        }
-        catch(Exception $e)
-        {
-            die(json_encode(array('code' => 'M09001')));
-        }
+		//$message = new Model_Message();
+        $user = new Model_User($uid);
 
         if( $uid == $this->user->pk())
         {
             die(json_encode(array('code' => 'M09002')));
         }
 
-        $user->pk($uid);
-        $user->load();
-
-        if( !$this->user->is_followd_of($uid) )
+        if( ! $this->user->fans_of($uid) )
         {
             die(json_encode(array('code' => 'M09004')));
         }
@@ -80,82 +71,173 @@ class Controller_Person extends Controller_Authenticated {
             "fuids" => $uid,
             "content" => $content,
 		);
-		$response = $message->send($data);
-		
+		$response = $this->user->send_message($uid, $content);
+
 		if($response === 0)
 		{
-			/* 黑名单 */
-			die(json_encode(array('code' => 'M09004')));
+            $this->response_json('M09004');
 		}
 		else if($response === false)
 		{
-			/* 系统错误 */
-			die(json_encode(array('code' => 'E00001')));
+            $this->response_json('E00001');
 		}
-		else 
-		{
-			/* 发送成功 */
-            die(json_encode(array('code' => 'M09003')));
-		}
+    
+        $this->_unread_cache->push_msg($uid);
+        $this->response_json('A00006');
     }
 
-    public function action_addfollow()
+    public function action_add_following()
     {
         $uid = Arr::get($_POST, 'uid');
 
         if($uid == $this->user->pk())
         {
-            die(json_encode(array('code' => 'CC2510')));
+            $this->response_json('CC2510');
+        }
+        if($this->is_observer($uid))
+        {
+            $this->response_json('CC2811');
         }
 
-        $attention = new Model_Attention();
-		
-		$data = array(
-            "uid" => $this->user->pk(),
-            "fuids" => $uid
-        );
-				
-		$result = $attention->add_attention($data);
+		$result = $this->user->add_followding($uid);
 		
 		if($result['result'] === false)
 		{
-			/* 系统错误 */
-			die(json_encode(array('code' => 'M00908')));
+            $this->response_json('M00908');
 		}
 		else if ($result['result'] === -1)
 		{
-			/* 黑名单 */
-			die(json_encode(array('code' => 'M13002')));
+            $this->response_json('M13002');
 		}
 		else if($result['result'] === 1)
 		{
-			/* 已经添加了关注 */
-			die(json_encode(array('code' => 'CC2510')));
+            $this->response_json('CC2510');
+		}
+    
+        // Update current user following cache
+        $this->_following_cache->add_user($uid);
+        $this->_unread_cache->push_attention($uid);
+
+        // Push weibo into user inbox
+        $user = new Model_User($uid);
+        $outbox_cache = new Model_Cache_Outbox($user);
+        $outbox = new Model_Outbox;
+        $wids = $outbox->list_by_user($user->pk());
+
+        foreach($wids as $wid)
+        {
+            $outbox_cache->receive($wid);
+        }
+
+        $outbox_cache->push(array($this->user->pk()), FALSE);
+
+        $this->response_json('A00006', 'nothing');
+    }
+
+    public function action_rm_following()
+    {
+		$uid = Arr::get($_POST, "touid", false);
+		$from = Arr::get($_POST, "fromuid", false);
+		
+		if( ! $uid or ! $from)
+		{
+			$this->response_json('CF0406');
 		}
 
-        $json = array(
-            'code' => 'A00006',
-            'data' => array(),
-        );
+        if($from !== $this->user->pk())
+        {
+			$this->response_json('CF0406');
+        }
+		
+        $result = $this->user->rm_following($uid);
+		
+		if( ! $result)
+		{
+			$this->response_json('CC2510');
+		}
 
-        die(json_encode($json));
+        // Update current user following cache
+        $this->_following_cache->remove_user($uid);
+
+        $user = new Model_User($uid);
+        $outbox = new Model_Outbox;
+        $wids = $outbox->list_by_user($user->pk());
+        $inbox = new Model_Inbox;
+
+        foreach($wids as $wid)
+        {
+            $inbox->move_to_trash(array('uid' => $this->user->pk(), 'wid' => $wid));
+        }
+
+        $this->response_json('A00006');
+    }
+
+    public function action_rm_fans()
+    {
+		$uid = Arr::get($_POST, "touid", false);
+		$from = Arr::get($_POST, "fromuid", false);
+        $isblack = Arr::get($_POST, "isblack", false);
+
+		if( ! $uid or ! $from)
+		{
+			$this->response_json('CF0406');
+		}
+
+		if($from !== $this->user->pk())
+        {
+			$this->response_json('CF0406');
+        }
+
+        $response = $this->user->rm_fans($uid);
+
+        if($isblack)
+        {
+            $this->user->add_block($uid);
+        }
+
+		if( ! $response)
+		{
+			$this->response_json('CC2510');
+		}
+		
+        $this->response_json();
     }
 
     public function action_searchat()
     {
-        $nick = Arr::get($_REQUEST, 'atkey');
+        $nick = Arr::get($_GET, 'atkey');
 
         $user = new Model_User;
         $users = $user->like($nick);
 
         if($users)
         {
-            $json = array(
-                'code' => 'A00006',
-                'data' => $users,
-            );
+            $this->response_json('A00006', $users);
         }
+    }
+    
+    public function action_online()
+    {
+		$count = Arr::get($_GET, 'count', 1);
+        $uid = Arr::get($_GET, 'user_id');
 
-        die(json_encode($json));
+		if($uid !== $this->user->pk())
+			die;
+
+		$this->user->online = 1;
+		$this->user->save();
+    }
+
+    public function action_remind()
+    {
+        $count = Arr::get($_GET, 'count', 1);
+        $uid = Arr::get($_GET, 'user_id');
+        $callback = Arr::get($_GET, 'callback');
+
+		if($uid !== $this->user->pk())
+			die;
+
+        $value = $this->_unread_cache->value();
+        $this->response_json('A00006', $value, $callback);
     }
 }

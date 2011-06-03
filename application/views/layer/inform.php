@@ -1,10 +1,1 @@
-<div class="yInfo">
-	<!--<span id="WB_unread_title_1303023683684"></span>-->
-	<p id="WB_unread_comm_1303023683684" style="display: none; "></p>
-	<p id="WB_unread_fans_1303023683684" style="display: none; "></p>
-	<p id="WB_unread_msg_1303023683684" style="display: none; "></p>
-	<p id="WB_unread_atme_1303023683684">1条微博提到我，<a href="http://weibo.com/atme">查看<em>@</em>我</a></p>
-	<p id="WB_unread_group_1303023683684" style="display: none; "></p>
-	<p id="WB_unread_notice_1303023683684" style="display: none; "></p>
-	<div id="WB_unread_source_1303023683684"></div>
-</div>
+<div class="small_Yellow_div"><div id="WB_unread_layer_1306310481542" class="small_Yellow" style="display:none"><table class="CP_w"><thead><tr><th class="tLeft"><span></span></th><th class="tMid"><span></span></th><th class="tRight"><span></span></th></tr></thead><tbody><tr><td class="tLeft"><span></span></td><td class="tMid"><a accesskey="4" style="position:absolute;top:-9797em;" onfocus="(function(){var div = document.getElementById('WB_unread_comm_1306310481542');var parent = div.parentNode;if(parent){parent.focus();}})();return false;" href="javascript:;">新消息</a><div class="yInfo"><!--<span id="WB_unread_title_1306310481542"></span>--><p id="WB_unread_comm_1306310481542" style="display: none;"></p><p id="WB_unread_fans_1306310481542" style="display: none;"></p><p id="WB_unread_msg_1306310481542" style="display: none;"></p><p id="WB_unread_atme_1306310481542" style="display: none;"></p><p id="WB_unread_group_1306310481542" style="display: none;"></p><p id="WB_unread_notice_1306310481542" style="display: none;"></p><p id="WB_unread_invite_1306310481542" style="display: none;"></p><p id="#{unread_photo}"></p><div id="WB_unread_source_1306310481542"></div></div></td><td class="tRight"><span></span></td></tr></tbody><tfoot><tr><td class="tLeft"><span></span></td><td class="tMid"><span></span></td><td class="tRight"><span></span></td></tr></tfoot></table><div class="close"><a id="WB_unread_layer_close_1306310481542" href="javascript:void(0)">&nbsp;</a></div></div><div style="left:64px;display:none;" class="eventTip" id="WB_once_layer_1306310481542"></div></div>

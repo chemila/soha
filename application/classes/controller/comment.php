@@ -1,34 +1,35 @@
 <?php
-class Controller_Comment extends Controller_Authenticated
-{
+class Controller_Comment extends Controller_Authenticated {
 	public function action_index()
 	{
-        $page = $this->request->param('page', Arr::get($_GET, 'page', 1));
+        $page = $this->get_page();
 
-		$this->view = new View_Smarty("smarty:comment/index");
+        $this->init_view();
+        $this->init_user($this->user);
+
+        $this->_unread_cache->clear('comment');
+
         $comment = new Model_Comment;
-        $this->init_user();
-
         $comments = $comment->list_by_user($this->user->pk(), $page);
+
         $this->view->count = $comment->count_last_query();
         $this->view->comments = $comment->extend_collection($comments);
-        
-        $this->request->response = $this->view->render();
 	}
 
     public function action_atme()
     {
-        $page = $this->request->param('page', Arr::get($_GET, 'page', 1));
+        $page = $this->get_page();
 
-		$this->view = new View_Smarty("smarty:comment/index");
+        $this->init_view('index');
+        $this->init_user($this->user);
+
+        $this->_unread_cache->clear('atcmt');
+
         $comment = new Model_Comment;
-        $this->init_user();
-
         $comments = $comment->replyed_by_user($this->user->pk(), $page);
+
         $this->view->count = $comment->count_last_query();
         $this->view->comments = $comment->extend_collection($comments);
-        
-        $this->request->response = $this->view->render();
     }
 	
 	public function action_add()
@@ -58,18 +59,4 @@ class Controller_Comment extends Controller_Authenticated
             $weibo->save();
         }
 	}
-
-    protected function init_user(Model_User $user = NULL)
-    {
-        if( ! $user)
-            $user = $this->user;
-
-        $user->load();
-
-        $this->view->user = $user->as_array();
-        $this->view->followers = $user->attention_list(1);
-        $this->view->general_followers = $user->attention_list(0);
-        $this->view->friends = $user->friends_list();
-        $this->view->followers_of_friends = $user->followers_of_friends();
-    }
 }

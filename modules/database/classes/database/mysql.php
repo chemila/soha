@@ -31,6 +31,7 @@ class Database_MySQL extends Database {
 		// Extract the connection parameters, adding required variabels
 		extract($this->_config['connection'] + array(
 			'database'   => '',
+            'port'       => '',
 			'hostname'   => '',
 			'username'   => '',
 			'password'   => '',
@@ -45,12 +46,12 @@ class Database_MySQL extends Database {
 			if ($persistent)
 			{
 				// Create a persistent connection
-				$this->_connection = mysql_pconnect($hostname, $username, $password);
+				$this->_connection = mysql_pconnect($hostname.':'.$port, $username, $password);
 			}
 			else
 			{
 				// Create a connection and force it to be a new link
-				$this->_connection = mysql_connect($hostname, $username, $password, TRUE);
+				$this->_connection = mysql_connect($hostname.':'.$port, $username, $password, TRUE);
 			}
 		}
 		catch (ErrorException $e)
@@ -66,7 +67,6 @@ class Database_MySQL extends Database {
 
 		// \xFF is a better delimiter, but the PHP driver uses underscore
 		$this->_connection_id = sha1($hostname.'_'.$username.'_'.$password);
-
 		$this->_select_db($database);
 
 		if ( ! empty($this->_config['charset']))

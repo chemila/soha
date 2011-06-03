@@ -1,25 +1,68 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Setting extends ORM {
-    protected $_has_one = array(
-        'user' => array(
-            'model' => 'user',            
-            'foreign_key' => 'uid',
-        ),       
-    );
+class Model_Setting extends Model_QORM {
+    const CATEGORY_DEFAULT = 0;
 
-    public function get($category, $attr = NULL)
+    protected $_table_name = 'setting';
+    protected $_categories = array('comment', 'message', 'weibo');
+
+    public function by_user($uid)
     {
-        $data = DB::select('*')->from($this->_table_name)
-            ->where('uid', '=', $this->user->uid)
-            ->where('category', '=', $category)
+        return $this->where('uid', '=', $uid)
+            ->where('category', '=', self::CATEGORY_DEFAULT)
             ->limit(1)
-            ->execute($this->_db)
-            ->as_array();
+            ->find();
+    }
 
-        $data[0]['data'] = unserialize($data[0]['data']);
+    public function get_default()
+    {
+		return array(
+            'comment' => 0,
+            'message' => 0,
+            'where' => 1,
+        );
+    }
 
-        return isset($attr) ? $data[0][$attr] : $data[0];
+    public function get_categories()
+    {
+        return $this->_categories;
+    }
+
+    public function add_category($category)
+    {
+        $this->_categories[] = $category;
+
+        return array_unique($this->_categories);
+    }
+
+    public function merge_default($setting)
+    {
+        $data = array();
+        foreach($setting as $key => $value)
+        {
+            if(in_array($key, $this->_categories))
+            {
+                $data[$key] = $value;
+            }
+        }
+
+        return array_merge($this->get_default(), $data);
+    }
+
+    public function get_category($name, $default = true)
+    {
+        if( ! $this->loaded())
+        {
+            $this->_load();
+        }
+
+        $setting = unserialize($this->data);
+
+        if( ! is_array($setting))
+        {
+            return false;
+        }
+
+        return (bool)Arr::get($setting, $name, $default); 
     }
 }
-

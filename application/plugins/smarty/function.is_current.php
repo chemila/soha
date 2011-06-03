@@ -12,8 +12,13 @@
  */
 function smarty_function_is_current($params, &$smarty) 
 {
-    $uri = Arr::get($params, 'uri', false);
+    $uri = Arr::get($params, 'uri', '/');
 
-    if($uri and $uri === Request::detect_uri())
+    if($uri == '/')
+    {
+        $uri = 'public';
+    }
+
+    if($uri and $uri == substr(Request::detect_uri(), -1 * strlen($uri)))
         return sprintf('class="%s"', Arr::get($params, 'class', 'current'));
 }

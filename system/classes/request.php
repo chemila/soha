@@ -1102,7 +1102,7 @@ class Request {
 				// All other exceptions are PHP/server errors
 				$this->status = 500;
 			}
-
+            
 			// Re-throw the exception
 			throw $e;
 		}

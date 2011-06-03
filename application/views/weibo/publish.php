@@ -11,7 +11,7 @@
         <div id="publisher_info" class="wordNumBg">你还可以输入<span class="pipsLim">140</span>字</div>
         <div class="postOptionBg">
             <div id="publisher_faces" class="OnTit">
-                <img title="表情" class="small_icon faceicon" dynamic-src="http://img.t.sinajs.cn/t35/style/images/common/transparent.gif" src="http://img.t.sinajs.cn/t35/style/images/common/transparent.gif">
+                <img title="表情" class="small_icon faceicon" dynamic-src="media/img/common/transparent.gif" src="media/img/common/transparent.gif">
                 <a tabindex="2" href="javascript:void(0)">表情</a>
             </div>
             <div class="OnPic">
@@ -28,10 +28,12 @@
                     <a id="publisher_perch_delete" class="close" title="删除" href="javascript:;"><img dynamic-src="http://img.t.sinajs.cn/t35/style/images/index/fbqimgclose.gif" align="absmiddle" width="8" height="7" /></a>
                 </span>-->
             </div>
+            <!-- 
             <div id="publisher_video" class="OnTit">
-                <img class="small_icon videoicon" title="视频" dynamic-src="http://img.t.sinajs.cn/t35/style/images/common/transparent.gif" src="http://img.t.sinajs.cn/t35/style/images/common/transparent.gif">
+                <img class="small_icon videoicon" title="视频" dynamic-src="media/img/common/transparent.gif" src="media/img/common/transparent.gif">
                 <a tabindex="4" href="javascript:void(0);">视频</a>
             </div>
+             -->
         </div>
         <div class="postBtnBg bgColorA_No"><!-- 不可点状态<div class="postBtnBg bgColorA_No"> -->
             <a title="发布微博" tabindex="8" id="publisher_submit" href="javascript:void(0);"><span class="bgColorA"><span class="BackG"></span><span class="BackG1"></span><span class="BackG2"></span></span><span class="bgColorB"></span></a>

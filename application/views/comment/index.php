@@ -8,13 +8,13 @@
         <!--{include file="header/user.php"}--> 
         <!--{include file="home/nav.php"}--> 
         <div class="line"></div>
-        <!--{include file="home/sidebar.php"}--> 	
+		<div id="user_list"><!--{include file="home/sidebar.php"}--></div>
 	</div>
     <div class="MIB_600"> 
         <h2 class="new_title_ml" style="margin-top:10px;">
-            <a href="/comment/atme" class="current">回复我的评论</a>
+            <a href="comment/atme" class="current">回复我的评论</a>
             <b class="mb_line_r">|</b>
-            <a href="/comment">发出的评论</a>
+            <a href="comment">发出的评论</a>
         </h2>	
     </div>
     <div class="commentsmanage MIB_linkal">
@@ -27,6 +27,6 @@
          -->
     </div>
     <div style="clear:both;"></div>
-	<div class="pages"><!--{pagination total=$count}--></div>
+	<div class="pages"><!--{pagination total=$count|default:0 perpage=$perpage|default:20 tpl="public/pagination"}--></div>
 </div>
 <!--{include file="footer.php"}--> 

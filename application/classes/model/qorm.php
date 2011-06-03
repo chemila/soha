@@ -35,15 +35,13 @@ abstract class Model_QORM extends ORM {
         }
     }
 
-    public function pull($limit = 10)
+    public function pull($limit = 10, $with_oauth = FALSE)
     {
         $this->init();
-        $data = $this->_mq->receive($this->_queue_key, max(0, $limit));
+        $data = $this->_mq->receive($this->_queue_key, $limit);
 
         if(empty($data))
             return false;
-
-        $classname = 'Model_'.$this->_table_name;
 
         foreach($data as $array)
         {
@@ -51,16 +49,44 @@ abstract class Model_QORM extends ORM {
                 continue;
 
             $to_save = unserialize($array['body']);
-            if(is_array($to_save))
-            {
-                $obj = new $classname;
 
-                $obj->values($to_save);
-                $obj->save();
+            if( ! is_array($to_save))
+                continue;
+		
+            if($with_oauth)
+            {
+                $this->access_oauth($to_save);
+            }
+            else
+            {
+                $this->insert_or_update($to_save);         
             }
         }
         
         return true;
+    }
+
+    public function insert_or_update(Array $to_save)
+    {
+        if(isset($to_save[$this->_primary_key]))
+        {
+            $this->find($to_save[$this->_primary_key]); 
+
+            if($this->loaded())
+            {
+                unset($to_save[$this->_primary_key]);
+            }
+        }
+
+        $this->values($to_save);
+        $this->save();
+
+        return $this->saved();
+    }
+
+    public function access_oauth($data)
+    {
+        throw new BadMethodCallException('Invalid method call: access_oauth');
     }
 
     public function move_to_trash($data)
@@ -75,37 +101,42 @@ abstract class Model_QORM extends ORM {
         }
         catch(Queue_Exception $e)
         {
-            if( ! is_array($data))
+            $query = DB::delete($this->_table_name);
+            foreach($data as $key => $value)
             {
-                $data = array($this->_primary_key => $data);
+                $query->where($key, '=', $value);
             }
 
-            list($key, $value) = each($data);
-            return DB::delete($this->_table_name)->where($key, '=', $value)->execute($this->_db);
+            return $query->execute($this->_db);
         }
         
         return true;
     }
 
-    public function clear_trash()
+    public function clear_trash($limit = 30)
     {
         $this->init();
-        $data = $this->_mq->receive($this->_queue_trash_key);
+        $data = $this->_mq->receive($this->_queue_trash_key, $limit);
 
-        if( ! $data[0]['body'])
-        {
+        if(empty($data))
             return false;
-        }
 
-        $to_remove = unserialize($data[0]['body']);
-
-        if( ! is_array($to_remove))
+        foreach($data as $array)
         {
-            $to_remove = array($this->_primary_key => $to_remove);
+            if(empty($array['body']))
+                continue;
+
+            $to_remove = unserialize($array['body']);
+
+            $query = DB::delete($this->_table_name);
+            foreach($to_remove as $key => $value)
+            {
+                $query->where($key, '=', $value);
+            }
+            $query->execute($this->_db);
         }
 
-        list($key, $value) = each($to_remove);
-        return DB::delete($this->_table_name)->where($key, '=', $value)->execute($this->_db);
+        return true;
     }
     
     public function save_sync()

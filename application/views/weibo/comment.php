@@ -34,7 +34,7 @@
         <!--{if $count > 10}--> 
         <div class="list_head MIB_linedot3 moreheight"> 
             后面还有<span><!--{$count - 10}--></span>条评论，
-            <a href="/weibo/show/<!--{$weibo.id}-->">点击查看<em>&gt;&gt;</em> </a> 
+            <a href="weibo/show/<!--{$weibo.id}-->">点击查看<em>&gt;&gt;</em> </a> 
         </div>
         <!--{/if}--> 
     </div>

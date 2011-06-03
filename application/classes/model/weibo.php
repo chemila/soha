@@ -78,7 +78,8 @@ class Model_Weibo extends Model_QORM {
 
     public function hot_commented($page = 1, $limit = 20)
     {
-        return $this->order_by('comment_count', 'desc')
+        return $this->where('user_category', '=', Model_User::CATEGORY_STAR)
+            ->order_by('comment_count', 'desc')
             ->order_by('id', 'desc')
             ->limit($limit)
             ->offset(max(0, $page - 1) * $limit)
@@ -133,10 +134,12 @@ class Model_Weibo extends Model_QORM {
             ->find_all();
     }
 
-    public function get_from_ids(Array $wids)
+    public function get_from_ids(Array $wids = NULL)
     {
-        $result = array();
+        if( ! $wids)
+            return;
 
+        $result = array();
         foreach($wids as $wid)
         {
             $weibo = new self($wid);
@@ -175,7 +178,7 @@ class Model_Weibo extends Model_QORM {
         return $ats;
     }
 
-    public function save_shadow(Model_Collect_Weibo $shadow, $fake_uid)
+    public function save_shadow(Model_Collect_Weibo $shadow)
     {
         $this->values($shadow->as_array());
         $this->uid = NULL;
@@ -220,14 +223,17 @@ class Model_Weibo extends Model_QORM {
 
         // Update user statuses_count 
         $user = new Model_User($this->uid);
+        $fans = $user->get_fans_ids();
+
         $user->load();
         $user->statuses_count ++;
         $user->save();
 
         // Send to outbox and push into users inboxes
 		$outbox = new Model_Cache_Outbox($user);
-        $outbox->receive($this)->push($ats);
-        unset($user, $outbox);
+        $users = array_merge($ats, $fans);
+        $outbox->receive($this->pk())->push($users);
+        unset($outbox, $user);
 
         // Update shadow wid
         $shadow->wid = $this->pk();
@@ -261,5 +267,78 @@ class Model_Weibo extends Model_QORM {
         $this->save();
         
         return $this->saved();
+    }
+
+    public function access_oauth($data)
+    {
+        $pk = $data[0];
+        $this->find($pk);
+
+        if( ! $this->loaded())
+            return false;
+
+        $params = array(
+            'content' => $this->content,
+            'id' => $pk,
+        );
+
+        $user = new Model_User($this->uid);
+        $source = $user->get_source();
+        $token = $user->get_access_token();
+
+        if( ! $token or ! $source)
+            return false;
+
+        $oauth = new OAuth($source, $token);
+        $model_oauth = Model_OAuth::factory($oauth);
+
+        if($this->is_root())
+        {
+            $params['content'] = $this->content;
+            if($this->type == self::TYPE_IMAGE)
+            {
+                $media_data = $this->media_data;
+            }
+        }
+        else
+        {
+            $weibo_shadow = new Model_Collect_Weibo;
+
+            // Forward from the same plateform
+            if($sid = $weibo_shadow->get_sid($this->rid, $source))
+            {
+                $params['sid'] = $sid;
+            }
+            else
+            {
+                $this->root->find($this->rid);
+
+                if($this->root->loaded())
+                {
+                    $params['content'] = $this->content.$this->root->content;
+                    // Upload the image from the other
+                    if($this->root->type == self::TYPE_IMAGE)
+                    {
+                        $media_data = $this->root->media_data;
+                    }
+                }
+            }
+        }
+
+        if(isset($media_data))
+        {
+            $array = unserialize($media_data);
+
+            if(is_array($array))
+            {
+                $img = Arr::get($array, 'img', false);
+                if(is_array($img) and $src = Arr::get($img, 'src', false))
+                {
+                    $params['pic'] = Model_Weibo_Image::get_file($src);
+                }
+            }
+        }
+
+        return $model_oauth->publish_status($params);
     }
 }

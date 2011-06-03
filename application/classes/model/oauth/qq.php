@@ -153,4 +153,49 @@ class Model_OAuth_QQ extends Model_OAuth {
         return $status;
     }
 
+    public function url_publish_status(Array $weibo)
+    {
+        $this->request_method = self::REQUEST_METHOD_POST;
+
+        // invalid in boundary
+        $id = Arr::get($weibo, 'id', false);
+        $sid = Arr::get($weibo, 'sid', false);
+        unset($weibo['id'], $weibo['sid']);
+
+        $suffix = ' http://t.leju.com/star/weibo/show/'.$id;
+
+        $this->params = array(
+            'format' => 'json',
+            'content' => utf8::substr($weibo['content'], 0, 100).$suffix,
+            'clientip' => $_SERVER['REMOTE_ADDR'],
+        );
+
+        if(isset($weibo['pic']))
+        {
+            $this->request_options = array(
+                'multipart' => array(
+                    'content' => $this->params['content'],
+                    'pic' => '@'.$weibo['pic'],
+                ),
+            );
+
+            return $this->domain.'/api/t/add_pic';
+        }
+        elseif($sid)
+        {
+            //http://open.t.qq.com/api/t/re_add
+            $this->params['reid'] = $sid;
+            return $this->domain.'/api/t/re_add';
+        }
+        else
+        {
+            //http://open.t.qq.com/api/t/add
+            return $this->domain.'/api/t/add';
+        }
+    }
+
+    public function parse_publish_status()
+    {
+        return $this->response;
+    }
 }

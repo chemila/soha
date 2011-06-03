@@ -613,14 +613,6 @@ abstract class Image {
                 if( ! @chmod($directory, 0777))
                     throw new CE('Directory :dir must be writable', array(':dir' => $directory));
             }
-
-            /**
-			if ( ! is_dir($directory) OR ! is_writable($directory))
-			{
-				throw new CE('Directory must be writable: :directory',
-					array(':directory' => $directory));
-			}
-            **/
 		}
 
 		// The quality must be in the range of 1 to 100

@@ -2,13 +2,9 @@
 
 return array(
 	'cookie' => array(
-        'name' => 'su',
-		'encrypted' => FALSE,
-        'lifetime' => 2592000,
+        'name' => 'star_session',
+		'encrypted' => false,
+        'lifetime' => 86400,
 	),
-	'native' => array(
-		'encrypted' => FALSE,
-        'lifetime' => 2592000,
-    ),
 );
 

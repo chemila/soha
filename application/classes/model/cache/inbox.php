@@ -2,34 +2,21 @@
 
 class Model_Cache_Inbox extends Model_Cache {
 
-    public function __construct($user)
+    public function get($default = NULL)
     {
-        parent::__construct($user);
-        $this->_key = $this->_key_prefix.':'.$this->_user->pk();
+        $value = parent::get($default);
+        return $this->_value = empty($value) ? array() : array_unique($value);
     }
 
-    public function fetch($limit = 40, $offset = 0)
+    public function receive($wid)
     {
-        $value = $this->get();
-
-        if( ! $value or ! is_array($value))
-        {
-            return array();
-        }
-        $this->_value = $value;
-
-        return $this->limit($offset, $limit);
-    }
-
-    public function receive(Model_Weibo $weibo)
-    {
-        $this->_data[] = $weibo;
+        $this->_data[] = $wid;
 
         if($this->_user->is_online())
         {
             try
             {
-                $this->append($weibo->pk());
+                $this->append($wid);
             }
             catch(Cache_Exception $e) 
             {
@@ -39,29 +26,13 @@ class Model_Cache_Inbox extends Model_Cache {
 
         $data = array(
             'uid' => $this->_user->pk(),
-            'wid' => $weibo->pk(),
+            'wid' => $wid,
             'created_at' => time(),
         );
 
         $this->save_sync($data);
 
         return $this;
-    }
-
-    public function pull($limit = 10, $offset = 0)
-    {
-        $friends = $this->_user->get_friends();
-        $result = array();
-        
-        foreach($friends as $uid)
-        {
-            $user = new Model_User($uid);
-            
-            $outbox = new Model_Cache_Outbox($user);
-            $result += $outbox->fetch($limit, $offset);
-        }
-
-        return $result;
     }
 }
 

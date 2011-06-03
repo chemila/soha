@@ -1,7 +1,7 @@
-<!--{include file="header_setting.php"}-->
+<!--{include file="header/setting.php"}-->
 
 <div class="main">
-<!--{include file="menu_top_setting.php"}-->
+<!--{include file="setting/top.php"}-->
 		<div class="main_c clearfix">
 			<div class="content">
 				<div class="title">
@@ -16,7 +16,7 @@
 						<a href="javascript:;" onclick="App.remove_from_blacklist('<!--{$block.uid}-->', this, '<!--{$block.nick}-->','他','1')">解除</a>
 							<p><!--{$block.datetime|date_format:"%Y-%m-%d %H:%I"}--></p>
 						</div>
-						<a href="/home/profile/<!--{$block.uid}-->" class="user_img"><img src="<!--{$block.portrait|fix_portrait}-->" style="width: 50px; height: 50px;" uid="<!--{$block.uid}-->" namecard="true"></a> <a href="/home/profile/<!--{$block.uid}-->" uid="<!--{$block.uid}-->" namecard="true"><!--{$block.nick}--></a>
+						<a href="home/profile/<!--{$block.uid}-->" class="user_img"><img src="<!--{$block.portrait|fix_portrait}-->" style="width: 50px; height: 50px;" uid="<!--{$block.uid}-->" namecard="true"></a> <a href="home/profile/<!--{$block.uid}-->" uid="<!--{$block.uid}-->" namecard="true"><!--{$block.nick}--></a>
 							<p><!--{$block.location}--></p>
 						</div>
 					</li>
@@ -28,7 +28,7 @@
 				</ul>
 				<div class="page"> <span class="fr"><!--{pagination total=$count|default:0}--></span> <a href="#" class="top">返回顶部</a> </div>
 			</div>
-<!--{include file="right_setting.php"}-->
+<!--{include file="setting/right.php"}-->
 		</div>
 		<div class="main_b"></div>
-<!--{include file="footer_setting.php"}-->
+<!--{include file="footer/setting.php"}-->

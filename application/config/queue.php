@@ -7,8 +7,9 @@ return array
         'timeout'            => '300',
 		'server'             => array
 		(
-            'host'             => 'localhost',
-            'port'             => '22221',
+
+            'host'             => $_SERVER['SINASRV_MEMCACHEQ_SERVER'],  // Memcache Server:Port
+            //'port'             => $_SERVER['SINASRV_MEMCACHEQ_PORT'],  // Memcache port number
             'persistent'       => FALSE,        // Persistent connection
             'weight'           => 1,
             'timeout'          => 1,

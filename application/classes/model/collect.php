@@ -9,8 +9,6 @@ class Model_Collect extends ORM {
         return new $classname;
     }
 
-    public function __construct(){}
-
     public function insert($data)
     {
         try

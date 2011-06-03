@@ -159,4 +159,49 @@ class Model_OAuth_Sina extends Model_OAuth {
 
         return $status;
     }
+
+    public function url_publish_status(Array $weibo)
+    {
+        $this->request_method = self::REQUEST_METHOD_POST;
+
+        // invalid in boundary
+        $id = Arr::get($weibo, 'id', false);
+        $sid = Arr::get($weibo, 'sid', false);
+        unset($weibo['id'], $weibo['sid']);
+
+        $suffix = ' http://t.leju.com/star/weibo/show/'.$id;
+
+        $this->params = array(
+            'status' => utf8::substr($weibo['content'], 0, 100).$suffix,
+            //'annotations' => json_encode(array('test' => 'hello')),
+        );
+
+        if(isset($weibo['pic']))
+        {
+            $this->request_options = array(
+                'multipart' => array(
+                    'status' => $this->params['status'],
+                    'pic' => '@'.$weibo['pic'],
+                ),
+            );
+
+            return $this->domain.'/statuses/upload.json';
+        }
+        elseif($sid)
+        {
+            $this->params['id'] = $sid;
+            //http://api.t.sina.com.cn/statuses/repost.json
+            return $this->domain.'/statuses/repost.json';
+        }
+        else
+        {
+            //http://api.t.sina.com.cn/statuses/update.json
+            return $this->domain.'/statuses/update.json';
+        }
+    }
+
+    public function parse_publish_status()
+    {
+        return $this->response;
+    }
 }

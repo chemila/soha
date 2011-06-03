@@ -18,6 +18,7 @@ return array
 			 * Ports and sockets may be appended to the hostname.
 			 */
 			'hostname'   => $_SERVER['SINASRV_DB_HOST'],
+			'port'       => $_SERVER['SINASRV_DB_PORT'],
 			'database'   => $_SERVER['SINASRV_DB_NAME'],
 			'username'   => $_SERVER['SINASRV_DB_USER'],
 			'password'   => $_SERVER['SINASRV_DB_PASS'],
@@ -39,6 +40,7 @@ return array
 			 * boolean  persistent  use persistent connections?
 			 */
 			'hostname'   => $_SERVER['SINASRV_DB_HOST_R'],
+			'port'       => $_SERVER['SINASRV_DB_PORT_R'],
 			'database'   => $_SERVER['SINASRV_DB_NAME_R'],
 			'username'   => $_SERVER['SINASRV_DB_USER_R'],
 			'password'   => $_SERVER['SINASRV_DB_PASS_R'],
@@ -51,6 +53,6 @@ return array
 		 */
 		'table_prefix' => 'pin_',
 		'charset'      => 'utf8',
-		'caching'      => TRUE,
+		'caching'      => FALSE,
 	),
 );

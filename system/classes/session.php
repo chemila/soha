@@ -9,7 +9,7 @@ abstract class Session {
 	/**
 	 * @var  string  default session adapter
 	 */
-	public static $default = 'native';
+	public static $default = 'cookie';
 
 	// Session instances
 	protected static $instances = array();
@@ -352,8 +352,7 @@ abstract class Session {
 		catch (Exception $e)
 		{
 			// Log & ignore all errors when a write fails
-			Core::$log->add(Core::ERROR, Core::exception_text($e))->write();
-
+			//Core::$log->add(Core::ERROR, Core::exception_text($e))->write();
 			return FALSE;
 		}
 	}

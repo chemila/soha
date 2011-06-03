@@ -4,26 +4,25 @@ class Controller_Weibo extends Controller_Authenticated {
 
     public function action_show()
     {
-        $id = $this->request->param('id');
-        $page = $this->request->param('page', Arr::get($_GET, 'page', 1));
+        $id = $this->request->param('id', false);
+
+        if( ! $id)
+        {
+            $this->trigger_error('该微博已不存在');
+        }
+
+        $page = $this->get_page();
 
         $weibo = new Model_Weibo($id);
         $user = $weibo->get_user();
-        $this->view = new View_Smarty('smarty:weibo/show');
-
         $comments = $weibo->get_comments($page, 20);
         $count = $weibo->count_last_query();
 
+        $this->init_view();
+        $this->init_user($user);
+
         $this->view->feeds = array($weibo->extend()->as_array());
         $this->view->comments = $weibo->extend_collection($comments);
-        $this->view->user = $user->as_array();
-        $this->view->current_user = $this->user->pk();
-        $this->view->followers = $user->attention_list(1);
-        $this->view->general_followers = $user->attention_list(0);
-        $this->view->friends = $user->friends_list();
-        $this->view->followers_of_friends = $user->followers_of_friends();
-
-        $this->request->response = $this->view->render();
     }
 
     public function action_forward(Array $params = NULL)
@@ -34,10 +33,9 @@ class Controller_Weibo extends Controller_Authenticated {
 
         if( ! $content or strlen($content) > 420)
         {
-            $this->json_exit('CX0010');
+            $this->response_json('CX0010');
         }
 
-        // TODO: forward in original platform
         $current_weibo = new Model_Weibo($wid);
         $weibo = new Model_Weibo_Plaintext;
 
@@ -54,11 +52,12 @@ class Controller_Weibo extends Controller_Authenticated {
         //$cache_version = $weibo->save_sync();
         if( ! $weibo->saved())
         {
-            $this->json_exit('CC0701');
+            $this->response_json('CC0701');
         }
 
         if($ats = $weibo->ats())
         {
+            $ats[] = $current_weibo->uid;
             foreach($ats as $at)
             {
                 $atme = new Model_Atme;
@@ -70,8 +69,13 @@ class Controller_Weibo extends Controller_Authenticated {
         }
 
         // Send to outbox and inbox
+		$friends = $this->_friend_cache->value();
         $outbox = new Model_Cache_Outbox($this->user);
-        $outbox->receive($weibo)->push($weibo->ats());
+        $users = array_merge($ats, $friends);
+        $outbox->receive($weibo->pk())->push($users);
+
+		// Push unread cache
+		$this->_unread_cache->push_atme($ats)->push_feed($friends);
 
         $current_weibo->increse_forward();
         $current_weibo->save();
@@ -80,6 +84,18 @@ class Controller_Weibo extends Controller_Authenticated {
         $this->user->load();
         $this->user->statuses_count ++;
         $this->user->save();
+
+        // Publish weibo according to user setting of weibo
+        if($this->user->get_setting('weibo', true))
+        {
+            $weibo_cache = new Model_Cache_Weibo($this->user);
+            $weibo_cache->receive($weibo);
+            unset($weibo_cache);
+        }
+        
+        // Means forward when post comment, no more actions required
+        if($params)
+            return true;
 
         if($comments_to)
         {
@@ -96,18 +112,10 @@ class Controller_Weibo extends Controller_Authenticated {
             }
         }
 
-        $this->view = new View_Smarty('smarty:weibo/feed');
+        $this->init_view('feed');
         $this->view->weibo = $weibo->extend()->as_array();
-        $this->view->current_user = $this->user->pk();
 
-        $json = array(
-            'code' => 'A00006',
-            'data' => array(
-                'html' => $this->view->render(),
-            ),
-        );
-
-        $this->request->response = json_encode($json);
+        $this->response_json('A00006', array('html' => $this->view->render()));
     }
 
     public function action_create()
@@ -116,7 +124,7 @@ class Controller_Weibo extends Controller_Authenticated {
 
         if( ! $content or strlen($content) > 420)
         {
-            $this->json_exit('CC0701');
+            $this->response_json('CC0701');
         }
 
         $type = 0;
@@ -144,7 +152,6 @@ class Controller_Weibo extends Controller_Authenticated {
         $weibo->uid = $this->user->pk();
         $weibo->timeline = time();
         $weibo->type = $type;
-        //$weibo->src = 0;
         $weibo->created_at = time();
         $weibo->updated_at = time();
 
@@ -155,14 +162,14 @@ class Controller_Weibo extends Controller_Authenticated {
         }
         catch(Model_Weibo_Exception $e)
         {
-            $this->json_exit('CC0701');
+            $this->response_json('CC0701');
         }
 
 		$weibo->save();
 
 		if( ! $weibo->saved())
 		{
-            $this->json_exit('CC0701');
+            $this->response_json('CC0701');
 		}
 
         if($ats = $weibo->ats())
@@ -178,35 +185,41 @@ class Controller_Weibo extends Controller_Authenticated {
         }
 
         // Send to outbox and push into users inboxes
-		$outbox = new Model_Cache_Outbox($this->user);
-        $outbox->receive($weibo)->push($weibo->ats());
+		$friends = $this->_friend_cache->value();
+        $outbox = new Model_Cache_Outbox($this->user);
+        $users = array_merge($ats, $friends);
+        $outbox->receive($weibo->pk())->push($users);
+        unset($outbox, $users);
+		
+		// Push unread cache
+		$this->_unread_cache->push_atme($ats)->push_feed($friends);
 
         $this->user->load();
         $this->user->statuses_count ++;
         $this->user->save();
 
-		$this->view = new View_Smarty('smarty:weibo/feed');
-        $this->view->weibo = $weibo->extend()->as_array();
-        $this->view->current_user = $this->user->pk();
+        // Publish weibo according to user setting of weibo
+        if($this->user->get_setting('weibo', true))
+        {
+            $weibo_cache = new Model_Cache_Weibo($this->user);
+            $weibo_cache->receive($weibo);
+            unset($weibo_cache);
+        }
 
-        $json = array(
-            'code' => 'A00006',
-            'data' => array(
-                'html' => $this->view->render(), 
-            ),
-        );
-		
-        $this->request->response = json_encode($json);
+        $this->init_view('feed');
+        $this->view->weibo = $weibo->extend()->as_array();
+
+        $this->response_json('A00006', array('html' => $this->view->render()));
     }
 
     public function action_comment_index()
     {
-        $wid = Arr::get($_REQUEST, 'resId');
-		$this->view = new View_Smarty('smarty:weibo/comment');
+        $wid = Arr::get($_GET, 'resId');
+
         $weibo = new Model_Weibo($wid);
         $comments = $weibo->get_comments();
         $count = $weibo->comments->count_all();
-        
+
         $comments_to = array();
 
         if( ! $weibo->is_root())
@@ -221,19 +234,14 @@ class Controller_Weibo extends Controller_Authenticated {
             }
         }
         
-        $this->view->current_user = $this->user->pk();
+        $this->init_view('comment');
 
         $this->view->weibo = $weibo->as_array();
         $this->view->comments = $weibo->extend_collection($comments);
         $this->view->comments_to = $comments_to;
         $this->view->count = $count;
 
-        $json = array(
-            'code' => 'A00006',
-            'data' => $this->view->render(),
-        );
-		
-        $this->request->response = json_encode($json);
+        $this->response_json('A00006', $this->view->render());
     }
 
     public function action_comment_post()
@@ -262,7 +270,7 @@ class Controller_Weibo extends Controller_Authenticated {
 
         if( ! $comment->saved())
         {
-            $this->json_exit('CC0701');
+            $this->response_json('CC0701');
         }
 
         // Increase comment count at the same time
@@ -270,7 +278,9 @@ class Controller_Weibo extends Controller_Authenticated {
         $weibo->comment_count ++;
         $weibo->save();
 
-        //TODO: forward a weibo at the same time
+		// Push unread cache
+		$this->_unread_cache->push_atcmt($comment->rid)->push_comment($weibo->uid);
+
         if($forward)
         {
             $params = array(
@@ -285,19 +295,13 @@ class Controller_Weibo extends Controller_Authenticated {
             catch(Exception $e){}
         }
         
-        $this->view = new View_Smarty('smarty:weibo/comment_reply');
+        $this->init_view('comment_reply');
 
         $comment->user = $this->user->as_array();
         $this->view->weibo = $weibo->as_array();
         $this->view->comment = $comment->as_array();
-        $this->view->current_user = $this->user->pk();
 
-        $json = array(
-            'code' => 'A00006',
-            'data' => $this->view->render(),
-        );
-
-        $this->request->response = json_encode($json);
+        $this->response_json('A00006', $this->view->render());
     }
 
     public function action_comment_delete()
@@ -319,7 +323,7 @@ class Controller_Weibo extends Controller_Authenticated {
             $code = 'A00006';
         }
 
-        $this->json_exit($code);
+        $this->response_json($code);
     }
 
     public function action_delete($id = NULL)
@@ -333,7 +337,8 @@ class Controller_Weibo extends Controller_Authenticated {
             $weibo = new Model_Weibo($wid);
 
             $outbox_cache = new Model_Cache_Outbox($this->user);
-            $outbox_cache->remove($wid)->pull($weibo->ats());
+            $users = array_merge($weibo->ats(), $this->_friend_cache->value());
+            $outbox_cache->remove($wid)->pull($users);
             
             $inbox = new Model_Inbox;
             $outbox = new Model_Outbox;
@@ -351,28 +356,51 @@ class Controller_Weibo extends Controller_Authenticated {
         }
         catch(Exception $e)
         {
-            echo $e->getMessage();
             $code = 'CC0701';
         }
 
-        $this->json_exit($code);
+        $this->response_json($code);
     }
 
     public function action_upload()
     {
-        $filename = Model_Weibo_Image::upload($_FILES, 'pic1');
+        try
+        {
+            $filename = Model_Weibo_Image::upload($_FILES, 'pic1');
+        }
+        catch(Exception $e){}
 
         if($filename)
         {
-            $this->view = new View_Smarty('smarty:weibo/upload');
-            $this->view->filename = $filename;
+            $this->init_view('upload');
 
-            $this->request->response = $this->view->render();
+            $this->view->filename = $filename;
+        }
+        else
+        {
+            $this->response_json('CC0701');
         }
     }
 
-    protected function json_exit($code = 'A00006')
+    public function action_refresh()
     {
-        die(json_encode(array('code' => $code)));
+        $after = Arr::get($_POST, 'after');
+        $limit = Arr::get($_POST, 'unread', 1);
+
+        $since_id = str_replace('wid_', '', $after);
+        $inbox = $this->user->inbox_since($since_id, $limit);
+
+        $this->init_view('feeds');
+        $weibo = new Model_Weibo;
+        $feeds = $weibo->get_from_ids($inbox);
+        $this->view->feeds = $feeds;
+
+        $data = array(
+            'total' => count($feeds),
+            'html' => $this->view->render(),
+        );
+
+        $this->_unread_cache->clear('feed');
+        $this->response_json('A00006', $data);
     }
 }

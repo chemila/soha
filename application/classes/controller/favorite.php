@@ -4,67 +4,47 @@ class Controller_Favorite extends Controller_Authenticated {
 	
     public function action_add()
     {
-    	$id = $this->request->param("mid", Arr::get($_REQUEST, 'mid'));
+    	$id = $this->request->param("mid", Arr::get($_POST, 'mid'));
     	
     	$model_favorite = Model::factory("favorite");
-    	
         $model_favorite->add_favorite(array("wid"=>$id, "uid"=>$this->user->uid));
         
-        $this->request->response = json_encode(array("code"=>"M10001"));
+        $this->response_json('M10001');
     }
     
 	public function action_delete()
     {
-    	$id = Arr::get($_POST, "mid", "");
+    	$id = Arr::get($_POST, "id", "");
     	
     	if(empty($id))
     	{
-    		$this->request->response = json_encode(array("code"=>"R40001"));
+            $this->response_json('R40001');
     	}
     	
-    	$model_favorite = Model::factory("favorite");
-    	
-        $reponse = $model_favorite->del_favorite($id);
-        
-        if( $reponse )
+    	$model_favorite = new Model_Favorite($id);//Model::factory("favorite");
+
+ 		if($model_favorite->rm_favorite())
         {
-        	$this->request->response = json_encode(array("code"=>"A00006"));
+            $this->response_json();
+        }
+        else
+        {
+            $this->response_json("R40001");
         }
     }
 
     public function action_index()
     {
-        $page = Arr::get($_GET, 'page', 1);
+        $page = $this->get_page();
     	
-    	// Init view cache modules etc.
-        $this->view = new View_Smarty('smarty:favorite/index');
-        
-        $model_favorite = Model::factory("favorite");
-        
-        /*
-         * cache
-         */
-        $count = 0;
-        if( 1||! $my_favorite_weibo_row = $this->cache->get('setting:favorite:'.$this->user->uid.":".$page))
-        {
-            $my_favorite_weibo_row = $model_favorite->list_favorite($this->user->uid, $page, 20, $count);
-            $this->cache->set('setting:favorite:'.$this->user->uid.":".$page, $my_favorite_weibo_row, 24*3600);
-            $this->view->count = $count;
-        }
-        
-        $user_info = $this->public_user_info();
-        	
-        $this->view->user_info = $user_info;
+        $this->init_view();
+        $this->init_user($this->user);
 
-        $this->view->list_my_favorites = $my_favorite_weibo_row;
-        
-        $this->request->response = $this->view->render();
-    }
-    
-    public function public_user_info()
-    {
-    	$user_info = Model_API::factory('user')->get_user_info(array("uid"=>$this->user->uid));
-		
-		return $user_info;
+        $favorite = new Model_Favorite;
+        $favorites = $favorite->list_by_user($this->user->pk(), $page);
+
+        $this->view->count = $favorite->count_last_query();
+        $this->view->favorites = $favorite->extend_collection($favorites);
+        $this->view->user_info = $this->user->as_array();
     }
 }

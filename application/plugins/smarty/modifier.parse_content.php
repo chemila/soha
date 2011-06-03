@@ -21,7 +21,7 @@ function smarty_modifier_parse_content($content, $with_user = TRUE) {
 
         foreach($match[1] as $face)
         {
-            $src = $config->get($face, '/media/img/face/default.gif');
+            $src = $config->get($face, 'media/img/face/default.gif');
             $replace["[$face]"] = sprintf('<img src="%s" title="%s" type="face">', $src, $face);
         }
         
@@ -33,7 +33,7 @@ function smarty_modifier_parse_content($content, $with_user = TRUE) {
     {
     	if(count($match[1]))
     	{
-    		array_unique($match[1]);
+    		$match[1] = array_unique($match[1]);
     		
 		    $user = New Model_User;
     		foreach ($match[1] as $key => $nick)
@@ -43,13 +43,12 @@ function smarty_modifier_parse_content($content, $with_user = TRUE) {
 		        try
 		        {
 		            $uid = $user->get_uid($nick);
+		            $content = preg_replace('~@'.$nick.'~su', sprintf('<a href="home/profile/%d" namecard="true" uid="%d">@%s</a>', $uid, $uid, $nick), $content);
 		        }
 		        catch(Model_API_Exception $e)
 		        {
-		            $uid = NULL;
+		            $content = preg_replace('~@'.$nick.'~su', sprintf('<a href="javascript:;" namecard="true" uid="">@%s</a>', $nick), $content);
 		        }
-		        
-		        $content = preg_replace('~@'.$nick.'~su', sprintf('<a href="/home/profile/%d" namecard="true" uid="%d">@%s</a>', $uid, $uid, $nick), $content);
     		}
     	}
     }

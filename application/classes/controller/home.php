@@ -2,38 +2,31 @@
 
 class Controller_Home extends Controller_Authenticated {
 
-    public $view;
-    public $cache;
-
     public function action_index()
     {
-        $page = max(1, $this->request->param('page', Arr::get($_GET, 'page', 1)));
+        $page = $this->get_page();
+
+        $this->_unread_cache->clear('feed');
 
         // Init view cache modules etc.
-        $this->view = new View_Smarty('smarty:home/index');
-
+        $this->init_view();
+        $this->init_user($this->user);
         $weibo = new Model_Weibo;
-        $this->init_user();
-
         $inbox = $this->user->inbox($page);
 
         $this->view->feeds = $weibo->get_from_ids($inbox);
         $this->view->count = $this->user->inbox_count();
-        $this->view->current_user = $this->user->pk();
-        $this->view->title = '最新微博';
-        
-        $this->request->response = $this->view->render();
+        $this->view->title = $this->user->nick.'的最新微博';
     }
 
-    public function action_profile($uid = NULL)
+    public function action_profile()
     {
-        $uid = $this->request->param('uid', $uid);
-        $page = $this->request->param('page', Arr::get($_GET, "page", 1));
+        $page = $this->get_page();
+        $uid = $this->request->param('uid', false);
         $limit = 30;
-        
-        $this->view = new View_Smarty('smarty:home/profile');
-        $user = $uid ? new Model_User($uid) : $this->user;
 
+        $user = $uid ? new Model_User($uid) : $this->user;
+        $this->init_view();
         $this->init_user($user);
         $weibo = new Model_Weibo;
 
@@ -47,7 +40,7 @@ class Controller_Home extends Controller_Authenticated {
         if($uid && $uid != $this->user->pk())
         {
         	$this->view->show_attention_button = 1;
-        	$this->view->followed = $this->user->is_followd_by($uid);
+        	$this->view->followed = $this->user->following_of($uid);
         }
         else 
         {
@@ -55,43 +48,25 @@ class Controller_Home extends Controller_Authenticated {
         }
 
         $this->view->domain = $_SERVER['HTTP_HOST'];
+        $this->view->title = $user->nick.'发布的微博';
         $this->view->feeds = $weibo->extend_collection($feeds);
-        $this->view->current_user = $this->user->pk();
-
-        $this->request->response = $this->view->render();
     }
 
     public function action_atme()
     {
-        $page = max(1, $this->request->param('page', Arr::get($_GET, 'page', 1)));
+        $page = $this->get_page();
 
-        $this->view = new View_Smarty('smarty:home/index');
+        $this->init_view('index');
+        $this->init_user($this->user);
+
+        $this->_unread_cache->clear('atme');
+
         $weibo = new Model_Weibo;
         $atme = new Model_Atme;
-
-        $this->init_user();
         
-        $this->view->content_title = 0;
-
         $atme_ids = $atme->by_user($this->user->pk());
         $this->view->feeds = $weibo->get_from_ids($atme_ids);
         $this->view->count = $atme->count_by_user($this->user->pk());
-        $this->view->title = '提到我的';
-
-        $this->request->response = $this->view->render();
-    }
-
-    protected function init_user(Model_User $user = NULL)
-    {
-        if( ! $user)
-            $user = $this->user;
-
-        $user->load();
-
-        $this->view->user = $user->as_array();
-        $this->view->followers = $user->attention_list(1);
-        $this->view->general_followers = $user->attention_list(0);
-        $this->view->friends = $user->friends_list();
-        $this->view->followers_of_friends = $user->followers_of_friends();
+        $this->view->title = '提到我的微博';
     }
 }
