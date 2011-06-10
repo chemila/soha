@@ -17,5 +17,9 @@ return array
             'status'           => TRUE,
 		),
 	),
+    'native' => array(
+        'path' => DOCROOT,
+        'key' => 'chemila',
+    ),
 );
 
