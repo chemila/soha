@@ -1,5 +1,4 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-die('敬请关注！');
 /**
  * Set the default time zone.
  */
@@ -69,6 +68,10 @@ Core::modules(array(
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
  */
+echo 'Email me：';
+echo Text::auto_link_emails('chemila@gmail.com');
+echo "<br>TO BE CONTINUED<br>";
+die;
 Route::load();
 
 if ( ! defined('SUPPRESS_REQUEST'))
