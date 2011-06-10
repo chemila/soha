@@ -304,10 +304,10 @@ class Model_API_User extends Model_API
         return $response['result'];
     }
     
-    public function get_user_source($data)
+/*    public function get_user_source($data)
     {
     	$response = $this->post('/user/getusersource.php', $data);
     	
     	return $response['result'];
-    }
+    }*/
 }

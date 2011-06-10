@@ -1,4 +1,5 @@
 <?php defined('SYSPATH') or die('No direct script access.');
+die('敬请关注！');
 /**
  * Set the default time zone.
  */
@@ -32,7 +33,7 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
  * - boolean  caching     enable or disable internal caching                 FALSE
  */
 Core::init(array(
-	'base_url'   => '/star/',
+	'base_url'   => '/',
     'index_file' => 'index.php',
     'cache_dir' => $_SERVER['SINASRV_CACHE_DIR'],
     'errors' => FALSE,       

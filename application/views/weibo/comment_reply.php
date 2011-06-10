@@ -9,7 +9,7 @@
         <div class="txtinfo"> <a href="home/profile/<!--{$comment.uid}-->" uid="<!--{$comment.uid}-->" namecard="true"><!--{$comment.user.nick}--></a>:<!--{$comment.content|parse_content}--><span class="MIB_txtbl">(<!--{$comment.created_at|date_format:"%Y-%m-%d %H:%M:%S"}-->)</span> 
         </div>
         <!--actions: delete reply etc.-->
-        <p class="MIB_more MIB_linkbl"> <a class="lose" onclick="scope.replyByCid(<!--{$comment.uid}-->, <!--{$weibo.uid}-->, <!--{$comment.wid}-->, <!--{$comment.id}-->, '<!--{$comment.user.nick}-->', '<!--{$comment.content|strip_tags|escape}-->', 'miniblog2', 1, 1);" href="javascript:;">回复</a> </p>
+        <p class="MIB_more MIB_linkbl"> <a class="lose" onclick="scope.replyByCid(<!--{$comment.uid}-->, <!--{$weibo.uid}-->, <!--{$comment.wid}-->, <!--{$comment.id}-->, '<!--{$comment.user.nick}-->', '<!--{$comment.content|strip|strip_tags|escape}-->', 'miniblog2', 1, 1);" href="javascript:;">回复</a> </p>
     </div>
     <span class="clear"></span> 
 </li>

@@ -11,7 +11,7 @@ class Model_User extends Model {
 	protected $_columns = array(
         'nick', 'domain_name', 'pass', 'email', 'friends_count', 'followers_count',
         'statuses_count', 'portrait', 'gender', 'intro', 'country', 'province', 'city', 'regip', 'regdate', 
-        'lastip', 'lastvisit', 'merged', 'verified', 'location', 'status', 'category', 'online',
+        'lastip', 'lastvisit', 'merged', 'verified', 'location', 'status', 'category', 'online', 'source'
     );
     protected $_table_columns = array();
 	protected $_primary_key  = 'uid';
@@ -444,7 +444,10 @@ class Model_User extends Model {
 
 		$response = Model_API::factory("user")->add_attention($params);
 
-		return $response;
+        if(isset($response['result']))
+		    return $response['result'];
+
+        return false;
     }
 
     public function rm_following($uid)
@@ -573,7 +576,7 @@ class Model_User extends Model {
         $res = array();
         foreach($cached as $wid)
         {
-            if($wid >= $since_id)
+            if($wid > $since_id)
             {
                 $res[] = $wid;
             }
@@ -611,7 +614,9 @@ class Model_User extends Model {
     public function inbox_count()
     {
         $inbox = new Model_Inbox;
-        return $inbox->count_by_user($this->pk());
+        $inbox_cache = new model_cache_inbox($this);
+
+        return max($inbox->count_by_user($this->pk()), $inbox_cache->count());
     }
 
     public function outbox_count()
@@ -789,7 +794,14 @@ class Model_User extends Model {
 
     public function get_source()
     {
-        return Model_API::factory('user')->get_user_source(array('uid' => $this->pk()));
+        $this->load();
+
+        if($this->loaded())
+        {
+            return $this->source;
+        }
+
+        return false;
     }
 
     public function get_setting($category, $default = false)

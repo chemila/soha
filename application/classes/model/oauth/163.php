@@ -62,4 +62,31 @@ class Model_OAuth_163 extends Model_OAuth {
             'verified' => $this->response['verified'],
         );
     }
+
+    public function url_statuses_friends(Array $params = NULL)
+    {
+        $page = Arr::get($params, 'cursor', 1);
+        $this->params = array(
+            'cursor' => ($page - 1) * 30,       
+        );
+        
+        //http://api.t.163.com/statuses/friends.format
+        return $this->domain.'/statuses/friends.json'; 
+    }
+
+    public function parse_statuses_friends()
+    {
+        if( ! isset($this->response['users']))
+            return false;
+
+        $result = array();
+
+        foreach($this->response['users'] as $user)
+        {
+            $result[] = $user['id'];
+        }
+
+        return $result;
+    }
+
 }

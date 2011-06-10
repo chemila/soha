@@ -198,4 +198,32 @@ class Model_OAuth_QQ extends Model_OAuth {
     {
         return $this->response;
     }
+
+    public function url_statuses_friends(Array $params = NULL)
+    {
+        $cursor = Arr::get($params, 'cursor', 1);
+        $this->params = array(
+            'startindex' => ($cursor - 1) * 30,
+            'reqnum' => 30,       
+            'format' => 'json',
+        );
+
+        //http://open.t.qq.com/api/friends/idollist
+        return $this->domain.'/api/friends/idollist'; 
+    }
+
+    public function parse_statuses_friends()
+    {
+        if( ! isset($this->response['data']['info']))
+            return false;
+
+        $result = array();
+
+        foreach($this->response['data']['info'] as $user)
+        {
+            $result[] = $user['name'];
+        }
+
+        return $result;
+    }
 }

@@ -191,4 +191,31 @@ class Model_OAuth_Sohu extends Model_OAuth {
     {
         return $this->response;
     }
+
+    public function url_statuses_friends(Array $params = NULL)
+    {
+        $cursor = Arr::get($params, 'cursor', 1);
+        $this->params = array(
+            'page' => $cursor,
+            'count' => 20,       
+        );
+
+        //http://api.t.sohu.com/statuses/friends.xml
+        return $this->domain.'/statuses/friends.json'; 
+    }
+
+    public function parse_statuses_friends()
+    {
+        if( ! isset($this->response['users']))
+            return false;
+
+        $result = array();
+
+        foreach($this->response['users'] as $user)
+        {
+            $result[] = $user['id'];
+        }
+
+        return $result;
+    }
 }

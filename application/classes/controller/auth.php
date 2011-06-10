@@ -73,6 +73,7 @@ class Controller_Auth extends Controller_Base {
         }
 
         $user = new Model_User;
+        $choose = false;
 
         if( ! $uid = $user->check_exist($user_info['suid'], $user_info['source']))
         {
@@ -80,6 +81,8 @@ class Controller_Auth extends Controller_Base {
             {
                 $this->trigger_error('创建用户失败');
             }
+
+            $choose = true;
         }
 
         if( ! $user->save_token($access_token))
@@ -96,7 +99,15 @@ class Controller_Auth extends Controller_Base {
             $this->trigger_error('用户session存储失败');
         }
 
-        $this->request->redirect('/');
+        if($choose)
+        {
+            $this->init_view('choose');
+            $this->view->user = $user_info;
+        }
+        else
+        {
+            $this->request->redirect('/');
+        }
     }
 
     protected function get_referer_source()

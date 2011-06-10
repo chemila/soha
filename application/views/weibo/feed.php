@@ -74,11 +74,11 @@
                 <!--{if $current_user|default:false and $current_user == $weibo.uid}--> 
                 <a onclick="App.miniblogDel('<!--{$weibo.id}-->',null,this)" href="javascript:void(0);"><strong lang="CX0043">删除</strong></a><span class="MIB_line_l">|</span>
                 <!--{/if}--> 
-                <a onClick="App.ModForward('<!--{$weibo.id}-->','<!--{$weibo.content|strip_tags|escape}-->',0,this,'num_<!--{$weibo.id}-->','<!--{$weibo.user.nick}-->',' ','')" href="javascript:void(0);"><strong lang="CD0023">转发</strong><strong type="rttCount" rid="<!--{$weibo.rid}-->" id="num_<!--{$weibo.rid}-->">(<!--{$weibo.forward_count|default:0}-->)</strong></a>
+                <a onClick="App.ModForward('<!--{$weibo.id}-->','<!--{$weibo.content|strip|strip_tags|escape}-->',0,this,'num_<!--{$weibo.id}-->','<!--{$weibo.user.nick}-->',' ','')" href="javascript:void(0);"><strong lang="CD0023">转发</strong><strong type="rttCount" rid="<!--{$weibo.rid}-->" id="num_<!--{$weibo.rid}-->">(<!--{$weibo.forward_count|default:0}-->)</strong></a>
                 <span class="MIB_line_l">|</span>
                 <a onclick="App.addfavorite_miniblog('<!--{$weibo.id}-->');" href="javascript:void(0);"><strong lang="CL1003">收藏</strong></a>
                 <span class="MIB_line_l">|</span>
-                <a href="javascript:void(0);"  lastforwarder="" lastforwardername="" initbloger=""  initblogername="" id="_comment_count_miniblog2_<!--{$weibo.id}-->" onClick="scope.loadCommentByRid(<!--{$weibo.uid}-->, 'miniblog2', '新浪微博', '<!--{$weibo.id}-->', '<!--{$weibo.content|strip_tags|escape}-->', '', '', 1, 0, 1);"><strong lang="CL1004">评论</strong><strong rid="<!--{$weibo.id}-->" type="commtCount">(<!--{$weibo.comment_count|default:0}-->)</strong></a> 
+                <a href="javascript:void(0);"  lastforwarder="" lastforwardername="" initbloger=""  initblogername="" id="_comment_count_miniblog2_<!--{$weibo.id}-->" onClick="scope.loadCommentByRid(<!--{$weibo.uid}-->, 'miniblog2', '新浪微博', '<!--{$weibo.id}-->', '<!--{$weibo.content|strip|strip_tags|escape}-->', '', '', 1, 0, 1);"><strong lang="CL1004">评论</strong><strong rid="<!--{$weibo.id}-->" type="commtCount">(<!--{$weibo.comment_count|default:0}-->)</strong></a> 
             </div>
         </div>
         <!--start: comments goes here--> 

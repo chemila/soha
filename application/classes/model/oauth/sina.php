@@ -204,4 +204,32 @@ class Model_OAuth_Sina extends Model_OAuth {
     {
         return $this->response;
     }
+
+    public function url_statuses_friends(Array $params = NULL)
+    {
+        $cursor = Arr::get($params, 'cursor', -1);
+
+        $this->params = array(
+            'cursor' => $cursor,
+            'count' => 200,       
+        );
+
+        //http://api.t.sina.com.cn/statuses/friends/:id.
+        return $this->domain.'/statuses/friends.json'; 
+    }
+
+    public function parse_statuses_friends()
+    {
+        if( ! isset($this->response['users']))
+            return false;
+
+        $result = array();
+
+        foreach($this->response['users'] as $user)
+        {
+            $result[] = $user['id'];
+        }
+
+        return $result;
+    }
 }

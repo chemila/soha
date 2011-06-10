@@ -99,39 +99,24 @@ class Controller_Person extends Controller_Authenticated {
             $this->response_json('CC2811');
         }
 
-		$result = $this->user->add_followding($uid);
+        $result = $this->add_followding($uid);
 		
-		if($result['result'] === false)
+		if($result === false)
 		{
             $this->response_json('M00908');
 		}
-		else if ($result['result'] === -1)
+		else if ($result === -1)
 		{
             $this->response_json('M13002');
 		}
-		else if($result['result'] === 1)
+		else if($result === 1)
 		{
             $this->response_json('CC2510');
 		}
-    
-        // Update current user following cache
-        $this->_following_cache->add_user($uid);
-        $this->_unread_cache->push_attention($uid);
-
-        // Push weibo into user inbox
-        $user = new Model_User($uid);
-        $outbox_cache = new Model_Cache_Outbox($user);
-        $outbox = new Model_Outbox;
-        $wids = $outbox->list_by_user($user->pk());
-
-        foreach($wids as $wid)
+        else
         {
-            $outbox_cache->receive($wid);
+            $this->response_json('A00006', 'nothing');
         }
-
-        $outbox_cache->push(array($this->user->pk()), FALSE);
-
-        $this->response_json('A00006', 'nothing');
     }
 
     public function action_rm_following()
@@ -239,5 +224,102 @@ class Controller_Person extends Controller_Authenticated {
 
         $value = $this->_unread_cache->value();
         $this->response_json('A00006', $value, $callback);
+    }
+
+    public function action_select()
+    {
+        $source = $this->user->get_source();
+        $token = $this->user->get_access_token();
+
+        if( ! $token or ! $source)
+            $this->trigger_error('用户数据错误');
+
+        $oauth = new OAuth($source, $token);
+        $model_oauth = Model_OAuth::factory($oauth);
+        $star = new Model_Star;
+        $friends = array();
+        $cursor = 1;
+
+        while($cursor <= 10 and count($friends) < 100)
+        {
+            $ids = $model_oauth->statuses_friends(array('cursor' => $cursor));
+
+            if( ! $ids)
+                break;
+
+            $friends = array_merge($friends, $ids);
+            $cursor ++;
+        }
+
+        if($friends)
+        {
+            $stars = $star->list_by_source($source); 
+            $uids = array_intersect($stars, $friends);
+            $users = array();
+
+            if($uids)
+            {
+                $this->init_view('select', 'user');
+                $count = min(20, count($uids));
+
+                for($i = 0; $i < $count; $i ++)
+                {
+                    $suid = array_shift($uids);
+                    $users[] = $star->list_by_ss($suid, $source);
+                }
+
+                $this->view->users = $users;
+            }
+            else
+            {
+                $this->request->redirect('/');
+            }
+        }
+        else
+        {
+            $this->request->redirect('/');
+        }
+    }
+
+    public function action_choose()
+    {
+        $selected = Arr::get($_POST, 'selected', false);
+
+        if($selected)
+        {
+            foreach($selected as $uid)
+            {
+                $this->add_followding($uid);                 
+            }
+        }
+            
+        $this->request->redirect('/');
+    }
+
+    protected function add_followding($uid)
+    {
+        $result = $this->user->add_followding($uid);
+                
+        if($result !== true)
+            return $result;
+
+        // Update current user following cache
+        $this->_following_cache->add_user($uid);
+        $this->_unread_cache->push_attention($uid);
+
+        // Push weibo into user inbox
+        $user = new Model_User($uid);
+        $outbox_cache = new Model_Cache_Outbox($user);
+        $outbox = new Model_Outbox;
+        $wids = $outbox->list_by_user($user->pk());
+
+        foreach($wids as $wid)
+        {
+            $outbox_cache->receive($wid);
+        }
+
+        $outbox_cache->push(array($this->user->pk()), FALSE);
+
+        return true;
     }
 }

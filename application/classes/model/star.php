@@ -116,4 +116,26 @@ class Model_Star extends ORM {
 
         return $config[0];
     }
+
+    public function list_by_source($source)
+    {
+        $cache = Cache::instance('memcache');
+
+        $records = DB::select('suid')->from($this->_table_name)
+            ->where('source', '=', $source)
+            ->cached(2592000)
+            ->execute($this->_db)
+            ->as_array('suid');
+
+        return array_keys($records);
+    }
+
+    public function list_by_ss($suid, $source)
+    {
+        return $this->where('suid', '=', $suid)
+            ->where('source', '=', $source)
+            ->limit(1)
+            ->find()
+            ->as_array();
+    }
 }
