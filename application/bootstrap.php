@@ -71,6 +71,8 @@ Core::modules(array(
 echo 'Email me：';
 echo Text::auto_link_emails('chemila@gmail.com');
 echo "<br>TO BE CONTINUED<br>";
+echo "wangjingxianshizhutou";
+echo "<a href='#' onclick='alert(\"en, shi zhutou\")'>dian a </a>";
 die;
 Route::load();
 
