@@ -67,13 +67,11 @@ Core::modules(array(
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
- */
 echo 'Email me：';
 echo Text::auto_link_emails('chemila@gmail.com');
 echo "<br>TO BE CONTINUED<br>";
-echo "wangjingxianshizhutou";
-echo "<a href='#' onclick='alert(\"en, shi zhutou\")'>dian a </a>";
 die;
+ */
 Route::load();
 
 if ( ! defined('SUPPRESS_REQUEST'))
