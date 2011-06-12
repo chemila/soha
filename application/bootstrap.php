@@ -34,7 +34,7 @@ ini_set('unserialize_callback_func', 'spl_autoload_call');
 Core::init(array(
 	'base_url'   => '/',
     'index_file' => 'index.php',
-    'cache_dir' => $_SERVER['SINASRV_CACHE_DIR'],
+    'cache_dir' => $_SERVER['CACHE_DIR'],
     'errors' => FALSE,       
     'charset' => 'utf-8',
     'caching' => FALSE,
@@ -67,11 +67,11 @@ Core::modules(array(
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
+ */
 echo 'Email me：';
 echo Text::auto_link_emails('chemila@gmail.com');
 echo "<br>TO BE CONTINUED<br>";
 die;
- */
 Route::load();
 
 if ( ! defined('SUPPRESS_REQUEST'))

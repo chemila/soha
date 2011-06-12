@@ -8,8 +8,8 @@ return array
 		'server'             => array
 		(
 
-            'host'             => $_SERVER['SINASRV_MEMCACHEQ_SERVER'],  // Memcache Server:Port
-            //'port'             => $_SERVER['SINASRV_MEMCACHEQ_PORT'],  // Memcache port number
+            'host'             => $_SERVER['MEMCACHEQ_SERVER'],  // Memcache Server:Port
+            'port'             => $_SERVER['MEMCACHEQ_PORT'],  // Memcache port number
             'persistent'       => FALSE,        // Persistent connection
             'weight'           => 1,
             'timeout'          => 1,

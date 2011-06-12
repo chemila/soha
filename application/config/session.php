@@ -2,7 +2,7 @@
 
 return array(
 	'cookie' => array(
-        'name' => 'star_session',
+        'name' => 't_session',
 		'encrypted' => false,
         'lifetime' => 86400,
 	),
