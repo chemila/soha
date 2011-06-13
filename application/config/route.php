@@ -12,9 +12,9 @@
 return array
 (
     'default' => array(
-        'uri' => '(public(/<action>))',
+        'uri' => '(test(/<action>))',
         'patterns' => array(),
-        'defaults' => array('controller' => 'public', 'action' => 'index'),
+        'defaults' => array('controller' => 'test', 'action' => 'index'),
     ),
     'admin' => array(
         'uri' => '(admin(/<action>))',

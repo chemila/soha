@@ -24,6 +24,7 @@
 			
 		<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 	</div>
+    <!--
 	<script type="text/javascript">
 		var timeout = 10;
 		var timeouthandle = setInterval(function(){
@@ -37,5 +38,6 @@
 		}, 1000);
 	
 	</script>
+    -->
 	
 <!--{include file="footer.php"}-->
