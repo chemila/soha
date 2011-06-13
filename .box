@@ -1,6 +1,7 @@
  ---
 php_extensions:
-- mysqli 
+- memcache
+- mbstring
 php_error_reporting: E_ALL
 php_display_errors: "On"
 php_date_timezone: Asia/Shanghai
