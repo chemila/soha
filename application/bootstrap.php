@@ -1,8 +1,4 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-echo 'Email me：';
-echo Text::auto_link_emails('chemila@gmail.com');
-echo "<br>TO BE CONTINUED<br>";
-die;
 /**
  * Set the default time zone.
  */
