@@ -1,4 +1,8 @@
 <?php
+echo 'Email me：';
+echo Text::auto_link_emails('chemila@gmail.com');
+echo "<br>TO BE CONTINUED<br>";
+die;
 /**
  * The directory in which your application specific resources are located.
  * The application directory must contain the bootstrap.php file.
@@ -70,9 +74,4 @@ require SYSPATH.'classes/core'.EXT;
 
 // Bootstrap the application
 require APPPATH.'bootstrap'.EXT;
-var_dump($_SERVER);
 
-echo 'Email me：';
-echo Text::auto_link_emails('chemila@gmail.com');
-echo "<br>TO BE CONTINUED<br>";
-die;
