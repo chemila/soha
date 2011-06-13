@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/StreamFilters
+END
+StringReplacementFilter.php
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/StreamFilters/StringReplacementFilter.php
+END
+StringReplacementFilterFactory.php
+K 25
+svn:wc:ra_dav:version-url
+V 133
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/StreamFilters/StringReplacementFilterFactory.php
+END
+ByteArrayReplacementFilter.php
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/StreamFilters/ByteArrayReplacementFilter.php
+END

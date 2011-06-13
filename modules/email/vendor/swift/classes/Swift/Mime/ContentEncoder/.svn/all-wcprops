@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/Mime/ContentEncoder
+END
+QpContentEncoder.php
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/Mime/ContentEncoder/QpContentEncoder.php
+END
+PlainContentEncoder.php
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/Mime/ContentEncoder/PlainContentEncoder.php
+END
+Base64ContentEncoder.php
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/Mime/ContentEncoder/Base64ContentEncoder.php
+END

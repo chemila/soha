@@ -1,0 +1,143 @@
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate
+END
+Between.php
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Between.php
+END
+Int.php
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Int.php
+END
+Identical.php
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Identical.php
+END
+EmailAddress.php
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/EmailAddress.php
+END
+Exception.php
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Exception.php
+END
+Barcode.php
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Barcode.php
+END
+Interface.php
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Interface.php
+END
+Abstract.php
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Abstract.php
+END
+GreaterThan.php
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/GreaterThan.php
+END
+InArray.php
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/InArray.php
+END
+Ccnum.php
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Ccnum.php
+END
+Float.php
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Float.php
+END
+StringLength.php
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/StringLength.php
+END
+Ip.php
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Ip.php
+END
+Regex.php
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Regex.php
+END
+Alnum.php
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Alnum.php
+END
+Date.php
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Date.php
+END
+Hostname.php
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Hostname.php
+END
+NotEmpty.php
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/NotEmpty.php
+END
+LessThan.php
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/LessThan.php
+END
+Digits.php
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Digits.php
+END
+Hex.php
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Hex.php
+END
+Alpha.php
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/phpQuery/vendor/Zend/Validate/Alpha.php
+END

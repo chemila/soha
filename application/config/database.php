@@ -24,7 +24,7 @@ return array
 			'password'   => $_SERVER['DB_PASS'],
 			'persistent' => FALSE,
 		),
-		'table_prefix' => 'pin_',
+		'table_prefix' => 't_',
 		'charset'      => 'utf8',
 		'caching'      => TRUE,
 	),
@@ -51,7 +51,7 @@ return array
 		 *
 		 * string   identifier  set the escaping identifier
 		 */
-		'table_prefix' => 'pin_',
+		'table_prefix' => 't_',
 		'charset'      => 'utf8',
 		'caching'      => FALSE,
 	),

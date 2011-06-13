@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/CharacterReader
+END
+Utf8Reader.php
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/CharacterReader/Utf8Reader.php
+END
+GenericFixedWidthReader.php
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/CharacterReader/GenericFixedWidthReader.php
+END
+UsAsciiReader.php
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/leju/!svn/ver/156933/t.leju.com/trunk/star/modules/email/vendor/swift/classes/Swift/CharacterReader/UsAsciiReader.php
+END
