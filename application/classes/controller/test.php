@@ -22,6 +22,7 @@ class Controller_Test extends Controller {
         $queue = Queue::instance('native');
         $queue->create('test');
         $queue->send('t','hello world');
+
         var_dump($queue->receive('t'));
     }
 
