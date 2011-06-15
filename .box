@@ -25,9 +25,8 @@ shared_writable_dirs:
 - /application/logs
 - /application/upload
 url_rewrites:
-    - "^(?:application|modules|system)\b.* index.php/$0"
     -
-    rule: ".* /index.php/$0"
+    rule: ".* /index.php/$args"
     conditions:
         - "!-f $request_filename"
         - "!-d $request_filename"
