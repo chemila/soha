@@ -443,7 +443,7 @@ class Core {
 	{
 		// Transform the class name into a path
 		$file = str_replace('_', '/', strtolower($class));
-        var_dump($file)MEMCACHED_PORT; 
+        var_dump($file); 
 		if ($path = Core::find_file('classes', $file))
 		{
 			// Load the class file
