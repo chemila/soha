@@ -4,6 +4,10 @@ php_extensions:
 - mbstring
 - apc
 - mysql
+- eaccelerator
+- curl
+- gd
+- mcrypt
 php_error_reporting: E_ALL
 php_display_errors: "On"
 php_date_timezone: Asia/Shanghai
