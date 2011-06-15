@@ -5,6 +5,6 @@ class Controller_Test extends Controller {
 	{
         $weibo = new Model_Weibo;
 
-        var_dump($weibo->find_all()->as_array());
+        var_dump($weibo->limit(10)->find_all()->as_array());
 	}
 }// End Welcome
