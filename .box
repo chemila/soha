@@ -18,6 +18,6 @@ php_sysvshm.init_mem: 1000
 url_rewrites:
 - about/us about_us.php
 shared_writable_dirs:
-- /var/www/application/logs/
-- /var/www/application/cache/
-- /var/www/application/upload/
+- /var/www/application/logs
+- /var/www/application/cache
+- /var/www/application/upload
