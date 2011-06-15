@@ -10,7 +10,7 @@ class Controller_Test extends Controller {
 
     public function action_smarty()
     {
-        $this->view = new View_Smarty('smarty:help/index');
+        $this->view = new View('help/index');
         $this->request->response = $this->view->render();
     }
 }// End Welcome
