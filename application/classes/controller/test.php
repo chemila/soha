@@ -7,4 +7,10 @@ class Controller_Test extends Controller {
 
         var_dump($weibo->limit(10)->find_all()->as_array());
 	}
+
+    public function action_smarty()
+    {
+        $this->view = new View_Smarty('smarty:help/index');
+        $this->request->response = $this->view->render();
+    }
 }// End Welcome

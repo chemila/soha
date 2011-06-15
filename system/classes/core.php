@@ -213,7 +213,6 @@ class Core {
 
 		// Determine if we are running in a Windows environment
 		Core::$is_windows = (DIRECTORY_SEPARATOR === '\\');
-        var_dump(realpath($settings['cache_dir']));
 
 		if (isset($settings['cache_dir']))
 		{

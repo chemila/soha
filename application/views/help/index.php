@@ -2,19 +2,6 @@
 </head>
 <body>
 <div id="wrap_blog">
-	<div class="mxk_header">
-        <!--start: header top--> 
-        <!--{include file="header/top.php"}--> 
-		<ul class="nav">
-			<li><a href="public">微博明星(<!--{$stars_count_all}-->)</a></li>
-            <!--
-			<li><a href="public/industry">行业大腕(<!--{$stars_count_tag[2].cnt}-->)</a></li>
-			<li><a href="public/grass">草根红人(<!--{$stars_count_tag[4].cnt}-->)</a></li>
-            -->
-			<li><a href="home">我关注的</a></li>
-			<li><a href="help"  class="current">帮助</a></li>
-		</ul>
-	</div>
 	<div class="clearfix help_center">
 		<div class="main_blog_top">
 			<div class="blog_title"><span class="f20">帮助中心</span></div>
