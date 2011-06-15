@@ -6,4 +6,9 @@ class Controller_Test extends Controller {
         $this->view = new View('help/index');
         $this->request->response = $this->view->render();
 	}
+
+    public function action_debug()
+    {
+        die('rewrite enabled');
+    }
 }// End Welcome

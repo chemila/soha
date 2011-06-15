@@ -5,8 +5,10 @@
 return array(
     'sina' => array(
         'oauth_version' => '1.0a',
-        'key' => '1612564805',
-        'secret' => '2857fb55fe21979cda0be6c299c293ed',
+        //'key' => '1612564805',
+        'key' => '1953097712',
+        //'secret' => '2857fb55fe21979cda0be6c299c293ed',
+        'secret' => '2f2079d17b4ac344c0cc487baa0734bd',
         'callback' => URL::site('auth/oauth_callback', true),
     ),
     'qq' => array(
