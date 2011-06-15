@@ -37,7 +37,7 @@ Core::init(array(
     'cache_dir' => $_SERVER['CACHE_DIR'],
     'errors' => FALSE,       
     'charset' => 'utf-8',
-    'caching' => FALSE,
+    'caching' => true,
 ));
 
 /**
