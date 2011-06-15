@@ -17,3 +17,7 @@ php_iconv_internal_encoding: UTF-8
 php_sysvshm.init_mem: 1000
 url_rewrites:
 - about/us about_us.php
+shared_writable_dirs:
+- cache
+- logs
+- upload
