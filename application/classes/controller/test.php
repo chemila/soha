@@ -9,6 +9,12 @@ class Controller_Test extends Controller {
 
     public function action_smarty()
     {
+        $class = 'View_Smarty';
+		$file = str_replace('_', '/', strtolower($class));
+		$path = Core::find_file('classes', $file);
+        var_dump($path);
+        var_dump(file_exists($path));
+
         $this->view = new View_Smarty;
         $this->view->var = 'test';
         $this->request->response = $this->view->render('smarty:help/test');
