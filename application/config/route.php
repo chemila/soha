@@ -21,4 +21,9 @@ return array
         'patterns' => array(),
         'defaults' => array('controller' => 'test', 'action' => 'index'),
     ),
+    'error' => array(
+        'uri' => '(error(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'error', 'action' => 'index'),
+    ),
 );
