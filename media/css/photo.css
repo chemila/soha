@@ -82,3 +82,15 @@ li li {
     width: 100%;
     z-index: 15;
 }
+#nav li a {
+    color: #E9E9E9;
+    display: block;
+    font-weight: 800;
+    line-height: 42px;
+    padding: 0px 15px;
+    text-decoration: none;
+}
+#nav li.active a {
+    color: white;
+    font-weight: 800;
+}
