@@ -29,7 +29,7 @@ email: <a href="mailto:chemila@gmail.com">chemila@gmail.com</a>
 </div>
 <script type="text/javascript">
 //<![CDATA[
-var so = new SWFObject("media/swf/photos.swf", "polaroid", "100%", "95%", "8", "#FFFFFF");
+var so = new SWFObject("media/swf/photos.swf", "polaroid", "100%", "96%", "8", "#FFFFFF");
 // specify the url to the xml-file, default is photos.xml
 so.addVariable("xmlURL","photo/xml");
 so.write("fullscreendemo");
