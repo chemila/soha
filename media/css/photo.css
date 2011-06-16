@@ -27,11 +27,6 @@ p {
     margin:0 auto;
     width:815px;
 }
-#header {
-    border-top:5px solid #4a4d50;
-    border-bottom:1px solid #4a4d50;
-    margin:0 0 15px 0;
-}
 #demo {
     height:600px;
     width:600px;
@@ -76,7 +71,7 @@ li li {
 }
 #header {
     -webkit-box-shadow: rgba(255, 255, 255, 0.496094) 0px 1px 0px;
-    background: #75311B;
+    background: #191919;
     height: 42px;
     position: relative;
     width: 100%;
