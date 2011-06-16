@@ -12,9 +12,9 @@
 return array
 (
     'default' => array(
-        'uri' => '(test(/<action>))',
+        'uri' => '(photo(/<action>))',
         'patterns' => array(),
-        'defaults' => array('controller' => 'test', 'action' => 'index'),
+        'defaults' => array('controller' => 'photo', 'action' => 'index'),
     ),
     'test' => array(
         'uri' => '(test(/<action>))',
