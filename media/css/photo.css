@@ -76,8 +76,8 @@ li li {
 }
 #header {
     -webkit-box-shadow: rgba(255, 255, 255, 0.496094) 0px 1px 0px;
-    background: #FFF;
-    height: 6%;
+    background: #75311B;
+    height: 42px;
     position: relative;
     width: 100%;
     z-index: 15;
