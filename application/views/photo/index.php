@@ -10,9 +10,6 @@
 <body>
 <div id="header">
     <div id="header-inner">
-        <div id="logo">
-            <a href="/">chemila is best</a>
-        </div>
         <div id="nav">
             <ul>
                 <li id="nav-home" class="active"><a href="/">首页</a></li>
