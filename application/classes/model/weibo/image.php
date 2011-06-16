@@ -24,7 +24,10 @@ class Model_Weibo_Image extends Model_Weibo {
 
     public static function get_path($filename, $type = self::TYPE_ORIGIN)
     {
-        return $type.DIRECTORY_SEPARATOR.substr($filename, 0, 2).DIRECTORY_SEPARATOR;
+        $config = Core::config('upload');
+        $subdirectory = $type.DIRECTORY_SEPARATOR.substr($filename, 0, 2).DIRECTORY_SEPARATOR;
+
+        return $config->get('path').DIRECTORY_SEPARATOR.$subdirectory;
     }
 
     public static function get_file($file, $type = self::TYPE_ORIGIN)
@@ -62,10 +65,51 @@ class Model_Weibo_Image extends Model_Weibo {
 	    $array->rule($key, 'Upload::type', array(self::$valid_types));
 	    $array->rule($key, 'Upload::size', array(self::$max_allowed_size));
 	    $array->rule($key, 'Upload::valid');
+
         if ( ! $array->check())
+            return false;
+
+        $file = md5(microtime().rand()).'.'.strtolower(pathinfo($data[$key]['name'], PATHINFO_EXTENSION));
+        $path = self::get_path($file);
+
+        if(Upload::save($data[$key], $file, $path))
+        {
+            self::resize($path.DIRECTORY_SEPARATOR.$file);
+            return self::get_file($file, 'small');
+        }
+    }
+
+    public static function resize($file, $path)
+    {
+        $image_small = Image::factory($file);
+        $image_middle = Image::factory($file);
+        $directory = $path.DIRECTORY_SEPARATOR.$file;
+        
+        try
+        {
+            $image_small->resize(self::SMALL_WIDTH, self::SMALL_HEIGHT, Image::INVERSE)
+                ->save(self::get_file($directory, 'small'));
+            $image_middle->resize(self::MIDDLE_WIDTH, self::MIDDLE_HEIGHT, Image::INVERSE)
+                ->save(self::get_file($directory, 'middle'));
+
+            return true;
+        }
+        catch(CE $e)
         {
             return false;
         }
+    }
+
+    public static function upload_rsync(Array $data, $key = 'file')
+    {
+        $array = Validate::factory($data);
+
+	    $array->rule($key, 'Upload::not_empty');
+	    $array->rule($key, 'Upload::type', array(self::$valid_types));
+	    $array->rule($key, 'Upload::size', array(self::$max_allowed_size));
+	    $array->rule($key, 'Upload::valid');
+        if ( ! $array->check())
+            return false;
 
         $config = Core::config('upload');
         $tmp_file = $data[$key]['tmp_name'];
@@ -78,7 +122,7 @@ class Model_Weibo_Image extends Model_Weibo {
         if( ! $small or ! $middle)
             return false;
 
-        if($file = Model_Upload::save($data[$key], $filename, $path))
+        if($file = Upload::save($data[$key], $filename, $path))
         {
             $file_small = self::get_file($file, self::TYPE_SMALL);
             $file_middle  = self::get_file($file, self::TYPE_MIDDLE);
@@ -95,7 +139,7 @@ class Model_Weibo_Image extends Model_Weibo {
         } 
     }
 
-    public static function resize($file, $type)
+    public static function resize_rsync($file, $type)
     {
         $size = array(
             self::TYPE_SMALL => array(

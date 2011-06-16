@@ -2,6 +2,8 @@
 
 return array
 (
+    /**
+     * disabled rsync
     'rsync' => array(
         'host' => $_SERVER['CACHE_URL'],
         'module' => 't_leju_com_storage',
@@ -9,8 +11,9 @@ return array
             //'127.0.0.1',
         ),
     ),
+    **/
     'remove_spaces' => TRUE,
-    'path' => 'star/upload/',
+    'path' => $_SERVER['UPLOAD_DIR'],
 );
 
 

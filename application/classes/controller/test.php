@@ -8,42 +8,30 @@ class Controller_Test extends Controller_Base {
 
     public function action_debug()
     {
-        $arr = array(
-            'photo' => array('desc' => 'test', 'url' => 'test.png'),
-            'photo' => array('desc' => 'test', 'url' => 'test.png'),
-            'photo' => array('desc' => 'test', 'url' => 'test.png'),
-        );
-
-        var_dump(Arr::to_xml($arr, 'photos'));
-    }
-
-    public function action_pic()
-    {
-        $this->init_view('pic', 'test');
-    }
-
-    public function action_xml()
-    {
-        $arr = array();
-        $arr[] = array(
-            'desc' => 'test',
-            'url' => 'media/img/404.png',
-        );
-        $arr[] = array(
-            'desc' => 'hello',
-            'url' => 'media/img/404.png',
-        );
-        $photo = '<photo desc="%s" url="%s" />';
-        $xml = '<?xml version="1.0" encoding="utf-8"?>'."\r\n";
-        $xml .= '<photos>'."\r\n";
-
-        foreach($arr as $value)
+        if( ! $_FILES)
         {
-            $xml .= sprintf('<photo desc="%s" url="%s" />', $value['desc'], $value['url'])."\r\n";
+            echo<<<HTML
+            <form action="/test/debug" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" />
+                <input type="submit" value="submit" />
+            </form>
+HTML;
+            die;
         }
+        else
+        {
+            $config = Core::config('upload');
+            $path = $config->get('path');
+            $file = 'test.png';
 
-        $xml .= '</photos>';
-        
-        die($xml);
+            if($res = Upload::save($_FILES['file'], $file, $path))
+            {
+                var_dump($path.DIRECTORY_SEPARATOR.$file);
+            }
+            else
+            {
+                var_dump($res);
+            }
+        }
     }
 }// End Welcome
