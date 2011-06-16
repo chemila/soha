@@ -26,7 +26,7 @@ shared_writable_dirs:
 - /application/upload
 url_rewrites:
     -
-    rule: ".* /index.php/$args"
+    rule: ".* /error"
     conditions:
         - "!-f $request_filename"
         - "!-d $request_filename"
