@@ -19,8 +19,8 @@ class Controller_Photo extends Controller_Base {
             $tmp = unserialize($value['media_data']);
             $photos[] = array(
                 'desc' => Text::limit_chars($value['content'], 25, '...'),
-                'url' => $tmp['img']['src'],
-                //'url' => 'media/img/404.png',
+                //'url' => $tmp['img']['src'],
+                'url' => 'media/img/404.png',
             );
         }
 
