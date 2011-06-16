@@ -82,6 +82,12 @@ li li {
     width: 100%;
     z-index: 15;
 }
+#nav li {
+    display: inline-block;
+    font-size: 14px;
+    vertical-align: middle;
+    zoom: 1;
+}
 #nav li a {
     color: #E9E9E9;
     display: block;
