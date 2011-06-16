@@ -24,9 +24,3 @@ shared_writable_dirs:
 - /application/cache
 - /application/logs
 - /application/upload
-url_rewrites:
-    -
-    rule: "^.* /index.php/error"
-    conditions:
-        - "!-f $request_filename"
-        - "!-d $request_filename"
