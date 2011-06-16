@@ -26,4 +26,9 @@ return array
         'patterns' => array(),
         'defaults' => array('controller' => 'error', 'action' => 'index'),
     ),
+    'photo' => array(
+        'uri' => '(photo(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'photo', 'action' => 'index'),
+    ),
 );

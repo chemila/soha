@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Auth extends Controller_Base {
-    const COOKIE_NAME = 'su';
+    const COOKIE_NAME = 'chemila';
 
     public function action_index()
     {

@@ -4,7 +4,7 @@ class Controller_Error extends Controller_Base {
     
     public function action_index()
     {
-        $this->init_view();
+        $this->init_view('404');
     }
 
     public function action_404()

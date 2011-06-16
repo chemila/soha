@@ -527,4 +527,28 @@ class Arr {
         
         return false; 
     } 
+
+    public static function to_xml(Array $data, $root = 'root')
+    {
+        $xml = new XmlWriter();
+        $xml->openMemory();
+        $xml->startDocument('1.0', 'UTF-8');
+        $xml->startElement($root);
+
+        function write(XMLWriter $xml, $data){
+            foreach($data as $key => $value){
+                if(is_array($value)){
+                    $xml->startElement($key);
+                    write($xml, $value);
+                    $xml->endElement();
+                    continue;
+                }
+                $xml->writeElement($key, $value);
+            }
+        }
+        write($xml, $data);
+
+        $xml->endElement();
+        return $xml->outputMemory(true);
+    }
 } // End arr
