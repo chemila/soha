@@ -3,8 +3,7 @@
 class Controller_Test extends Controller {
 	public function action_index()
 	{
-        $this->view = new View_Smarty('smarty:help/index');
-        $this->request->response = $this->view->render();
+        $this->request->redirect('error/404');
 	}
 
     public function action_debug()
