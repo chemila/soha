@@ -30,12 +30,12 @@ class Controller_Photo extends Controller_Base {
                 $ext = 'jpg';
             }
 
-            $url = Core::cache($file, file_get_contents($file), 24*3600, );
+            $url = Core::cache($file, file_get_contents($file), 24*3600, $ext);
 
             $photos[] = array(
                 'desc' => Text::limit_chars($value['content'], 25, '...'),
                 //'url' => $tmp['img']['src'],
-                'url' => str_replace(Core::$cache_dir, '', $url),
+                'url' => $url,
             );
         }
 
