@@ -73,6 +73,11 @@ class Core {
 	public static $cache_dir;
 
 	/**
+	 * @var  string  cache directory
+	 */
+	public static $log_dir;
+
+	/**
 	 * @var  integer  default lifetime for caching, in seconds
 	 */
 	public static $cache_life = 60;
@@ -767,10 +772,10 @@ class Core {
 	 * @return  mixed    for getting
 	 * @return  boolean  for setting
 	 */
-	public static function cache($name, $data = NULL, $lifetime = NULL)
+	public static function cache($name, $data = NULL, $lifetime = NULL, $ext = NULL)
 	{
 		// Cache file is a hash of the name
-		$file = sha1($name).'.txt';
+		$file = sha1($name).(empty($ext) ? '.txt' : '.'.ltrim($ext, '.'));
 
 		// Cache directories are split by keys to prevent filesystem overload
 		$dir = Core::$cache_dir.DIRECTORY_SEPARATOR.$file[0].$file[1].DIRECTORY_SEPARATOR;
@@ -818,13 +823,22 @@ class Core {
 			chmod($dir, 0777);
 		}
 
+        // If no extension setting
 		// Force the data to be a string
-		$data = serialize($data);
+        if( ! $ext)
+        {
+		    $data = serialize($data);
+        }
 
 		try
 		{
 			// Write the cache
-			return (bool) file_put_contents($dir.$file, $data, LOCK_EX);
+			if(file_put_contents($dir.$file, $data, LOCK_EX))
+            {
+                return $dir.$file;
+            }
+
+            return FALSE;
 		}
 		catch (Exception $e)
 		{

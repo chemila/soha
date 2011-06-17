@@ -1,9 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<base href="<!--{php}-->echo URL::base(false, true);<!--{/php}-->" />
-<title>photos</title>
+<!--{include file="header.php"}--> 
 <script type="text/javascript" src="media/js/photo.js"></script>
 <link href="media/css/photo.css" rel="stylesheet" type="text/css">
 <link href="media/css/nav.css" rel="stylesheet" type="text/css">

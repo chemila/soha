@@ -19,6 +19,9 @@ class Controller_Photo extends Controller_Base {
         foreach($array as $value)
         {
             $tmp = unserialize($value['media_data']);
+            $file = Arr::get($tmp['img'], 'middle', $tmp['img']['src']);
+            $url = Core::cache($file, file_get_contents($file), 24*3600, pathinfo($file, PATHINFO_EXTENSION));
+            var_dump($url);die;
             $photos[] = array(
                 'desc' => Text::limit_chars($value['content'], 25, '...'),
                 //'url' => $tmp['img']['src'],
