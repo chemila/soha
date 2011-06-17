@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <base href="<!--{php}-->echo URL::base(false, true);<!--{/php}-->" />
-    <title>Page not found!</title>
-    <link href="media/css/404.css" rel="stylesheet" type="text/css">
+<!--{include file="header.php"}--> 
+<link href="media/css/404.css" rel="stylesheet" type="text/css">
 </head>
-
 <body>
     <div class="wrapper">
         <h1><a href="/"><span>Brightkite</span></a></h1>

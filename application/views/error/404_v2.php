@@ -1,9 +1,4 @@
-<html>
-<head>
-<title>404 not found</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf8">
-<base href="<!--{php}-->echo URL::base(false, true);<!--{/php}-->" />
-</head>
+<!--{include file="header.php"}--> 
 <style type="text/css">
 A:link   {color:red; text-decoration:none; cURSOR: default}
 A:visited{color:red; text-decoration:none; cURSOR: default}
@@ -11,6 +6,7 @@ A:active {color:red; text-decoration:none; cURSOR: default}
 A:hover  {color:white; background-color:red; text-decoration:none; font-weight: bold; cURSOR: e-resize; }
 .content {text-align:center; margin-top:10px;}
 </style>
+</head>
 <body bgcolor="#FFFFFF" MARGINHEIGHT="0" topmargin="0" vspace="0" marginwidth="0" leftmargin="0" hspace="0" style="margin:0">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" height="70%">
     <tr align="center" valign="bottom"> 

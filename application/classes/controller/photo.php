@@ -51,7 +51,7 @@ class Controller_Photo extends Controller_Base {
         foreach($array as $value)
         {
             $tmp = unserialize($value['media_data']);
-            $url = Arr::get($tmp['img'], 'middle', $tmp['img']['src']);
+            $url = Arr::get($tmp['img'], 'small', $tmp['img']['src']);
 
             if( ! $url)
                 continue;

@@ -1,5 +1,5 @@
 body {
-    background: #354E61 url(media/img/error/bg-main.png) top left repeat-x;
+    background: #354E61 url(/media/img/error/bg-main.png) top left repeat-x;
     font-family: 'Arial', sans-serif;
     font-size: small;
     color: #999;
@@ -11,7 +11,7 @@ body {
 }
 .header {
     padding: 10px 15px 15px;
-    background: url(media/img/error/bg-tabs.png) bottom repeat-x;
+    background: url(//media/img/error/bg-tabs.png) bottom repeat-x;
 }
 .content {
     padding: 15px;
@@ -62,7 +62,7 @@ p a {
     position: absolute;
     width: 50%;
     height: 5px;
-    background: url(media/img/error/corners-white.png) no-repeat;
+    background: url(/media/img/error/corners-white.png) no-repeat;
 }
 .corner.tl {
     top: -5px;
@@ -88,6 +88,5 @@ p a {
     width: 530px;
     height: 244px;
     margin: 0 auto;
-    background: url(media/img/error/bg-404.jpg) no-repeat;
+    background: url(/media/img/error/bg-404.jpg) no-repeat;
 }
-
