@@ -6,19 +6,19 @@
 <title>photos</title>
 <script type="text/javascript" src="media/js/photo.js"></script>
 <link href="media/css/photo.css" rel="stylesheet" type="text/css">
+<link href="media/css/nav.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<div id="header">
-    <div id="header-inner">
-        <div id="nav">
-            <ul>
-                <li id="nav-home" class="active"><a href="/">首页</a></li>
-                <li id="nav-profile"><a href="u/chemila">我的主页</a></li>
-            </ul>
-        </div>
-    </div>
+<div class="app nav">
+    <span class="sprite left"></span>
+    <ul class="list">
+        <li class="link"><a href="/">Home</a></li>
+        <li class="link active"><a href="javascript:;">Photos</a></li>
+        <li class="link"><a href="http://weibo.com/chemila">Weibo</a></li>
+    </ul> 
+    <span class="sprite right"></span>
 </div>
-<div id="fullscreendemo">
+<div id="photos">
     <strong>This site requires Flash Player 8.0 or greater</strong><br />
     Please click <a href="http://www.adobe.com/products/flashplayer/">here</a> to download.<br />
     <p>
@@ -26,10 +26,10 @@
 </div>
 <script type="text/javascript">
     //<![CDATA[
-    var so = new SWFObject("media/swf/photos.swf", "polaroid", "100%", "95%", "8", "#FFFFFF");
+    var so = new SWFObject("media/swf/photos.swf", "polaroid", "100%", "100%", "8", "#FFFFFF");
     // specify the url to the xml-file, default is photos.xml
     so.addVariable("xmlURL","photo/xml");
-    so.write("fullscreendemo");
+    so.write("photos");
     //]]>
 </script>
 </body>

@@ -1,0 +1,64 @@
+.app.nav {
+    background: -moz-linear-gradient(90deg, #E2E2E2 0%, #EDEDED 100%) repeat scroll 0 0 transparent;
+    clear: both;
+    height: 32px;
+    margin: 0 0 0 -7px;
+    position: relative;
+    width: 998px;
+}
+.app.nav .left {
+    background-position: -366px -8px;
+    height: 9px;
+    left: 0;
+    position: absolute;
+    top: -9px;
+    width: 7px;
+}
+.sprite {
+    background: url("media/img/header/sprite.png") no-repeat scroll 0 0 transparent;
+    display: block;
+}
+* {
+    margin: 0;
+    outline: medium none;
+    padding: 0;
+}
+ul, ul li {
+    list-style-position: outside;
+    list-style-type: none;
+}
+.link {
+    color: inherit;
+    cursor: pointer;
+}
+.app.nav .list .link a {
+    border-right: 1px solid #DADBDC;
+    color: #3D3D3D;
+    float: left;
+    font-size: 13px;
+    line-height: 31px;
+    padding: 0 20px 1px;
+}
+a {
+    text-decoration: none;
+}
+.app.nav .list .link.active a {
+    background-image: -moz-linear-gradient(center bottom , #868A8D 0%, #ABAFB2 100%);
+    color: #FFFFFF;
+}
+.app.nav .right {
+    background-position: -372px -8px;
+    height: 9px;
+    position: absolute;
+    right: 0;
+    top: -9px;
+    width: 7px;
+}
+.app.nav .list .link a:hover {
+    background-image: -moz-linear-gradient(center bottom , #CFCFCF 0%, #E0E0E0 100%);
+    color: #3D3D3D;
+}
+.section.app .app.nav .list .link.active a {
+    background-image: -moz-linear-gradient(center bottom , #868A8D 0%, #ABAFB2 100%);
+    color: #FFFFFF;
+}

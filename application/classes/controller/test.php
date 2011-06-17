@@ -34,4 +34,9 @@ HTML;
             }
         }
     }
+
+    public function action_nav()
+    {
+        $this->init_view('nav', 'error');
+    }
 }// End Welcome
