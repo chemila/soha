@@ -25,7 +25,7 @@ class Controller_Photo extends Controller_Base {
             $photos[] = array(
                 'desc' => Text::limit_chars($value['content'], 25, '...'),
                 //'url' => $tmp['img']['src'],
-                'url' => str_replace('/var/www', '', $url),
+                'url' => str_replace(Core::$cache_dir, '', $url),
             );
         }
 
