@@ -38,7 +38,7 @@ HTML;
     public function action_cache()
     {
         $f = 'http://ww1.sinaimg.cn/large/3e4fe687jw1dhljk6gcalj.jpg';
-        $file = Core::cache($f, file_get_contents($f), NULL, '.jpg');
+        $file = Core::cache($f);
         var_dump($file);
     }
 }// End Welcome

@@ -772,10 +772,10 @@ class Core {
 	 * @return  mixed    for getting
 	 * @return  boolean  for setting
 	 */
-	public static function cache($name, $data = NULL, $lifetime = NULL, $ext = NULL)
+	public static function cache($name, $data = NULL, $lifetime = NULL)
 	{
 		// Cache file is a hash of the name
-		$file = sha1($name).(empty($ext) ? '.txt' : '.'.ltrim($ext, '.'));
+		$file = sha1($name).'.txt';
 
 		// Cache directories are split by keys to prevent filesystem overload
 		$dir = Core::$cache_dir.DIRECTORY_SEPARATOR.$file[0].$file[1].DIRECTORY_SEPARATOR;
@@ -825,20 +825,12 @@ class Core {
 
         // If no extension setting
 		// Force the data to be a string
-        if( ! $ext)
-        {
-		    $data = serialize($data);
-        }
+		$data = serialize($data);
 
 		try
 		{
 			// Write the cache
-			if(file_put_contents($dir.$file, $data, LOCK_EX))
-            {
-                return $dir.$file;
-            }
-
-            return FALSE;
+			return (bool)file_put_contents($dir.$file, $data, LOCK_EX);
 		}
 		catch (Exception $e)
 		{
@@ -1514,5 +1506,4 @@ class Core {
 
 		return $output;
 	}
-
 } // End Core
