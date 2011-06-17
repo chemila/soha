@@ -8,9 +8,11 @@ class Controller_Photo extends Controller_Base {
 
 	public function action_xml()
 	{
+        $cnt = min(60, Arr::get($_GET, 'cnt', 20));
+
         $array = DB::query(Database::SELECT,
             'SELECT content,media_data from pin_weibo where user_category=1 and type=1 
-            order by rand(unix_timestamp()) limit 20'
+            order by rand(unix_timestamp()) limit '.$cnt
         )->execute()->as_array();
         $photos = array();
 

@@ -54,7 +54,6 @@ deconcept.SWFObject.prototype={
     },
     addVariable:function(_13,_14){
         this.variables[_13]=_14;
-        console.info(this.variables); 
     },
     getVariable:function(_15){
         return this.variables[_15];
@@ -94,7 +93,6 @@ deconcept.SWFObject.prototype={
             return _19;
     },
     write:function(_20){
-        console.info(_20);
         if(this.getAttribute("useExpressInstall")){
             var _21=new deconcept.PlayerVersion([6,0,65]);
             if(this.installedVer.versionIsValid(_21)&&!this.installedVer.versionIsValid(this.getAttribute("version"))){
