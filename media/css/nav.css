@@ -44,7 +44,7 @@ a {
 }
 .app.nav .list .link.active a {
     background-image: -moz-linear-gradient(center bottom , #868A8D 0%, #ABAFB2 100%);
-    color: #FFFFFF;
+    color: #1e1e1e;
 }
 .app.nav .right {
     background-position: -372px -8px;
@@ -54,11 +54,11 @@ a {
     top: -9px;
     width: 7px;
 }
-.app.nav .list .link a:hover {
-    background-image: -moz-linear-gradient(center bottom , #CFCFCF 0%, #E0E0E0 100%);
+a:hover {
+    background-image: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#CFCFCF), to(#E0E0E0));
     color: #3D3D3D;
 }
-.section.app .app.nav .list .link.active a {
-    background-image: -moz-linear-gradient(center bottom , #868A8D 0%, #ABAFB2 100%);
-    color: #FFFFFF;
+.active a {
+    background-image: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#868A8D), to(#ABAFB2));
+    color: white;
 }

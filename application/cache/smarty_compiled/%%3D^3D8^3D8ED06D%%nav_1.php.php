@@ -1,3 +1,5 @@
+<?php /* Smarty version 2.6.26, created on 2011-06-18 23:42:12
+         compiled from shared/nav_1.php */ ?>
 <div class="app nav">
     <span class="sprite left"></span>
     <ul class="list">
@@ -8,4 +10,3 @@
     </ul> 
     <span class="sprite right"></span>
 </div>
-
