@@ -98,7 +98,7 @@
 			if ((/^(?:javascript)/i).test(href) || href == '#') {
 				href = null;
 			}
-            console.info(selectedOpts);
+
 			if (selectedOpts.type) {
 				type = selectedOpts.type;
 
