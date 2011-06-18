@@ -27,8 +27,8 @@ return array
         'defaults' => array('controller' => 'error', 'action' => 'index'),
     ),
     'photo' => array(
-        'uri' => '(photo(/<action>))',
-        'patterns' => array(),
+        'uri' => '(photo(/<action>(/<page>)))',
+        'patterns' => array('page' => '\d*'),
         'defaults' => array('controller' => 'photo', 'action' => 'index'),
     ),
 );

@@ -8,13 +8,10 @@ class Controller_Photo extends Controller_Base {
 
 	public function action_xml()
 	{
-        $cnt = min(60, Arr::get($_GET, 'cnt', 20));
+        $page = $this->get_page();
 
-        $array = DB::query(Database::SELECT,
-            'SELECT content,media_data from pin_weibo where user_category=1 and type=1 and source="sina"
-            order by id desc limit '.$cnt
-        )->execute()->as_array();
-
+        $weibo = new Model_Weibo;
+        $array = $weibo->photos($page); 
         $photos = array();
 
         foreach($array as $value)
@@ -30,9 +27,11 @@ class Controller_Photo extends Controller_Base {
             {
                 $url = $this->load($file);
             }
+
             $photos[] = array(
                 'desc' => Text::limit_chars($value['content'], 25, '...'),
                 'url' => str_replace($_SERVER['DOCUMENT_ROOT'], '', $url),
+                'link' => sprintf("weibo(%s);", json_encode($value)),
             );
         }
 
@@ -42,11 +41,8 @@ class Controller_Photo extends Controller_Base {
 
     public function action_save()
     {
-        $cnt = Arr::get($_GET, 'cnt', 20);
-        $array = DB::query(Database::SELECT,
-            'SELECT content,media_data from pin_weibo where user_category=1 and type=1 and source="sina"
-            order by id desc limit '.$cnt
-        )->execute()->as_array();
+        $page = $this->get_page();
+        $array = Model::Factory('weibo')->photos($page); 
 
         foreach($array as $value)
         {
@@ -103,14 +99,19 @@ class Controller_Photo extends Controller_Base {
 
     protected function to_xml(array $array)
     {
-        $photo = '<photo desc="%s" url="%s" />';
-
         $xml = '<?xml version="1.0" encoding="utf-8"?>'."\r\n";
         $xml .= '<photos>'."\r\n";
 
-        foreach($array as $value)
+        foreach($array as $photo)
         {
-            $xml .= sprintf('<photo desc="%s" url="%s" />', $value['desc'], $value['url'])."\r\n";
+            $tmp = '<photo ';
+            foreach($photo as $attr => $value)
+            {
+                $tmp .= sprintf("%s='%s' " , $attr, $value);
+            }
+            $tmp .= '/>'."\r\n";
+
+            $xml .= $tmp;
         }
 
         $xml .= '</photos>';

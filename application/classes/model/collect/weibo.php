@@ -94,4 +94,12 @@ class Model_Collect_Weibo extends Model_QORM {
             ->find()
             ->sid;
     }
+
+    public function find_by_wid($wid, $source = 'sina')
+    {
+        return $this->where('wid', '=', $wid)
+            ->and_where('source', '=', $source)
+            ->limit(1)
+            ->find();
+    }
 }

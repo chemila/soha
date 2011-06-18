@@ -14,14 +14,18 @@
 <script type="text/javascript">
     //<![CDATA[
     var so = new SWFObject("media/swf/photos.swf", "polaroid", "100%", "100%", "8", "#FFFFFF");
-    var count = 20;
-    show(count);
+    var page = 1;
+    show(page);
 
-    function show(cnt) {
-        cnt = Math.ceil(cnt);
+    function show(page) {
+        if(page < 0) return;
         // specify the url to the xml-file, default is photos.xml
-        so.addVariable("xmlURL","photo/xml?cnt=" + cnt);
+        so.addVariable("xmlURL","photo/xml/" + page);
         so.write("photos");
+    }
+    
+    function weibo(json) {
+        alert(json.content);
     }
     //]]>
 </script>
