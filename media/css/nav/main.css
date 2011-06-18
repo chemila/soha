@@ -15,7 +15,7 @@
     width: 7px;
 }
 .sprite {
-    background: url("media/img/header/sprite.png") no-repeat scroll 0 0 transparent;
+    background: url("sprite.png") no-repeat scroll 0 0 transparent;
     display: block;
 }
 * {

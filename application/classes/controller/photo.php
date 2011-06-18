@@ -28,10 +28,16 @@ class Controller_Photo extends Controller_Base {
                 $url = $this->load($file);
             }
 
+            $json = array(
+                'id' => $value['id'],
+                'content' => $value['content'],
+                'image' => $file,
+            );
+
             $photos[] = array(
                 'desc' => Text::limit_chars($value['content'], 25, '...'),
                 'url' => str_replace($_SERVER['DOCUMENT_ROOT'], '', $url),
-                'link' => sprintf("weibo(%s);", json_encode($value)),
+                'link' => sprintf("weibo(%s);", json_encode($json)),
             );
         }
 

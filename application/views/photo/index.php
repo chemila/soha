@@ -1,7 +1,10 @@
 <!--{include file="header.php"}--> 
 <script type="text/javascript" src="media/js/photo.js"></script>
+<script type="text/javascript" src="media/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="media/js/jquery.fancybox-1.3.4.js"></script>
+<link rel="stylesheet" href="media/css/fancybox/main.css" type="text/css" media="screen" />
 <link href="media/css/photo.css" rel="stylesheet" type="text/css">
-<link href="media/css/nav.css" rel="stylesheet" type="text/css">
+<link href="media/css/nav/main.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <!--{include file="shared/nav_1.php"}--> 
@@ -25,10 +28,34 @@
     }
     
     function weibo(json) {
-        alert(json.content);
+        $('#photos').hide();
+        $("#weibo_container").show();
+
+        $('#weibo').attr('title', json.content);
+        $('#weibo').attr('href', json.image);
+        $('#weibo_image').attr('src', json.image);
+        $('#weibo_image').attr('alt', json.content);
+
+        $('#weibo_image').trigger('click');
     }
+
+	$(document).ready(function() {
+        $("#weibo_image").fancybox({
+            'scrolling'     : 'no',
+            'titleShow'     : true,
+            'showCloseButton' : true,
+            'titlePosition' : 'inline', 
+            'onClosed'      : function() {
+                $("#photos").show();
+                $("#weibo_container").hide();
+            }
+        });
+    });
     //]]>
 </script>
+<div id="weibo_container" style="display:none;">
+    <a id="weibo" href="inline" title=""><img alt="" src="" id="weibo_image"/></a>
+</div>
 </body>
 </html>
 
