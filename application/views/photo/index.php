@@ -29,32 +29,35 @@
     
     function weibo(json) {
         $('#photos').hide();
-        $("#weibo_container").show();
+        //$("#weibo_container").show();
 
         $('#weibo').attr('title', json.content);
         $('#weibo').attr('href', json.image);
-        $('#weibo_image').attr('src', json.image);
-        $('#weibo_image').attr('alt', json.content);
 
-        $('#weibo_image').trigger('click');
+        //$('#weibo_image').attr('src', json.image);
+        //$('#weibo_image').attr('alt', json.content);
+
+        $('#weibo').trigger('click');
     }
 
 	$(document).ready(function() {
-        $("#weibo_image").fancybox({
-            'scrolling'     : 'no',
-            'titleShow'     : true,
+        $("#weibo").fancybox({
+            /**
+            'titlePosition'		: 'outside',
+            'scrolling' : 'yes',
+            **/
             'showCloseButton' : true,
-            'titlePosition' : 'inline', 
+            'overlayColor'		: '#000',
+            'overlayOpacity'	: 0.9,
             'onClosed'      : function() {
                 $("#photos").show();
-                $("#weibo_container").hide();
             }
         });
     });
     //]]>
 </script>
 <div id="weibo_container" style="display:none;">
-    <a id="weibo" href="inline" title=""><img alt="" src="" id="weibo_image"/></a>
+    <a id="weibo" href="#inline" title=""></a>
 </div>
 </body>
 </html>

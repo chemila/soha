@@ -98,7 +98,7 @@
 			if ((/^(?:javascript)/i).test(href) || href == '#') {
 				href = null;
 			}
-
+            console.info(selectedOpts);
 			if (selectedOpts.type) {
 				type = selectedOpts.type;
 
@@ -133,6 +133,7 @@
 			}
 
 			if (type == 'inline') {
+                console.info(href);
 				obj	= href.substr(href.indexOf("#"));
 				type = $(obj).length > 0 ? 'inline' : 'ajax';
 			}
