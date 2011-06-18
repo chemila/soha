@@ -46,8 +46,10 @@
             'titlePosition'		: 'outside',
             'scrolling' : 'yes',
             **/
+            'scrolling' : 'no',
+            'titlePosition'		: 'inside',
             'showCloseButton' : true,
-            'overlayColor'		: '#000',
+            'overlayColor'		: '#E8EAE6',
             'overlayOpacity'	: 0.9,
             'onClosed'      : function() {
                 $("#photos").show();
