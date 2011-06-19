@@ -18,13 +18,13 @@ class Controller_Cron extends Controller {
     {
         set_time_limit(60);
         // Setting cron jobs here
-        Cron::set('queue_inbox', array('* * * * *', array($this, 'queue_inbox')));
-        Cron::set('queue_inbox_trash', array('* * * * *', array($this, 'queue_inbox_trash')));
-        Cron::set('queue_outbox', array('* * * * *', array($this, 'queue_outbox')));
-        Cron::set('queue_outbox_trash', array('* * * * *', array($this, 'queue_outbox_trash')));
-        Cron::set('queue_atme', array('* * * * *', array($this, 'queue_atme')));
-        Cron::set('queue_atme_trash', array('* * * * *', array($this, 'queue_atme_trash')));
-        Cron::set('queue_unread', array('* */2 * * *', array($this, 'queue_unread')));
+        //Cron::set('queue_inbox', array('* * * * *', array($this, 'queue_inbox')));
+        //Cron::set('queue_inbox_trash', array('* * * * *', array($this, 'queue_inbox_trash')));
+        //Cron::set('queue_outbox', array('* * * * *', array($this, 'queue_outbox')));
+        //Cron::set('queue_outbox_trash', array('* * * * *', array($this, 'queue_outbox_trash')));
+        //Cron::set('queue_atme', array('* * * * *', array($this, 'queue_atme')));
+        //Cron::set('queue_atme_trash', array('* * * * *', array($this, 'queue_atme_trash')));
+        //Cron::set('queue_unread', array('* */2 * * *', array($this, 'queue_unread')));
         Cron::set('collect_weibo_oauth', array('*/5 * * * *', array($this, 'collect_weibo_oauth')));
         Cron::set('queue_weibo', array('* * * * *', array($this, 'queue_weibo')));
         //Cron::set('observe_star', array('* */2 * * *', array($this, 'observe_star')));
@@ -108,7 +108,7 @@ class Controller_Cron extends Controller {
                 $since_id = $weibo->last_id($source);
 
                 $data = $model_oauth->home_timeline(array(
-                    'count' => 50,
+                    'count' => 20,
                     'since_id' => $since_id,
                 ));
 

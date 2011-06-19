@@ -28,15 +28,17 @@ class Controller_Photo extends Controller_Base {
                 $url = $this->load($file);
             }
 
+            $url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $url);
+
             $json = array(
                 'id' => $value['id'],
                 'content' => $value['content'],
-                'image' => $file,
+                'image' => $url,
             );
 
             $photos[] = array(
                 'desc' => Text::limit_chars($value['content'], 25, '...'),
-                'url' => str_replace($_SERVER['DOCUMENT_ROOT'], '', $url),
+                'url' => $url,
                 'link' => sprintf("weibo(%s);", json_encode($json)),
             );
         }
