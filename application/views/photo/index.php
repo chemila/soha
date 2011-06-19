@@ -24,19 +24,13 @@
         if(page < 0) return;
         // specify the url to the xml-file, default is photos.xml
         so.addVariable("xmlURL","photo/xml/" + page);
+        so.addParam("wmode", "transparent");
         so.write("photos");
     }
     
     function weibo(json) {
-        $('#photos').hide();
-        //$("#weibo_container").show();
-
-        $('#weibo').attr('title', json.content);
-        $('#weibo').attr('href', json.image);
-
-        //$('#weibo_image').attr('src', json.image);
-        //$('#weibo_image').attr('alt', json.content);
-
+        //$('#photos').hide();
+        $('#weibo').attr('title', json.content).attr('href', json.image);
         $('#weibo').trigger('click');
     }
 
@@ -49,10 +43,11 @@
             'scrolling' : 'no',
             'titlePosition'		: 'inside',
             'showCloseButton' : true,
-            'overlayColor'		: '#E8EAE6',
-            'overlayOpacity'	: 0.9,
+            'overlayColor'		: '#000',
+            'height' : 3000,
+            'overlayOpacity'	: 0.6,
             'onClosed'      : function() {
-                $("#photos").show();
+                // Close events goes here
             }
         });
     });

@@ -2,12 +2,12 @@ html, body {
     height:100%;
     width:100%;
     margin:0;
-    color:#4a4d50;
-    background:#e8eae6;
+    color:#E8EAE6;
+    background:#E8EAE6;
 }
 #wrapper {
     margin:0 auto;
-    width:815px;
+    width:100%;
 }
 #photos {
     height:100%;
