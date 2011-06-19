@@ -36,16 +36,12 @@
 
 	$(document).ready(function() {
         $("#weibo").fancybox({
-            /**
-            'titlePosition'		: 'outside',
-            'scrolling' : 'yes',
-            **/
             'scrolling' : 'no',
-            'titlePosition'		: 'inside',
-            'showCloseButton' : true,
-            'overlayColor'		: '#000',
-            'height' : 3000,
-            'overlayOpacity'	: 0.6,
+            'titlePosition'		: 'over',
+            'showCloseButton'   : true,
+            'overlayColor'		: '#777',
+			'autoScale'			: false,
+            'overlayOpacity'	: 0.7,
             'onClosed'      : function() {
                 // Close events goes here
             }
