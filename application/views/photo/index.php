@@ -35,13 +35,16 @@
     }
 
 	$(document).ready(function() {
+        function formatTitle(title, currentArray, currentIndex, currentOpts) {
+            return '<div id="fancybox-title-over"><span><a href="javascript:;" onclick="$.fancybox.close();"></a></span>' + (title && title.length ? '<b>' + title + '</b>' : '' ) + '</div>';
+        }
         $("#weibo").fancybox({
-            'scrolling' : 'no',
             'titlePosition'		: 'over',
             'showCloseButton'   : true,
             'overlayColor'		: '#777',
-			'autoScale'			: false,
+			'autoScale'			: true,
             'overlayOpacity'	: 0.7,
+            'titleFormat'       : formatTitle,
             'onClosed'      : function() {
                 // Close events goes here
             }
