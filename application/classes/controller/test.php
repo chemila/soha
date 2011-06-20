@@ -35,8 +35,89 @@ HTML;
         }
     }
 
-    public function action_cache()
+    public function action_ext()
     {
-        echo '<a href="javascript:alert(11111)">test</a>';
+        require_once 'Image/GraphViz.php';
+
+        $graph = new Image_GraphViz();
+
+        $graph->addNode(
+          'Node1',
+          array(
+            'URL'   => 'http://link1',
+            'label' => 'This is a label',
+            'shape' => 'box'
+          )
+        );
+
+        $graph->addNode(
+          'Node2',
+          array(
+            'URL'      => 'http://link2',
+            'fontsize' => '14'
+          )
+        );
+
+        $graph->addNode(
+          'Node3',
+          array(
+            'URL'      => 'http://link3',
+            'fontsize' => '20'
+          )
+        );
+
+        $graph->addEdge(
+          array(
+            'Node1' => 'Node2'
+          ),
+          array(
+            'label' => 'Edge Label'
+          )
+        );
+
+        $graph->addEdge(
+           array(
+             'Node1' => 'Node2'
+           ),
+           array(
+            'color' => 'red'
+         )
+        );
+        echo $graph->image();
     }
+
+    public function action_chart()
+    {
+        echo <<<HTML
+<html>
+  <head>
+    <script type='text/javascript' src='/media/js/google_jsapi.js'></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['orgchart']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('string', 'Manager');
+        data.addColumn('string', 'ToolTip');
+        data.addRows([
+          [{v:'Mike', f:'Mike<div style="color:red; font-style:italic">President</div>'}, '', 'The President'],
+          [{v:'Jim', f:'Jim<div style="color:red; font-style:italic">Vice President</div>'}, 'Mike', 'VP'],
+          [{v:'fuqiang', f:'<h2>付强</h2>总统'}, 'Mike', ''],
+          ['王三水', 'fuqiang', 'sanshui'],
+          ['测试中文', 'Jim', 'Bob Sponge'],
+          ['Carol', 'Bob', '']
+        ]);
+        var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+        chart.draw(data, {allowHtml:true});
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id='chart_div'></div>
+  </body>
+</html>
+HTML;
+    } 
 }// End Welcome

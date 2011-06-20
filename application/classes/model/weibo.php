@@ -350,7 +350,6 @@ class Model_Weibo extends Model_QORM {
             ->order_by('id', 'desc')
             ->limit(20)
             ->offset(($page - 1) * 20)
-            ->find_all()
-            ->as_array();
+            ->find_all();
     }
 }
