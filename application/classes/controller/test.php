@@ -40,7 +40,7 @@ HTML;
         echo <<<HTML
 <html>
   <head>
-    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript' src='/media/js/google_jsapi.js'></script>
     <script type='text/javascript'>
       google.load('visualization', '1', {packages:['orgchart']});
       google.setOnLoadCallback(drawChart);
@@ -52,7 +52,7 @@ HTML;
         data.addRows([
           [{v:'Mike', f:'Mike<div style="color:red; font-style:italic">President</div>'}, '', 'The President'],
           [{v:'Jim', f:'Jim<div style="color:red; font-style:italic">Vice President</div>'}, 'Mike', 'VP'],
-          [{v:'fuqiang', f:'<h2>付强</h2>'}, 'Mike', '总统'],
+          [{v:'fuqiang', f:'<h2>付强</h2>总统'}, 'Mike', ''],
           ['我是王三水', 'fuqiang', 'sanshui'],
           ['测试中文', 'Jim', 'Bob Sponge'],
           ['Carol', 'Bob', '']
