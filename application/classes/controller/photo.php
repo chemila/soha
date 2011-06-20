@@ -9,7 +9,7 @@ class Controller_Photo extends Controller_Base {
 	public function action_xml()
 	{
         $page = $this->get_page();
-        $page = max(6, $page);
+        $page = min(6, $page);
 
         $type = $this->request->param('type', 'weibo');
         $classname = 'model_'.$type;

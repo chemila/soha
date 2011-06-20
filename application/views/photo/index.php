@@ -23,7 +23,6 @@
 
     function show(page) {
         if(page < 0) return;
-        // specify the url to the xml-file, default is photos.xml
         so.addVariable("xmlURL","photo/xml/" + type + '?page=' + page);
         so.addParam("wmode", "transparent");
         so.write("photos");
