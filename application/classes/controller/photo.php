@@ -9,37 +9,42 @@ class Controller_Photo extends Controller_Base {
 	public function action_xml()
 	{
         $page = $this->get_page();
+        $type = $this->request->param('type', 'weibo');
+        $classname = 'model_'.$type;
+        $model = new $classname;
+        $array = $model->photos($page);
 
-        $weibo = new Model_Weibo;
-        $array = $weibo->photos($page); 
         $photos = array();
 
-        foreach($array as $value)
+        foreach($array as $obj)
         {
-            $tmp = unserialize($value['media_data']);
-            $file = Arr::get($tmp['img'], 'middle', $tmp['img']['src']);
-
-            if( ! $file)
+            if($obj instanceof Model_User)
             {
-                $url = 'media/img/404.png';
+                $file = preg_replace('~http://(\w+)\.sinaimg\.cn/(\w+)/\d+/(\w+)/(\d+)/?$~i', 
+                        'http://\\1.sinaimg.cn/\\2/180/\\3/\\4', $obj->portrait);
+                $content = $obj->location.' '.$obj->intro;
+                $desc = '@'.$obj->nick.' '.$obj->intro;
             }
             else
             {
-                $url = $this->load($file);
+                $tmp = unserialize($obj->media_data);
+                $file = Arr::get($tmp['img'], 'middle', $tmp['img']['src']);
+                $content = $desc = $obj->content;
             }
 
+            $url = $file ? $this->load($file) : 'media/img/404.png';
             $url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $url);
 
             $json = array(
-                'id' => $value['id'],
-                'content' => $value['content'],
+                'pk' => $obj->pk(),
+                'content' => $content,
                 'image' => $url,
             );
 
             $photos[] = array(
-                'desc' => Text::limit_chars($value['content'], 25, '...'),
+                'desc' => Text::limit_chars($desc, 25, '...'),
                 'url' => $url,
-                'link' => sprintf("weibo(%s);", json_encode($json)),
+                'link' => sprintf("details(%s);", json_encode($json)),
             );
         }
 

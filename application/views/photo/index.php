@@ -18,27 +18,26 @@
     //<![CDATA[
     var so = new SWFObject("media/swf/photos.swf", "polaroid", "100%", "100%", "8", "#FFFFFF");
     var page = 1;
+    var type = 'weibo';
     show(page);
 
     function show(page) {
         if(page < 0) return;
         // specify the url to the xml-file, default is photos.xml
-        so.addVariable("xmlURL","photo/xml/" + page);
+        so.addVariable("xmlURL","photo/xml/" + type + '?page=' + page);
         so.addParam("wmode", "transparent");
         so.write("photos");
     }
     
-    function weibo(json) {
-        //$('#photos').hide();
-        $('#weibo').attr('title', json.content).attr('href', json.image);
-        $('#weibo').trigger('click');
+    function details(json) {
+        $('#fancy_layer').attr('title', json.content).attr('href', json.image).trigger('click');
     }
 
 	$(document).ready(function() {
         function formatTitle(title, currentArray, currentIndex, currentOpts) {
             return '<div id="fancybox-title-over"><span><a href="javascript:;" onclick="$.fancybox.close();"></a></span>' + (title && title.length ? '<b>' + title + '</b>' : '' ) + '</div>';
         }
-        $("#weibo").fancybox({
+        $("#fancy_layer").fancybox({
             'titlePosition'		: 'over',
             'showCloseButton'   : true,
             'overlayColor'		: '#777',
@@ -52,9 +51,7 @@
     });
     //]]>
 </script>
-<div id="weibo_container" style="display:none;">
-    <a id="weibo" href="#inline" title=""></a>
-</div>
+<div style="display:none;"><a id="fancy_layer" href="#inline" title=""></a></div>
 </body>
 </html>
 

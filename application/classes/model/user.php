@@ -6,6 +6,7 @@ class Model_User extends ORM {
     const CATEGORY_ALL     = NULL;
 
 	protected $_primary_key  = 'uid';
+    protected $_table_name = 'member';
 
     public function load()
     {
@@ -476,5 +477,15 @@ class Model_User extends ORM {
         $setting = new Model_Setting(array('uid' => $this->pk(), 'category' => 0));
 
         return $setting->get_category($category, $default);
+    }
+
+    public function photos($page)
+    {
+        return $this->where('category', '=', 1)
+            ->where('source', '=', 'sina')
+            ->limit(20)
+            ->offset(($page - 1) * 20)
+            ->order_by('uid', 'desc')
+            ->find_all();
     }
 }
