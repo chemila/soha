@@ -101,12 +101,11 @@ HTML;
         data.addColumn('string', 'Manager');
         data.addColumn('string', 'ToolTip');
         data.addRows([
-          [{v:'Mike', f:'Mike<div style="color:red; font-style:italic">President</div>'}, '', 'The President'],
-          [{v:'Jim', f:'Jim<div style="color:red; font-style:italic">Vice President</div>'}, 'Mike', 'VP'],
-          [{v:'fuqiang', f:'<h2>付强</h2>总统'}, 'Mike', ''],
-          ['王三水', 'fuqiang', 'sanshui'],
-          ['测试中文', 'Jim', 'Bob Sponge'],
-          ['Carol', 'Bob', '']
+          [{v:'jingxian', f:'wangjingxian<div style="color:red; font-style:italic">President</div>'}, '', 'The President'],
+          [{v:'erxiao', f:'wangerxiao<div style="color:red; font-style:italic">Vice President</div>'}, 'jingxian', 'VP'],
+          [{v:'fuqiang', f:'<h2>付强</h2>总统'}, 'erxiao', ''],
+          ['wangsanxiao', 'jingxian', 'sanshui'],
+          ['wangsixiao', 'jingxian', '']
         ]);
         var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
         chart.draw(data, {allowHtml:true});
