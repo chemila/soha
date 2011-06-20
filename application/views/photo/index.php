@@ -47,10 +47,21 @@
                 // Close events goes here
             }
         });
+
+        $("#fancy_calendar").fancybox({
+            'showCloseButton'   : true,
+            'overlayColor'		: '#777',
+            'overlayOpacity'	: 0.7,
+            'width'				: '75%',
+		    'height'			: '75%',
+		    'autoScale'			: false,
+		    'transitionIn'		: 'none',
+		    'transitionOut'		: 'none',
+		    'type'				: 'iframe'
+        });
     });
     //]]>
 </script>
 <div style="display:none;"><a id="fancy_layer" href="#inline" title=""></a></div>
-</body>
 </html>
 
