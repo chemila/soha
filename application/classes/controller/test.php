@@ -52,7 +52,7 @@ HTML;
         data.addRows([
           [{v:'Mike', f:'Mike<div style="color:red; font-style:italic">President</div>'}, '', 'The President'],
           [{v:'Jim', f:'Jim<div style="color:red; font-style:italic">Vice President</div>'}, 'Mike', 'VP'],
-          ['fuqiang', 'Mike', '我是付强'],
+          [{v:'fuqiang', f:'<h2>付强</h2>'}, 'Mike', '总统'],
           ['我是王三水', 'fuqiang', 'sanshui'],
           ['测试中文', 'Jim', 'Bob Sponge'],
           ['Carol', 'Bob', '']
