@@ -6,11 +6,12 @@ return array(
     'sina' => array(
         'oauth_version' => '1.0a',
         //'key' => '1612564805',
-        'key' => '1953097712',
+        'key' => '4055761090',
         //'secret' => '2857fb55fe21979cda0be6c299c293ed',
-        'secret' => '2f2079d17b4ac344c0cc487baa0734bd',
+        'secret' => '7a5002cea6ca07a6ed1cf846b2d39cdc',
         'callback' => URL::site('auth/oauth_callback', true),
     ),
+    /**
     'qq' => array(
         'oauth_version' => '1.0',
         'key' => 'c636552a7f484f248e983a82e419b044',
@@ -29,5 +30,6 @@ return array(
         'secret' => 'b55XviEHJktWDLdQVj82kjatgvjg2RVI',
         'callback' => URL::site('auth/oauth_callback', true),
     ),
+    **/
 );
 

@@ -217,4 +217,40 @@ class Controller_Cron extends Controller {
     {
         die('forbidden');
     }
+
+    public function photos()
+    {
+        $config = Core::config('admin')->as_array();
+
+        foreach($config as $source => $admin_ids)
+        {
+            foreach($admin_ids as $admin_id)
+            {
+                $token = new Model_User_Token($admin_id);
+                $oauth = new OAuth($source, $token->to_access_token());
+                $model_oauth = Model_OAuth::factory($oauth);
+
+                $weibo = new Model_Collect_Weibo;
+                $since_id = $weibo->last_id($source);
+
+                $data = $model_oauth->home_timeline(array(
+                    'count' => 20,
+                    'since_id' => $since_id,
+                ));
+
+                if( ! $data)
+                    continue;
+
+                foreach($data as $status)
+                {
+                    try
+                    {
+                        $weibo->fetch($status, $source);
+                    }
+                    catch(Database_Exception $e) {}
+                }
+            }
+        }
+
+    }
 }
