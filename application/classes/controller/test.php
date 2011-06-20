@@ -37,8 +37,35 @@ HTML;
 
     public function action_chart()
     {
-        $comm = sprintf('dot -Tpng %s -o %s', core::$cache_dir.'/system_test', core::$cache_dir.'/test.png');
-        system($comm, $code);         
-        var_dump($code);
+        echo <<<HTML
+<html>
+  <head>
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['orgchart']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('string', 'Manager');
+        data.addColumn('string', 'ToolTip');
+        data.addRows([
+          [{v:'Mike', f:'Mike<div style="color:red; font-style:italic">President</div>'}, '', 'The President'],
+          [{v:'Jim', f:'Jim<div style="color:red; font-style:italic">Vice President</div>'}, 'Mike', 'VP'],
+          ['我是付强', 'Mike', ''],
+          ['测试中文', 'Jim', 'Bob Sponge'],
+          ['Carol', 'Bob', '']
+        ]);
+        var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+        chart.draw(data, {allowHtml:true});
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id='chart_div'></div>
+  </body>
+</html>
+HTML;
     } 
 }// End Welcome
