@@ -347,6 +347,7 @@ class Model_Weibo extends Model_QORM {
         return $this->where('user_category', '=', 1)
             ->where('type', '=', 1)
             ->where('source', '=', 'sina')
+            ->order_by('forward_count', 'desc')
             ->order_by('id', 'desc')
             ->limit(20)
             ->offset(($page - 1) * 20)

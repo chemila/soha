@@ -485,7 +485,7 @@ class Model_User extends ORM {
             ->where('source', '=', 'sina')
             ->limit(20)
             ->offset(($page - 1) * 20)
-            ->order_by('uid', 'desc')
+            ->order_by('followers_count', 'desc')
             ->find_all();
     }
 }
