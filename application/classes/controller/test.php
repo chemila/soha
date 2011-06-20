@@ -35,8 +35,10 @@ HTML;
         }
     }
 
-    public function action_cache()
+    public function action_chart()
     {
-        echo '<a href="javascript:alert(11111)">test</a>';
-    }
+        $comm = sprintf('dot -Tpng %s -o %s', core::$cache_dir.'/system_test', core::$cache_dir.'/test.png');
+        system($comm, $code);         
+        var_dump($code);
+    } 
 }// End Welcome

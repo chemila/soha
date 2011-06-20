@@ -85,7 +85,7 @@ if ( ! defined('SUPPRESS_REQUEST'))
     }
     catch(Exception $e)
     {
-        var_dump($e);die;
+        //var_dump($e);die;
         echo Request::factory('/error/404')
         	->execute()
             ->send_headers()
