@@ -8,6 +8,11 @@ class Controller_Auth extends Controller_Base {
         $this->init_view();
     }
 
+    public function action_authsub()
+    {
+        var_dump($_GET);die;    
+    }
+
     public function action_login()
     {
         $src = $this->request->param('source', 'sina');
