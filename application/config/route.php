@@ -32,8 +32,8 @@ return array
         'defaults' => array('controller' => 'photo', 'action' => 'index'),
     ),
     'auth' => array(
-        'uri' => '(auth(/<action>(/<type>)))',
-        'patterns' => array('type' => '\w*'),
+        'uri' => '(auth(/<action>))',
+        'patterns' => array(),
         'defaults' => array('controller' => 'auth', 'action' => 'index'),
     ),
 );
