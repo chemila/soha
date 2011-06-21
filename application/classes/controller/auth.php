@@ -20,11 +20,7 @@ class Controller_Auth extends Controller_Base {
 
         $client = new Zend_Gdata_HttpClient();
         $client->setAuthSubPrivateKeyFile(Core::$cache_dir.'/authsub.pem', null, true);
-
-        if(false and  ! $singleUseToken = Core::config('google')->get('authsub', false))
-        {
-            $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken, $client);
-        }
+        $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken, $client);
 
         var_dump($sessionToken);die;
         $calendarService = new Zend_Gdata_Calendar($client);
