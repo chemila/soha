@@ -31,9 +31,9 @@ return array
         'patterns' => array('page' => '\w*'),
         'defaults' => array('controller' => 'photo', 'action' => 'index'),
     ),
-    'authsub' => array(
-        'uri' => '(auth/authsub)',
-        'patterns' => array(),
+    'auth' => array(
+        'uri' => '(auth(/<action>(/<type>)))',
+        'patterns' => array('type' => '\w*'),
         'defaults' => array('controller' => 'auth', 'action' => 'index'),
     ),
 );

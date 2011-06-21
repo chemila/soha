@@ -5,6 +5,7 @@ class Controller_Auth extends Controller_Base {
 
     public function action_index()
     {
+        $this->request->redirect('error/404');
         $this->init_view();
     }
 
