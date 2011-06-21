@@ -9,7 +9,7 @@ class Controller_Auth extends Controller_Base {
         $this->init_view();
     }
 
-    public function action_authsub2()
+    public function action_authsub_security()
     {
         $singleUseToken = Arr::get($_GET, 'token', false);
 
@@ -17,8 +17,6 @@ class Controller_Auth extends Controller_Base {
         {
             $this->trigger_error('404');
         }
-        //1/RENntU4NoXijmq6MOkbyD6oZaHgLV7pk06r740fRqIM
-        var_dump($singleUseToken);
 
         $client = new Zend_Gdata_HttpClient();
         $client->setAuthSubPrivateKeyFile(Core::$cache_dir.'/authsub.pem', null, true);
@@ -32,7 +30,7 @@ class Controller_Auth extends Controller_Base {
 
     public function action_authsub()
     {
-        $my_calendar = 'http://www.google.com/calendar/feeds/default/private/full';
+        $my_calendar = $this->getAuthSubUrl();
          
         if ( ! isset($_SESSION['cal_token'])) 
         {
@@ -210,4 +208,13 @@ class Controller_Auth extends Controller_Base {
             
         return false;
     }
+
+    protected function getAuthSubUrl() 
+    {
+      $next = 'http://t.pagodabox.com/auth/authsub';
+      $scope = 'https://www.google.com/calendar/feeds/';
+      $secure = false;
+      $session = true;
+      return Zend_Gdata_AuthSub::getAuthSubTokenUri($next, $scope, $secure, $session);
+    } 
 }
