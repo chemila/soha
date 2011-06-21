@@ -29,7 +29,7 @@ class Controller_Auth extends Controller_Base {
 
     public function action_authsub()
     {
-        $my_calendar = $this->getAuthSubUrl();
+        $googleUri = $this->getAuthSubUrl();
          
         if ( ! isset($_SESSION['cal_token'])) 
         {
@@ -43,8 +43,6 @@ class Controller_Auth extends Controller_Base {
             else 
             {
                 // Display link to generate single-use token
-                $googleUri = Zend_Gdata_AuthSub::getAuthSubTokenUri('http://'. $_SERVER['SERVER_NAME'] . 
-                        $_SERVER['REQUEST_URI'], $my_calendar, 0, 1);
                 echo "Click <a href='$googleUri'>here</a> " .  "to authorize this application.";
                 exit();
             }
