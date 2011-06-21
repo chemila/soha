@@ -17,14 +17,17 @@ class Controller_Auth extends Controller_Base {
         {
             $this->trigger_error('404');
         }
-        var_dump($singleUseToken);die;
+        //1/RENntU4NoXijmq6MOkbyD6oZaHgLV7pk06r740fRqIM
+        var_dump($singleUseToken);
+
         $client = new Zend_Gdata_HttpClient();
         $client->setAuthSubPrivateKeyFile(Core::$cache_dir.'/authsub.pem', null, true);
         $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken, $client);
 
-        var_dump($sessionToken);die;
         $calendarService = new Zend_Gdata_Calendar($client);
         $calendarService->setAuthSubToken($sessionToken);
+
+        var_dump($sessionToken);die;
     }
 
     public function action_login()
