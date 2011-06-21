@@ -3,7 +3,7 @@
 class Controller_Test extends Controller_Base {
 	public function action_index()
 	{
-        $this->request->redirect('error/404');
+        $this->trigger_error('error');
 	}
 
     public function action_debug()

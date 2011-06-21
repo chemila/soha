@@ -1,25 +1,30 @@
 <!--{include file="header.php"}--> 
-<link href="media/css/404.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+A:link   {color:red; text-decoration:none; cURSOR: default}
+A:visited{color:red; text-decoration:none; cURSOR: default}
+A:active {color:red; text-decoration:none; cURSOR: default}
+A:hover  {color:white; background-color:red; text-decoration:none; font-weight: bold; cURSOR: e-resize; }
+.content {text-align:center; margin-top:10px;}
+</style>
 </head>
-<body>
-    <div class="wrapper">
-        <h1><a href="/"><span>Brightkite</span></a></h1>
-        <div class="box">
-            <div class="corner tl"></div>
-            <div class="corner tr"></div>
-            <div class="header">
-                <h2>Oops, page not found</h2>
-
-                <h3>You may have mistyped the URL or the page might have been deleted. Please check your spelling.</h3>
-            </div>
-            <div class="content">
-                <div class="picture"></div>
-                <hr />
-                <p><a href="/">Go home</a> | <a href="auth">Log in</a> | <a href="help">Get help</a> | <a href="http://weibo.com/chemila">Chemila blog</a></p>
-            </div>
-            <div class="corner bl"></div>
-            <div class="corner br"></div>
-        </div>
-    </div>
+<body bgcolor="#FFFFFF" MARGINHEIGHT="0" topmargin="0" vspace="0" marginwidth="0" leftmargin="0" hspace="0" style="margin:0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" height="70%">
+    <tr align="center" valign="bottom"> 
+        <td>
+            <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=4,0,2,0" width="600" height="400" align="top">
+            <param name=movie value="fuckoff3.swf">
+            <param name=quality value=high><param name="SCALE" value="exactfit"><param name="LOOP" value="false">
+            <embed src="media/swf/fuckoff3.swf" quality=high pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash" type="application/x-shockwave-flash" width="600" height="400" scale="exactfit" loop="false" align="top">
+            </embed> 
+            </object>
+        </td>
+    </tr>
+</table>
+<div class="content">
+    <a href="/">Go home</a> | 
+    <a href="auth">Log in</a> | 
+    <a href="help">Get help</a> | 
+    <a href="mailto:chemila@gmail.com">Email me</a> 
+</div>
 </body>
 </html>

@@ -11,7 +11,19 @@ class Controller_Auth extends Controller_Base {
 
     public function action_authsub()
     {
-        var_dump($_GET);die;    
+        $singleUseToken = Arr::get($_GET, 'token', false);
+        if( ! $singleUseToken)
+        {
+            $this->trigger_error('404');
+        }
+
+        $client = new Zend_Gdata_HttpClient();
+        $client->setAuthSubPrivateKeyFile(Core::$cache_dir.'/authsub.pem', null, true);
+        $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken, $client);
+
+        $calendarService = new Zend_Gdata_Calendar($client);
+        $calendarService->setAuthSubToken($sessionToken);
+        var_dump($sessionToken);die;
     }
 
     public function action_login()

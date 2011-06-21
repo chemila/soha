@@ -75,7 +75,7 @@ abstract class Controller_Base extends Controller {
         return max($page, 1);
     }
 
-    protected function trigger_error($message = NULL, Array $errors = Array(), $type = 'index')
+    protected function trigger_error($message = NULL, Array $errors = Array(), $type = '404')
     {
         if(Request::$is_ajax)
         {
