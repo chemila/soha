@@ -155,4 +155,20 @@ HTML;
         $calendarService = new Zend_Gdata_Calendar($client, 'google-ExampleApp-v1.0');
         $calendarService->setAuthSubToken($sessionToken);
     }
+
+    public function action_oauth()
+    {
+        $src = 'google';
+        session::instance()->set('oauth_src', $src);
+        $oauth = new OAuth($src);
+
+        if($callback = $oauth->request_token())
+        {
+            $this->request->redirect($callback);
+        }
+        else
+        {
+            $this->trigger_error('认证失败');
+        }
+    }
 }// End Welcome

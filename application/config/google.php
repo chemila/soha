@@ -3,9 +3,8 @@
 return array
 (
     'calendar' => 'hndao4l3ra242vkbqicipj718k@group.calendar.google.com',
-    'oauth' => array(
-        'key' => 't.pagodabox.com',
-        'secret' => 'pBg177sWMW2nzXi17yQJk3qM',
+    'authsub' => array(
+        'token' => '1/X9nBmy9X3eTIHOeS-HUSwmw6S_SRbmsq-R477jqLZ3Y',
     ),
 );
 

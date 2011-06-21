@@ -11,7 +11,6 @@ return array(
         'secret' => '7a5002cea6ca07a6ed1cf846b2d39cdc',
         'callback' => URL::site('auth/oauth_callback', true),
     ),
-    /**
     'qq' => array(
         'oauth_version' => '1.0',
         'key' => 'c636552a7f484f248e983a82e419b044',
@@ -30,6 +29,11 @@ return array(
         'secret' => 'b55XviEHJktWDLdQVj82kjatgvjg2RVI',
         'callback' => URL::site('auth/oauth_callback', true),
     ),
-    **/
+    'google' => array(
+        'oauth_version' => '1.0',
+        'key' => 't.pagodabox.com',
+        'secret' => 'pBg177sWMW2nzXi17yQJk3qM',
+        'callback' => URL::site('auth/oauth_google', true),
+    ),
 );
 

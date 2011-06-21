@@ -12,6 +12,7 @@ class Controller_Auth extends Controller_Base {
     public function action_authsub()
     {
         $singleUseToken = Arr::get($_GET, 'token', false);
+
         if( ! $singleUseToken)
         {
             $this->trigger_error('404');
@@ -19,7 +20,11 @@ class Controller_Auth extends Controller_Base {
 
         $client = new Zend_Gdata_HttpClient();
         $client->setAuthSubPrivateKeyFile(Core::$cache_dir.'/authsub.pem', null, true);
-        $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken, $client);
+
+        if(false and  ! $singleUseToken = Core::config('google')->get('authsub', false))
+        {
+            $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken, $client);
+        }
 
         var_dump($sessionToken);die;
         $calendarService = new Zend_Gdata_Calendar($client);
@@ -126,6 +131,27 @@ class Controller_Auth extends Controller_Base {
         {
             $this->request->redirect('/');
         }
+    }
+
+    public function action_oauth_google()
+    {
+        $verifier = Arr::get($_GET, 'oauth_verifier', $_GET['oauth_token']);
+        $src = $this->get_referer_source();
+
+        if( ! $src)
+        {
+            $this->trigger_error('获取认证来源出错');
+        }
+
+        $oauth = new OAuth($src);
+        $access_token = $oauth->access_token($verifier);
+
+        if( ! $oauth->has_access_token())
+        {
+            $this->trigger_error('获取access token失败');
+        }
+        
+        die('success');
     }
 
     protected function get_referer_source()
