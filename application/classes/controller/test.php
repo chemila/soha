@@ -35,57 +35,6 @@ HTML;
         }
     }
 
-    public function action_ext()
-    {
-        require_once 'Image/GraphViz.php';
-
-        $graph = new Image_GraphViz();
-
-        $graph->addNode(
-          'Node1',
-          array(
-            'URL'   => 'http://link1',
-            'label' => 'This is a label',
-            'shape' => 'box'
-          )
-        );
-
-        $graph->addNode(
-          'Node2',
-          array(
-            'URL'      => 'http://link2',
-            'fontsize' => '14'
-          )
-        );
-
-        $graph->addNode(
-          'Node3',
-          array(
-            'URL'      => 'http://link3',
-            'fontsize' => '20'
-          )
-        );
-
-        $graph->addEdge(
-          array(
-            'Node1' => 'Node2'
-          ),
-          array(
-            'label' => 'Edge Label'
-          )
-        );
-
-        $graph->addEdge(
-           array(
-             'Node1' => 'Node2'
-           ),
-           array(
-            'color' => 'red'
-         )
-        );
-        echo $graph->image();
-    }
-
     public function action_chart()
     {
         echo <<<HTML
@@ -119,4 +68,42 @@ HTML;
 </html>
 HTML;
     } 
+
+    public function action_calendar()
+    {
+        $calID = core::config('calendar')->get('id');
+        Zend_Loader::loadClass('Zend_Gdata');
+        Zend_Loader::loadClass('Zend_Gdata_AuthSub');
+        Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
+        Zend_Loader::loadClass('Zend_Gdata_Calendar');
+        $gdataCal = new Zend_Gdata_Calendar();
+        $query = $gdataCal->newEventQuery();
+        //原始范例中setUser给的参数是default 这样的话是开启范例中$client的主日历
+        //但由网页说明中我们可知用$cal可以开启我们指定的任何一本日历
+        $query->setUser($calID);
+        $query->setVisibility('public');
+        $query->setProjection('full');
+        $query->setOrderby('starttime');
+        $query->setStartMin('2011-02-01');
+        $query->setStartMax('2011-07-29');
+        $eventFeed = $gdataCal->getCalendarEventFeed($query);
+        foreach($eventFeed as $event){//在同一个query中能显示的事件数量上限为25笔
+            echo core::debug($event);
+            /**
+            foreach ($event->when as $when) {
+                echo "startTime:" . $when->startTime . "\n";//事件起始时间
+                echo "endTime:" . $when->endTime . "\n";//事件结束时间
+            }
+            echo "recurrence:" . @$event->recurrence->text . "\n";//循环事件才有内容
+
+            foreach ($event->where as $where) {
+                echo "where:" . $where->valueString . "\n";//地点
+            }
+            echo "content:" . $event->content->text . "\n";//详情
+            echo "updated:" . $event->updated->text . "\n";//最后修改时间
+            echo "title:" . $event->title->text . "\n";//事项
+            echo "id:" . $event->id->text . "\n\n";//事件id(平时看不到)
+            **/
+        }
+    }
 }// End Welcome
