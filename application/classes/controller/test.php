@@ -126,7 +126,38 @@ HTML;
 
     public function action_event()
     {
-        $this->createEvent($client, $title, $desc, $where, $startDate, $startTime, $endDate, $endTime);
+        $service = Zend_Gdata_Calendar::AUTH_SERVICE_NAME;
+        $user = "pagodabox@gmail.com";
+        $pass = "pag0d2box";
+         
+        // Create an authenticated HTTP client
+        $client = Zend_Gdata_ClientLogin::getHttpClient($user, $pass, $service);
+        $service = new Zend_Gdata_Calendar($client);
+        // Create a new entry using the calendar service's magic factory method
+        $event= $service->newEventEntry();
+         
+        // Populate the event with the desired information
+        // Note that each attribute is crated as an instance of a matching class
+        $event->title = $service->newTitle("My Event");
+        $event->where = array($service->newWhere("Mountain View, California"));
+        $event->content =
+                $service->newContent(" This is my awesome event. RSVP required.");
+         
+        // Set the date using RFC 3339 format.
+        $startDate = "2010-06-21";
+        $startTime = "23:00";
+        $endDate = "2010-06-21";
+        $endTime = "24:00";
+        $tzOffset = "-08";
+         
+        $when = $service->newWhen();
+        $when->startTime = "{$startDate}T{$startTime}:00.000{$tzOffset}:00";
+        $when->endTime = "{$endDate}T{$endTime}:00.000{$tzOffset}:00";
+        $event->when = array($when);
+         
+        // Upload the event to the calendar server
+        // A copy of the event as it is recorded on the server is returned
+        $newEvent = $service->insertEvent($event);
     }
 
     public function action_failed()
@@ -193,5 +224,19 @@ HTML;
         {
             $this->trigger_error('认证失败');
         }
+    }
+
+    public function action_tokeninfo()
+    {
+        // Carefully construct this value to avoid application security problems.
+        $php_self = htmlentities(substr($_SERVER['PHP_SELF'],
+             0,
+             strcspn($_SERVER['PHP_SELF'], "\n\r")),
+             ENT_QUOTES);
+         
+        Zend_Gdata_AuthSub::AuthSubRevokeToken($_SESSION['cal_token']);
+        unset($_SESSION['cal_token']);
+        header('Location: ' . $php_self);
+        exit();
     }
 }// End Welcome
