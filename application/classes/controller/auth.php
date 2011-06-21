@@ -17,7 +17,7 @@ class Controller_Auth extends Controller_Base {
         {
             $this->trigger_error('404');
         }
-
+        var_dump($singleUseToken);die;
         $client = new Zend_Gdata_HttpClient();
         $client->setAuthSubPrivateKeyFile(Core::$cache_dir.'/authsub.pem', null, true);
         $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken, $client);
@@ -147,6 +147,7 @@ class Controller_Auth extends Controller_Base {
             $this->trigger_error('获取access token失败');
         }
         
+        var_dump($access_token);
         die('success');
     }
 

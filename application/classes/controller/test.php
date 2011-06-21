@@ -129,15 +129,38 @@ HTML;
         $this->createEvent($client, $title, $desc, $where, $startDate, $startTime, $endDate, $endTime);
     }
 
-    public function action_auth()
+    public function action_failed()
     {
-        $client = new Zend_Gdata_HttpClient();
-        $_SESSION['sessionToken'] = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token'], $client);
-        var_dump($_GET);die;
-        $client->setAuthSubToken($_SESSION['sessionToken']);
-        
-        var_dump($_SESSION);die;
+        $config = core::config('google')->get('oauth');
+
+        $accessToken = new Zend_Oauth_Token_Access();
+        $accessToken->setToken($config['token']);
+        $accessToken->setTokenSecret($config['secret']);
+        $config = core::config('oauth')->get('google');
+
+        $oauthOptions = array(
+          'requestScheme' => Zend_Oauth::REQUEST_SCHEME_HEADER,
+          'version' => '1.0',
+          'consumerKey' => $config['key'],
+          'consumerSecret' => $config['secret'],
+          'signatureMethod' => 'RSA-SHA1', 
+          'callbackUrl' => 'http://t.pagodabox.com/',
+          'requestTokenUrl' => 'https://www.google.com/accounts/OAuthGetRequestToken',
+          'userAuthorizationUrl' => 'https://www.google.com/accounts/OAuthAuthorizeToken',
+          'accessTokenUrl' => 'https://www.google.com/accounts/OAuthGetAccessToken'
+        );
+
+        $httpClient = $accessToken->getHttpClient($oauthOptions);
+        $client = new Zend_Gdata_Docs($httpClient, "t.pagodabox.com");
+
+        // Retrieve user's list of Google Docs
+        $feed = $client->getDocumentListFeed();
+        foreach ($feed->entries as $entry) 
+        {
+          echo "$entry->title\n";
+        }
     }
+
 
     public function action_next()
     {

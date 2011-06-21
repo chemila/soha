@@ -7,7 +7,6 @@ class OAuth_Provider_Google extends Kohana_OAuth_Provider {
 	public function request_token(OAuth_Consumer $consumer, array $params = NULL)
     {
         $params['scope'] = 'http://www.google.com/calendar/feeds http://picasaweb.google.com/data';
-
         return parent::request_token($consumer, $params);
     }
 
@@ -18,17 +17,17 @@ class OAuth_Provider_Google extends Kohana_OAuth_Provider {
 
 	public function url_authorize()
 	{
-        return 'http://api.t.sina.com.cn/oauth/authorize';
+        return 'https://www.google.com/accounts/OAuthAuthorizeToken';
 	}
 
     public function url_authenticate()
     {
-        return 'http://api.t.sina.com.cn/oauth/authenticate';
+        return 'https://www.google.com/accounts/OAuthAuthorizeToken';
     }
 
 	public function url_access_token()
 	{
-		return 'http://api.t.sina.com.cn/oauth/access_token';
+		return 'https://www.google.com/accounts/OAuthGetAccessToken';
 	}
 }
 
