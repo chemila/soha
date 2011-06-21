@@ -71,15 +71,10 @@ HTML;
 
     public function action_calendar()
     {
-        $calID = core::config('calendar')->get('id');
-        Zend_Loader::loadClass('Zend_Gdata');
-        Zend_Loader::loadClass('Zend_Gdata_AuthSub');
-        Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
-        Zend_Loader::loadClass('Zend_Gdata_Calendar');
+        $calID = core::config('google')->get('calendar');
         $gdataCal = new Zend_Gdata_Calendar();
         $query = $gdataCal->newEventQuery();
-        //原始范例中setUser给的参数是default 这样的话是开启范例中$client的主日历
-        //但由网页说明中我们可知用$cal可以开启我们指定的任何一本日历
+
         $query->setUser($calID);
         $query->setVisibility('public');
         $query->setProjection('full');
@@ -105,5 +100,59 @@ HTML;
             echo "id:" . $event->id->text . "\n\n";//事件id(平时看不到)
             **/
         }
+    }
+
+    public function createEvent ($client, $title = 'Tennis with Beth',
+        $desc='Meet for a quick lesson', $where = 'On the courts',
+        $startDate = '2008-01-20', $startTime = '10:00',
+        $endDate = '2008-01-20', $endTime = '11:00', $tzOffset = '-08')
+    {
+        $gc = new Zend_Gdata_Calendar($client);
+        $newEntry = $gc->newEventEntry();
+
+        $newEntry->title = $gc->newTitle(trim($title));
+        $newEntry->where  = array($gc->newWhere($where));
+        $newEntry->content = $gc->newContent($desc);
+        $newEntry->content->type = 'text';
+
+        $when = $gc->newWhen();
+        $when->startTime = "{$startDate}T{$startTime}:00.000{$tzOffset}:00";
+        $when->endTime = "{$endDate}T{$endTime}:00.000{$tzOffset}:00";
+        $newEntry->when = array($when);
+
+        $createdEntry = $gc->insertEvent($newEntry);
+        return $createdEntry->id->text;
+    }
+
+    public function action_event()
+    {
+        $this->createEvent($client, $title, $desc, $where, $startDate, $startTime, $endDate, $endTime);
+    }
+
+    public function action_auth()
+    {
+        $client = new Zend_Gdata_HttpClient();
+        $_SESSION['sessionToken'] = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token'], $client);
+        var_dump($_GET);die;
+        $client->setAuthSubToken($_SESSION['sessionToken']);
+        
+        var_dump($_SESSION);die;
+    }
+
+    public function action_next()
+    {
+        $singleUseToken = $_GET['token'];
+        $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken);
+
+        // Create a Calendar service object and set the session token for subsequent requests
+        $calendarService = new Zend_Gdata_Calendar(null, 'google-ExampleApp-v1.0');
+        $calendarService->setAuthSubToken($sessionToken);
+        die;
+        $client = new Zend_Gdata_HttpClient();
+        $client->setAuthSubPrivateKeyFile(core::$cache_dir.'/google_rsakey.pem', null, true);
+        $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken, $client);
+
+        $calendarService = new Zend_Gdata_Calendar($client, 'google-ExampleApp-v1.0');
+        $calendarService->setAuthSubToken($sessionToken);
     }
 }// End Welcome
