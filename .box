@@ -1,14 +1,14 @@
  ---
 php_extensions:
-    - memcache
-    - mbstring
-    - apc
-    - mysql
-    - eaccelerator
-    - curl
-    - gd
-    - mcrypt
-    - sysvmsg
+- memcache
+- mbstring
+- apc
+- mysql
+- eaccelerator
+- curl
+- gd
+- mcrypt
+- sysvmsg
 
 php_error_reporting: E_ALL
 php_display_errors: "On"
@@ -23,14 +23,14 @@ php_iconv_internal_encoding: UTF-8
 php_sysvshm.init_mem: 1000
 
 shared_writable_dirs:
-    - /application/cache
-    - /application/logs
-    - /application/upload
+- /application/cache
+- /application/logs
+- /application/upload
 
 url_rewrites:
-    - "^(.*\/?)$ /index.php/$1"
-    - "^media/(.*\/?)$ /media/$1"
-    - "^application/upload/(.*\/?)$ /application/upload/$1"
+- "^media/(.*\/?)$ /media/$1"
+- "^application/upload/(.*\/?)$ /application/upload/$1"
+- "^(.*\/?)$ /index.php/$1"
 
 
 permissions:
