@@ -133,4 +133,28 @@ class Controller_Photo extends Controller_Base {
         
         return $xml;
     }
+
+    public function action_calendar()
+    {
+        $calendar = new Model_Calendar;
+        $weibo = new model_weibo;
+        $data = $weibo->where('source', '=', 'sina')
+            ->where('type', '=', 1)
+            ->order_by(DB::Expr('rand(unix_timestamp())'))
+            ->limit(1)
+            ->find()
+            ->as_array();
+        
+        $array = unserialize($data['media_data']);
+        $image = $array['img']['src'];
+
+        $params = array(
+            'title' => Text::limit_chars($data['content'], '100', '...'),
+            'icon' => URL::site('media/img/icon/image_add.png', true),
+            'url' => $image,
+            'type' => 'image/'.pathinfo($image, PATHINFO_EXTENSION),
+        );
+
+        $calendar->create_web_event($params);
+    }
 }

@@ -44,14 +44,14 @@ class Model_Calendar {
      * calendar with the specified event details. For simplicity, the event
      * is created as an all day event and does not include a description.
      *
-     * @param  string           $title     The event title
-     * @param  string           $startDate The start date of the event in YYYY-MM-DD format
-     * @param  string           $endDate   The end time of the event in HH:MM 24hr format
-     * @param  string           $icon      URL pointing to a 16x16 px icon representing the event.
-     * @param  string           $url       The URL containing the web content for the event.
-     * @param  string           $height    The desired height of the web content pane.
-     * @param  string           $width     The desired width of the web content pane.
-     * @param  string           $type      The MIME type of the web content.
+     * @param  string  $title     The event title
+     * @param  string  $startDate The start date of the event in YYYY-MM-DD format
+     * @param  string  $endDate   The end time of the event in HH:MM 24hr format
+     * @param  string  $icon      URL pointing to a 16x16 px icon representing the event.
+     * @param  string  $url       The URL containing the web content for the event.
+     * @param  string  $height    The desired height of the web content pane.
+     * @param  string  $width     The desired width of the web content pane.
+     * @param  string  $type      The MIME type of the web content.
      * @return string The ID URL for the event.
      */
     public function create_web_event(array $params)
@@ -73,12 +73,12 @@ class Model_Calendar {
         $event->when = array($when);
 
         $wc = $this->_service->newWebContent();
-        $wc->url = Arr::get($params, 'url', '/');
-        $wc->height = Arr::get($params, 'height', 120);
-        $wc->width = Arr::get($params, 'width', 276);
+        $wc->url = Arr::get($params, 'url');
+        $wc->height = Arr::get($params, 'height', '400');
+        $wc->width = Arr::get($params, 'width', '400');
 
         $wcLink = $this->_service->newLink();
-        $wcLink->rel = "http://schemas.google.com/gCal/2005/webContent";
+        $wcLink->rel = Arr::get($params, 'rel', "http://schemas.google.com/gCal/2005/webContent");
         $wcLink->title = Arr::get($params, 'title');
         $wcLink->type = Arr::get($params, 'type');
         $wcLink->href = Arr::get($params, 'icon');

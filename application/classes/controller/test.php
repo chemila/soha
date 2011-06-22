@@ -8,14 +8,14 @@ class Controller_Test extends Controller_Base {
 
     public function action_calendar()
     {
-        $calendar = new Model_Calendar;
-        $params = array(
-            'title' => 'Hello pagodabox users',
-            'where' => 'beijing',
-        );
+        $weibo = new model_weibo;
+        $data = $weibo->where('source', '=', 'sina')
+            ->order_by(DB::expr('rand(unix_timestamp())'))
+            ->limit(10)
+            ->find_all()
+            ->as_array();
 
-        $calendar->create_event($params);
-        $feeds = $calendar->query_by_date_range('2011-06-10', '2011-06-23');
+        var_dump($data);
     }
 
     public function action_debug()
