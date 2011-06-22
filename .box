@@ -28,11 +28,12 @@ shared_writable_dirs:
     - /application/upload
 
 url_rewrites:
-    - 
-    rules: "^(.*\/?)$ /index.php/$1"
+    -
+    rule: "^/location_a.php /index.php"
     conditions:
         - "!-f $request_filename"
         - "!-d $request_filename"
+
 
 permissions:
     /application :
