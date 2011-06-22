@@ -2,8 +2,8 @@
 
 return array
 (
-    //'calendar' => 'pagodabox@gmail.com',
-    'calendar' => '49gg0968q726ucooh02a2tu76c@group.calendar.google.com',
+    'calendar' => 'pagodabox@gmail.com',
+    //'calendar' => '49gg0968q726ucooh02a2tu76c@group.calendar.google.com',
     'oauth' => array(
         'name' => 'access',
         'token' => '1/bkGRRaoUsGN55WqPtcw_8YCUrKcrQWYQj3Fa6Ea-5Ls',
