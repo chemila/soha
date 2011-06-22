@@ -30,24 +30,22 @@ class Controller_Auth extends Controller_Base {
     public function action_authsub()
     {
         $googleUri = $this->getAuthSubUrl();
-        //$session_token = Core::config('google')->get('authsub_session', false);
+        $session_token = Core::config('google')->get('authsub_session', false);
          
-        if ( ! $_SESSION['cal_token'])
+        //if ( ! $_SESSION['cal_token'])
+        if ( ! $session_token)
         {
             if (isset($_GET['token'])) 
             {
                 // You can convert the single-use token to a session token.
                 $session_token = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
                 // Store the session token in our session.
-                $_SESSION['cal_token'] = $session_token;
-                echo $session_token;
-                echo Zend_Gdata_AuthSub::getAuthSubTokenInfo($session_token);
             } 
             else 
             {
                 // Display link to generate single-use token
-                echo "Click <a href='$googleUri'>here</a> " .  "to authorize this application.";
-                exit();
+                //echo "Click <a href='$googleUri'>here</a> " .  "to authorize this application.";
+                $this->request->redirect($googleUri);
             }
         }
          
@@ -80,7 +78,6 @@ class Controller_Auth extends Controller_Base {
         // A copy of the event as it is recorded on the server is returned
         $newEvent = $service->insertEvent($event);
         echo $createdEntry->id->text;
-
         die;
     }
 
