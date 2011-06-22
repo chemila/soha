@@ -234,7 +234,7 @@ class Controller_Auth extends Controller_Base {
     protected function getAuthSubUrl() 
     {
       $next = 'http://t.pagodabox.com/auth/authsub';
-      $scope = 'https://www.google.com/calendar/feeds/';
+      $scope = 'http://www.google.com/calendar/feeds/';
       $secure = false;
       $session = true;
       return Zend_Gdata_AuthSub::getAuthSubTokenUri($next, $scope, $secure, $session);
