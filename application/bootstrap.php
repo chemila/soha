@@ -86,7 +86,12 @@ if ( ! defined('SUPPRESS_REQUEST'))
     }
     catch(Exception $e)
     {
-        var_dump($e);die;
+        // Add this exception to the log
+		Core::$log->add(Core::ERROR, $e->getMessage());
+
+        // Make sure the logs are written
+        Core::$log->write();
+
         echo Request::factory('/error/404')
         	->execute()
             ->send_headers()

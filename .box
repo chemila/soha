@@ -21,6 +21,8 @@ php_upload_max_filesize: 2M
 php_max_file_uploads: "20"
 php_iconv_internal_encoding: UTF-8
 php_sysvshm.init_mem: 1000
+error_pages:
+    403: /error/index
 
 shared_writable_dirs:
     - /application/cache
