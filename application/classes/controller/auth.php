@@ -30,9 +30,9 @@ class Controller_Auth extends Controller_Base {
     public function action_authsub()
     {
         $googleUri = $this->getAuthSubUrl();
-        $session_token = Core::config('google')->get('authsub_session', false);
+        //$session_token = Core::config('google')->get('authsub_session', false);
          
-        if ( ! $session_token)
+        if ( ! $_SESSION['cal_token'])
         {
             if (isset($_GET['token'])) 
             {

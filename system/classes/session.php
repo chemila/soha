@@ -9,7 +9,7 @@ abstract class Session {
 	/**
 	 * @var  string  default session adapter
 	 */
-	public static $default = 'cookie';
+	public static $default = 'native';
 
 	// Session instances
 	protected static $instances = array();
