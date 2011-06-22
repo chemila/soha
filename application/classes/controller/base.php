@@ -114,7 +114,7 @@ abstract class Controller_Base extends Controller {
         die($response);
     }
 
-    protected function action_force_exit(){}
+    public function action_force_exit(){}
 
     protected function init_user(Model_User $user)
     {

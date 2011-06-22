@@ -5,11 +5,10 @@ class Controller_Auth extends Controller_Base {
 
     public function action_index()
     {
-        $this->request->redirect('error/404');
-        $this->init_view();
+        $this->trigger_error();
     }
 
-    public function action_authsub()
+    public function action_authsub_security()
     {
         $singleUseToken = Arr::get($_GET, 'token', false);
 
@@ -17,9 +16,6 @@ class Controller_Auth extends Controller_Base {
         {
             $this->trigger_error('404');
         }
-        //1/RENntU4NoXijmq6MOkbyD6oZaHgLV7pk06r740fRqIM
-        //1/kLP-MW01-DfJf1MmZk49i72GL90XVugB_KS2Dy-ZasM
-        var_dump($singleUseToken);
 
         $client = new Zend_Gdata_HttpClient();
         $client->setAuthSubPrivateKeyFile(Core::$cache_dir.'/authsub.pem', null, true);
@@ -29,6 +25,35 @@ class Controller_Auth extends Controller_Base {
         $calendarService->setAuthSubToken($sessionToken);
 
         var_dump($sessionToken);die;
+    }
+
+    public function action_authsub()
+    {
+        $googleUri = $this->getAuthSubUrl();
+         
+        if ( ! isset($_SESSION['cal_token'])) 
+        {
+            if (isset($_GET['token'])) 
+            {
+                // You can convert the single-use token to a session token.
+                $session_token = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
+                // Store the session token in our session.
+                $_SESSION['cal_token'] = $session_token;
+            } 
+            else 
+            {
+                // Display link to generate single-use token
+                echo "Click <a href='$googleUri'>here</a> " .  "to authorize this application.";
+                exit();
+            }
+        }
+         
+        // Create an authenticated HTTP Client to talk to Google.
+        $client = Zend_Gdata_AuthSub::getHttpClient($_SESSION['cal_token']);
+         
+        // Create a Gdata object using the authenticated Http Client
+        $cal = new Zend_Gdata_Calendar($client);
+        var_dump($_SESSION['cal_token']);die;
     }
 
     public function action_login()
@@ -180,4 +205,13 @@ class Controller_Auth extends Controller_Base {
             
         return false;
     }
+
+    protected function getAuthSubUrl() 
+    {
+      $next = 'http://t.pagodabox.com/auth/authsub';
+      $scope = 'https://www.google.com/calendar/feeds/';
+      $secure = false;
+      $session = true;
+      return Zend_Gdata_AuthSub::getAuthSubTokenUri($next, $scope, $secure, $session);
+    } 
 }
