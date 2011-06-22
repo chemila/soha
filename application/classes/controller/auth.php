@@ -40,7 +40,6 @@ class Controller_Auth extends Controller_Base {
                 $session_token = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
                 // Store the session token in our session.
                 $_SESSION['cal_token'] = $session_token;
-                die($session_token);
             } 
             else 
             {
