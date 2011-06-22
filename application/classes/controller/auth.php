@@ -65,9 +65,9 @@ class Controller_Auth extends Controller_Base {
         $event->content = $service->newContent(" This is my awesome event. RSVP required.");
          
         // Set the date using RFC 3339 format.
-        $startDate = "2010-06-22";
+        $startDate = "2011-06-22";
         $startTime = "11:00";
-        $endDate = "2010-06-22";
+        $endDate = "2011-06-22";
         $endTime = "24:00";
         $tzOffset = "-08";
          
