@@ -73,11 +73,6 @@ class Core {
 	public static $cache_dir;
 
 	/**
-	 * @var  string  cache directory
-	 */
-	public static $log_dir;
-
-	/**
 	 * @var  integer  default lifetime for caching, in seconds
 	 */
 	public static $cache_life = 60;

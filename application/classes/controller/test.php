@@ -126,17 +126,10 @@ HTML;
 
     public function action_event()
     {
-        requestUserLogin('Please login to your Google Account.');
-        $_SESSION['sessionToken'] = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token'], $client);
-        $client->setAuthSubToken($_SESSION['sessionToken']);
+        $client = new Zend_Gdata_HttpClient();
+        $session = Core::config('google')->get('authsub_session');
+        $client->setAuthSubToken($session);
 
-        //$this->createEvent($client, $title, $desc, $where, $startDate, $startTime, $endDate, $endTime);
-        $service = Zend_Gdata_Calendar::AUTH_SERVICE_NAME;
-        $user = "pagodabox@gmail.com";
-        $pass = "pag0d2box";
-         
-        // Create an authenticated HTTP client
-        $client = Zend_Gdata_ClientLogin::getHttpClient($user, $pass, $service);
         $service = new Zend_Gdata_Calendar($client);
         // Create a new entry using the calendar service's magic factory method
         $event= $service->newEventEntry();
@@ -149,9 +142,9 @@ HTML;
                 $service->newContent(" This is my awesome event. RSVP required.");
          
         // Set the date using RFC 3339 format.
-        $startDate = "2010-06-21";
-        $startTime = "23:00";
-        $endDate = "2010-06-21";
+        $startDate = "2010-06-22";
+        $startTime = "11:00";
+        $endDate = "2010-06-22";
         $endTime = "24:00";
         $tzOffset = "-08";
          
