@@ -29,7 +29,7 @@ shared_writable_dirs:
 
 url_rewrites:
     - 
-    rule: "^(.*\/?)$ /index.php/$1"
+    rules: "^(.*\/?)$ /index.php/$1"
     conditions:
         - "!-f $request_filename"
         - "!-d $request_filename"

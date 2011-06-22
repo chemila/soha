@@ -126,13 +126,11 @@ HTML;
 
     public function action_event()
     {
-<<<<<<< HEAD
         requestUserLogin('Please login to your Google Account.');
         $_SESSION['sessionToken'] = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token'], $client);
         $client->setAuthSubToken($_SESSION['sessionToken']);
 
         //$this->createEvent($client, $title, $desc, $where, $startDate, $startTime, $endDate, $endTime);
-=======
         $service = Zend_Gdata_Calendar::AUTH_SERVICE_NAME;
         $user = "pagodabox@gmail.com";
         $pass = "pag0d2box";
@@ -165,7 +163,6 @@ HTML;
         // Upload the event to the calendar server
         // A copy of the event as it is recorded on the server is returned
         $newEvent = $service->insertEvent($event);
->>>>>>> f958a8b7b77ee4c38b034c4ba96eb9de84fbcafb
     }
 
     public function action_failed()
