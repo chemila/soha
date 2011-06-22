@@ -2,7 +2,7 @@
 
 return array
 (
-    'calendar' => 'hndao4l3ra242vkbqicipj718k@group.calendar.google.com',
+    'calendar' => 'pagodabox@gmail.com',
     'authsub_session' => '1/qAvbDSrLZ9IILf7uRXzI8V-CeUBVRm7Fyirhp9Q8lJw',
     'oauth' => array(
         'name' => 'access',
