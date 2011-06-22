@@ -40,7 +40,8 @@ class Controller_Auth extends Controller_Base {
                 $session_token = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
                 // Store the session token in our session.
                 $_SESSION['cal_token'] = $session_token;
-                echo Zend_Gdata_AuthSub::getAuthSubTokenInfo($session_token);die;
+                echo $session_token;
+                echo Zend_Gdata_AuthSub::getAuthSubTokenInfo($session_token);
             } 
             else 
             {
@@ -52,7 +53,6 @@ class Controller_Auth extends Controller_Base {
          
         // Create an authenticated HTTP Client to talk to Google.
         $client = Zend_Gdata_AuthSub::getHttpClient($session_token);
-         
         // Create a Gdata object using the authenticated Http Client
         $service = new Zend_Gdata_Calendar($client);
         // Create a new entry using the calendar service's magic factory method
