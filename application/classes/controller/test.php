@@ -226,15 +226,6 @@ HTML;
 
     public function action_tokeninfo()
     {
-        // Carefully construct this value to avoid application security problems.
-        $php_self = htmlentities(substr($_SERVER['PHP_SELF'],
-             0,
-             strcspn($_SERVER['PHP_SELF'], "\n\r")),
-             ENT_QUOTES);
-         
-        Zend_Gdata_AuthSub::AuthSubRevokeToken($_SESSION['cal_token']);
-        unset($_SESSION['cal_token']);
-        header('Location: ' . $php_self);
-        exit();
+        echo Zend_Gdata_AuthSub::getAuthSubTokenInfo($_SESSION['cal_token']);
     }
 }// End Welcome
