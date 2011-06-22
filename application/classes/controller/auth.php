@@ -30,8 +30,9 @@ class Controller_Auth extends Controller_Base {
     public function action_authsub()
     {
         $googleUri = $this->getAuthSubUrl();
+        $session_token = Core::config('google')->get('authsub_session', false);
          
-        if ( ! isset($_SESSION['cal_token'])) 
+        if ( ! $session_token)
         {
             if (isset($_GET['token'])) 
             {
@@ -39,6 +40,7 @@ class Controller_Auth extends Controller_Base {
                 $session_token = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
                 // Store the session token in our session.
                 $_SESSION['cal_token'] = $session_token;
+                die($session_token);
             } 
             else 
             {
@@ -49,11 +51,34 @@ class Controller_Auth extends Controller_Base {
         }
          
         // Create an authenticated HTTP Client to talk to Google.
-        $client = Zend_Gdata_AuthSub::getHttpClient($_SESSION['cal_token']);
+        $client = Zend_Gdata_AuthSub::getHttpClient($session_token);
          
         // Create a Gdata object using the authenticated Http Client
-        $cal = new Zend_Gdata_Calendar($client);
-        var_dump($_SESSION['cal_token']);die;
+        $service = new Zend_Gdata_Calendar($client);
+        // Create a new entry using the calendar service's magic factory method
+        $event= $service->newEventEntry();
+         
+        // Populate the event with the desired information
+        // Note that each attribute is crated as an instance of a matching class
+        $event->title = $service->newTitle("My Event");
+        $event->where = array($service->newWhere("Mountain View, California"));
+        $event->content = $service->newContent(" This is my awesome event. RSVP required.");
+         
+        // Set the date using RFC 3339 format.
+        $startDate = "2010-06-22";
+        $startTime = "11:00";
+        $endDate = "2010-06-22";
+        $endTime = "24:00";
+        $tzOffset = "-08";
+         
+        $when = $service->newWhen();
+        $when->startTime = "{$startDate}T{$startTime}:00.000{$tzOffset}:00";
+        $when->endTime = "{$endDate}T{$endTime}:00.000{$tzOffset}:00";
+        $event->when = array($when);
+         
+        // Upload the event to the calendar server
+        // A copy of the event as it is recorded on the server is returned
+        $newEvent = $service->insertEvent($event);
     }
 
     public function action_login()
