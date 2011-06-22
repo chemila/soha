@@ -8,29 +8,10 @@ class Controller_Auth extends Controller_Base {
         $this->trigger_error();
     }
 
-    public function action_authsub_security()
-    {
-        $singleUseToken = Arr::get($_GET, 'token', false);
-
-        if( ! $singleUseToken)
-        {
-            $this->trigger_error('404');
-        }
-
-        $client = new Zend_Gdata_HttpClient();
-        $client->setAuthSubPrivateKeyFile(Core::$cache_dir.'/authsub.pem', null, true);
-        $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken, $client);
-
-        $calendarService = new Zend_Gdata_Calendar($client);
-        $calendarService->setAuthSubToken($sessionToken);
-
-        var_dump($sessionToken);die;
-    }
-
     public function action_authsub()
     {
-        $googleUri = $this->getAuthSubUrl();
-        $session_token = Core::config('google')->get('authsub_session', false);
+        $config = Core::config('google')->get('authsub');
+        $session_token = Arr::get($config, 'session', false);
          
         //if ( ! $_SESSION['cal_token'])
         if ( ! $session_token)
@@ -40,43 +21,18 @@ class Controller_Auth extends Controller_Base {
                 // You can convert the single-use token to a session token.
                 $session_token = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
                 // Store the session token in our session.
+
             } 
             else 
             {
+                $googleUri = Zend_Gdata_AuthSub::getAuthSubTokenUri($config['next'], $config['scope'], false, true);
                 // Display link to generate single-use token
                 //echo "Click <a href='$googleUri'>here</a> " .  "to authorize this application.";
                 $this->request->redirect($googleUri);
             }
         }
-         
-        // Create an authenticated HTTP Client to talk to Google.
-        $client = Zend_Gdata_AuthSub::getHttpClient($session_token);
-        // Create a Gdata object using the authenticated Http Client
-        $service = new Zend_Gdata_Calendar($client);
-        // Create a new entry using the calendar service's magic factory method
-        $event= $service->newEventEntry();
-         
-        // Populate the event with the desired information
-        // Note that each attribute is crated as an instance of a matching class
-        $event->title = $service->newTitle("My Event");
-        $event->where = array($service->newWhere("Mountain View, California"));
-        $event->content = $service->newContent(" This is my awesome event. RSVP required.");
-         
-        // Set the date using RFC 3339 format.
-        $startDate = "2011-06-22";
-        $startTime = "11:00";
-        $endDate = "2011-06-22";
-        $endTime = "24:00";
-        $tzOffset = "-08";
-         
-        $when = $service->newWhen();
-        $when->startTime = "{$startDate}T{$startTime}:00.000{$tzOffset}:00";
-        $when->endTime = "{$endDate}T{$endTime}:00.000{$tzOffset}:00";
-        $event->when = array($when);
-         
-        // Upload the event to the calendar server
-        // A copy of the event as it is recorded on the server is returned
-        $newEvent = $service->insertEvent($event);
+
+        $this->request->redirect('/');
     }
 
     public function action_login()
@@ -231,10 +187,7 @@ class Controller_Auth extends Controller_Base {
 
     protected function getAuthSubUrl() 
     {
-      $next = 'http://t.pagodabox.com/auth/authsub';
-      $scope = 'http://www.google.com/calendar/feeds/';
-      $secure = false;
-      $session = true;
-      return Zend_Gdata_AuthSub::getAuthSubTokenUri($next, $scope, $secure, $session);
+        $config = Core::config('google')->get('authsub');
+        return Zend_Gdata_AuthSub::getAuthSubTokenUri($config['next'], $config['scope'], false, true);
     } 
 }

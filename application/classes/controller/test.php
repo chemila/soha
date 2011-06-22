@@ -6,6 +6,18 @@ class Controller_Test extends Controller_Base {
         $this->trigger_error('error');
 	}
 
+    public function action_calendar()
+    {
+        $calendar = new Model_Calendar;
+        $params = array(
+            'title' => 'Hello pagodabox users',
+            'where' => 'beijing',
+        );
+
+        $calendar->create_event($params);
+        $feeds = $calendar->query_by_date_range('2011-06-10', '2011-06-23');
+    }
+
     public function action_debug()
     {
         if( ! $_FILES)
@@ -69,145 +81,6 @@ HTML;
 HTML;
     } 
 
-    public function action_calendar()
-    {
-        $calID = core::config('google')->get('calendar');
-        $gdataCal = new Zend_Gdata_Calendar();
-        $query = $gdataCal->newEventQuery();
-
-        $query->setUser($calID);
-        $query->setVisibility('public');
-        $query->setProjection('full');
-        $query->setOrderby('starttime');
-        $query->setStartMin('2011-02-01');
-        $query->setStartMax('2011-07-29');
-        $eventFeed = $gdataCal->getCalendarEventFeed($query);
-        foreach($eventFeed as $event){//在同一个query中能显示的事件数量上限为25笔
-            echo core::debug($event);
-            /**
-            foreach ($event->when as $when) {
-                echo "startTime:" . $when->startTime . "\n";//事件起始时间
-                echo "endTime:" . $when->endTime . "\n";//事件结束时间
-            }
-            echo "recurrence:" . @$event->recurrence->text . "\n";//循环事件才有内容
-
-            foreach ($event->where as $where) {
-                echo "where:" . $where->valueString . "\n";//地点
-            }
-            echo "content:" . $event->content->text . "\n";//详情
-            echo "updated:" . $event->updated->text . "\n";//最后修改时间
-            echo "title:" . $event->title->text . "\n";//事项
-            echo "id:" . $event->id->text . "\n\n";//事件id(平时看不到)
-            **/
-        }
-    }
-
-    public function createEvent ($client, $title = 'Tennis with Beth',
-        $desc='Meet for a quick lesson', $where = 'On the courts',
-        $startDate = '2008-01-20', $startTime = '10:00',
-        $endDate = '2008-01-20', $endTime = '11:00', $tzOffset = '-08')
-    {
-        $gc = new Zend_Gdata_Calendar($client);
-        $newEntry = $gc->newEventEntry();
-
-        $newEntry->title = $gc->newTitle(trim($title));
-        $newEntry->where  = array($gc->newWhere($where));
-        $newEntry->content = $gc->newContent($desc);
-        $newEntry->content->type = 'text';
-
-        $when = $gc->newWhen();
-        $when->startTime = "{$startDate}T{$startTime}:00.000{$tzOffset}:00";
-        $when->endTime = "{$endDate}T{$endTime}:00.000{$tzOffset}:00";
-        $newEntry->when = array($when);
-
-        $createdEntry = $gc->insertEvent($newEntry);
-        return $createdEntry->id->text;
-    }
-
-    public function action_event()
-    {
-        $client = new Zend_Gdata_HttpClient();
-        $session = Core::config('google')->get('authsub_session');
-        $client->setAuthSubToken($session);
-
-        $service = new Zend_Gdata_Calendar($client);
-        // Create a new entry using the calendar service's magic factory method
-        $event= $service->newEventEntry();
-         
-        // Populate the event with the desired information
-        // Note that each attribute is crated as an instance of a matching class
-        $event->title = $service->newTitle("My Event");
-        $event->where = array($service->newWhere("Mountain View, California"));
-        $event->content =
-                $service->newContent(" This is my awesome event. RSVP required.");
-         
-        // Set the date using RFC 3339 format.
-        $startDate = "2010-06-22";
-        $startTime = "11:00";
-        $endDate = "2010-06-22";
-        $endTime = "24:00";
-        $tzOffset = "-08";
-         
-        $when = $service->newWhen();
-        $when->startTime = "{$startDate}T{$startTime}:00.000{$tzOffset}:00";
-        $when->endTime = "{$endDate}T{$endTime}:00.000{$tzOffset}:00";
-        $event->when = array($when);
-         
-        // Upload the event to the calendar server
-        // A copy of the event as it is recorded on the server is returned
-        $newEvent = $service->insertEvent($event);
-    }
-
-    public function action_failed()
-    {
-        $config = core::config('google')->get('oauth');
-
-        $accessToken = new Zend_Oauth_Token_Access();
-        $accessToken->setToken($config['token']);
-        $accessToken->setTokenSecret($config['secret']);
-        $config = core::config('oauth')->get('google');
-
-        $oauthOptions = array(
-          'requestScheme' => Zend_Oauth::REQUEST_SCHEME_HEADER,
-          'version' => '1.0',
-          'consumerKey' => $config['key'],
-          'consumerSecret' => $config['secret'],
-          'signatureMethod' => 'RSA-SHA1', 
-          'callbackUrl' => 'http://t.pagodabox.com/',
-          'requestTokenUrl' => 'https://www.google.com/accounts/OAuthGetRequestToken',
-          'userAuthorizationUrl' => 'https://www.google.com/accounts/OAuthAuthorizeToken',
-          'accessTokenUrl' => 'https://www.google.com/accounts/OAuthGetAccessToken'
-        );
-
-        $httpClient = $accessToken->getHttpClient($oauthOptions);
-        $client = new Zend_Gdata_Docs($httpClient, "t.pagodabox.com");
-
-        // Retrieve user's list of Google Docs
-        $feed = $client->getDocumentListFeed();
-        foreach ($feed->entries as $entry) 
-        {
-          echo "$entry->title\n";
-        }
-    }
-
-
-    public function action_next()
-    {
-        $singleUseToken = $_GET['token'];
-        $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken);
-
-        // Create a Calendar service object and set the session token for subsequent requests
-        $calendarService = new Zend_Gdata_Calendar(null, 'google-ExampleApp-v1.0');
-        $calendarService->setAuthSubToken($sessionToken);
-        die;
-        $client = new Zend_Gdata_HttpClient();
-        $client->setAuthSubPrivateKeyFile(core::$cache_dir.'/google_rsakey.pem', null, true);
-        $sessionToken = Zend_Gdata_AuthSub::getAuthSubSessionToken($singleUseToken, $client);
-
-        $calendarService = new Zend_Gdata_Calendar($client, 'google-ExampleApp-v1.0');
-        $calendarService->setAuthSubToken($sessionToken);
-    }
-
     public function action_oauth()
     {
         $src = 'google';
@@ -222,10 +95,5 @@ HTML;
         {
             $this->trigger_error('认证失败');
         }
-    }
-
-    public function action_tokeninfo()
-    {
-        echo Zend_Gdata_AuthSub::getAuthSubTokenInfo($_SESSION['cal_token']);
     }
 }// End Welcome
