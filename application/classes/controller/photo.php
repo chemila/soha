@@ -150,11 +150,30 @@ class Controller_Photo extends Controller_Base {
 
         $params = array(
             'title' => Text::limit_chars($data['content'], '100', '...'),
-            'icon' => URL::site('media/img/icon/image_add.png', true),
+            'icon' => URL::site('media/img/icon/1308731950_images_plus.ico', true),
             'url' => $image,
             'type' => 'image/'.pathinfo($image, PATHINFO_EXTENSION),
         );
+        $calendar->create_web_event($params);
+        unset($data, $image, $params);
 
+        $user = new model_user;
+        $data = $user->where('category', '=', 1)
+            ->where('source', '=', 'sina')
+            ->order_by(DB::Expr('rand(unix_timestamp())'))
+            ->limit(1)
+            ->find()
+            ->as_array();
+        $image = preg_replace('~http://(\w+)\.sinaimg\.cn/(\w+)/\d+/(\w+)/(\d+)/?$~i', 
+                'http://\\1.sinaimg.cn/\\2/180/\\3/\\4', $data['portrait']);
+        $params = array(
+            'title' => Text::limit_chars($data['nick'].' '.$data['intro'], '30', '...'),
+            'icon' => URL::site('media/img/icon/1308734578_users-add.ico', true),
+            'width' => '180',
+            'height' => '180',
+            'url' => $image,
+            'type' => 'image/'.pathinfo($image, PATHINFO_EXTENSION),
+        );
         $calendar->create_web_event($params);
     }
 }

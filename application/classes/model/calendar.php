@@ -74,8 +74,8 @@ class Model_Calendar {
 
         $wc = $this->_service->newWebContent();
         $wc->url = Arr::get($params, 'url');
-        $wc->height = Arr::get($params, 'height', '400');
-        $wc->width = Arr::get($params, 'width', '400');
+        $wc->height = Arr::get($params, 'height', '300');
+        $wc->width = Arr::get($params, 'width', '300');
 
         $wcLink = $this->_service->newLink();
         $wcLink->rel = Arr::get($params, 'rel', "http://schemas.google.com/gCal/2005/webContent");
