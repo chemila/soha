@@ -28,9 +28,7 @@ shared_writable_dirs:
 - /application/upload
 
 url_rewrites:
-- ^media/(.*\/?)$ /media/$1
-- ^(.*\/?)$ /index.php/$1
-
+- ^(?:modules|system)\b.* index.php/$0
 
 permissions:
     /application :
