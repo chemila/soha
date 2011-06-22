@@ -126,7 +126,11 @@ HTML;
 
     public function action_event()
     {
-        $this->createEvent($client, $title, $desc, $where, $startDate, $startTime, $endDate, $endTime);
+        requestUserLogin('Please login to your Google Account.');
+        $_SESSION['sessionToken'] = Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token'], $client);
+        $client->setAuthSubToken($_SESSION['sessionToken']);
+
+        //$this->createEvent($client, $title, $desc, $where, $startDate, $startTime, $endDate, $endTime);
     }
 
     public function action_failed()

@@ -18,6 +18,7 @@ class Controller_Auth extends Controller_Base {
             $this->trigger_error('404');
         }
         //1/RENntU4NoXijmq6MOkbyD6oZaHgLV7pk06r740fRqIM
+        //1/kLP-MW01-DfJf1MmZk49i72GL90XVugB_KS2Dy-ZasM
         var_dump($singleUseToken);
 
         $client = new Zend_Gdata_HttpClient();
