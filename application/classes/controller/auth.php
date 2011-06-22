@@ -79,6 +79,9 @@ class Controller_Auth extends Controller_Base {
         // Upload the event to the calendar server
         // A copy of the event as it is recorded on the server is returned
         $newEvent = $service->insertEvent($event);
+        echo $createdEntry->id->text;
+
+        die;
     }
 
     public function action_login()
