@@ -29,7 +29,6 @@ shared_writable_dirs:
 
 url_rewrites:
     - ^media/(.*)$ media/$1
-    - ^(.*\/?)$ /index.php/$1
 
 permissions:
     /application :
