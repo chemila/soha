@@ -96,7 +96,14 @@ HTML;
         foreach($events as $event)
         {
             echo 'deleted '.$event->id->text. "<br>";
-            $event->delete();
+            try
+            {
+                $event->delete();
+            }
+            catch(Exception $e)
+            {
+                echo $e->getMessage()."<br>";
+            }
         }
     }
 }// End Welcome
