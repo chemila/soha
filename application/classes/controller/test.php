@@ -96,14 +96,7 @@ HTML;
         foreach($events as $event)
         {
             echo 'deleted '.$event->id->text. "<br>";
-            try
-            {
-                $calendar->delete_event($event->id->text);
-            }
-            catch(Exception $e)
-            {
-                echo $e->getMessage()."<br>";
-            }
+            $event->delete();
         }
     }
 }// End Welcome
