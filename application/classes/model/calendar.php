@@ -102,9 +102,9 @@ class Model_Calendar {
     {
         $query = $this->_service->newEventQuery();
 
-        $query->setUser($this->_user);
-        $query->setVisibility('public');
-        $query->setProjection('full');
+        //$query->setUser($this->_user);
+        //$query->setVisibility('public');
+        //$query->setProjection('full');
         $query->setEvent($eventId);
 
         try 
