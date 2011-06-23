@@ -96,7 +96,7 @@ HTML;
         foreach($events as $event)
         {
             echo 'deleted '.$event->id->text. "<br>";
-            $calendar->delete_event($event->id->text);
+            $event->delete();
         }
     }
 }// End Welcome

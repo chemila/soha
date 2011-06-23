@@ -102,8 +102,8 @@ class Model_Calendar {
     {
         $query = $this->_service->newEventQuery();
 
-        $query->setUser('default');
-        $query->setVisibility('private');
+        $query->setUser($this->_user);
+        $query->setVisibility('public');
         $query->setProjection('full');
         $query->setEvent($eventId);
 
@@ -208,7 +208,7 @@ class Model_Calendar {
      * @param  string           $eventId The event ID string
      * @return void
      */
-    public function delete_event($eventId)
+    public function delete_event_by_id($eventId)
     {
         $event = $this->get_event($eventId);
         $event->delete();
