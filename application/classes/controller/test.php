@@ -98,7 +98,7 @@ HTML;
             echo 'deleted '.$event->id->text. "<br>";
             try
             {
-                $calendar->delete_event($event->id);
+                $calendar->delete_event($event->id->text);
             }
             catch(Exception $e)
             {
