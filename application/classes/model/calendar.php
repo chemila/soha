@@ -109,7 +109,7 @@ class Model_Calendar {
 
         try 
         {
-            return $gdataCal->getCalendarEventEntry($query);
+            return $this->_service->getCalendarEventEntry($query);
         } 
         catch(Zend_Gdata_App_Exception $e) 
         {

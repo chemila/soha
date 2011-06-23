@@ -35,5 +35,11 @@ return array(
         'secret' => 'pBg177sWMW2nzXi17yQJk3qM',
         'callback' => URL::site('auth/oauth_google', true),
     ),
+    'yahoo' => array(
+        'oauth_version' => '1.0',
+        'key' => '7865e2715349ac7d9a1c5c5d38474cda',
+        'secret' => 'c40a8377b35c1966',
+        'callback' => URL::site('auth/oauth_yahoo', true),
+    ),
 );
 
