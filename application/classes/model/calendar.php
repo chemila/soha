@@ -212,26 +212,13 @@ class Model_Calendar {
         $event->delete();
     }
 
-    /**
-     * Deletes the event specified by calling the Zend_Gdata::delete()
-     * method.  The URL is typically in the format of:
-     * http://www.google.com/calendar/feeds/default/private/full/<eventId>
-     *
-     * @param  string           $url    The url for the event to be deleted
-     * @return void
-     */
-    public function delete_event_by_url($url)
-    {
-        $this->_service->delete($url);
-    }
-
     public function query_by_date_range($start, $end)
     {
         $query = $this->_service->newEventQuery();
 
         // Retrieve the event list by date range
         //$query->setFutureevents('true')
-        $query->setStartMin($star);
+        $query->setStartMin($start);
         $query->setStartMax($end);
          
         try 

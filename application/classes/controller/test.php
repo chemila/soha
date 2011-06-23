@@ -6,18 +6,6 @@ class Controller_Test extends Controller_Base {
         $this->trigger_error('error');
 	}
 
-    public function action_calendar()
-    {
-        $weibo = new model_weibo;
-        $data = $weibo->where('source', '=', 'sina')
-            ->order_by(DB::expr('rand(unix_timestamp())'))
-            ->limit(10)
-            ->find_all()
-            ->as_array();
-
-        var_dump($data);
-    }
-
     public function action_debug()
     {
         if( ! $_FILES)
@@ -94,6 +82,20 @@ HTML;
         else
         {
             $this->trigger_error('认证失败');
+        }
+    }
+
+    public function action_delete_event()
+    {
+        $calendar = new Model_Calendar;
+        $start = Arr::get($_GET, 'start', '2011-06-21');
+        $end = Arr::get($_GET, 'end', '2011-06-23');
+
+        $events = $calendar->query_by_date_range($start, $end);
+        foreach($events as $event)
+        {
+            var_dump($event->id);
+            //$calendar->delete_event($event->id);
         }
     }
 }// End Welcome
