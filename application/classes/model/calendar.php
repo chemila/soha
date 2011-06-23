@@ -227,6 +227,7 @@ class Model_Calendar {
         } 
         catch(Zend_Gdata_App_Exception $e) 
         {
+            var_dump($e);
             return false;
         }
     }
