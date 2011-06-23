@@ -7,25 +7,20 @@ class Controller_User extends Controller_Base {
 
     }
 
-    public function action_relation()
+    public function action_relationship()
     {
         $uid = Arr::get($_GET, 'uid', 1005136);
-
+        $json = array();
+        
         $user = new Model_User($uid);
+        $self = array('uid' => 1, 'nick' => 'fuqiang', 'intro' => 'root');
         $fans = $user->get_fans();
-        $follower = $user->get_followers();
-        $json = '';
+        $followers = $user->get_followers();
 
-        foreach($fans as $key => $value)
-        {
-            $json .= sprintf('%s->%s;', $key, $user->nick);
-        }
+        $json = array_push($fans, $self);
+        $json = $fans + $followers;
 
-        foreach($followers as $key => $value)
-        {
-            $json .= sprintf('%s->%s;', $user->nick, $key);
-        }
-
-        die($json);
+        $this->init_view();
+        $this->view->json = json_encode($json);
     }
 }

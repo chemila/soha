@@ -37,12 +37,7 @@ class Controller_Auth extends Controller_Base {
 
     public function action_login()
     {
-        $src = $this->request->param('source', 'sina');
-        if(empty($src))
-        {
-            $this->trigger_error('缺少认证平台来源');
-        }
-
+        $src = Arr::get($_GET, 'source', 'sina');
         session::instance()->set('oauth_src', $src);
         $oauth = new OAuth($src);
 
