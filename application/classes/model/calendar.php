@@ -235,6 +235,8 @@ class Model_Calendar {
     public function query_by_text($text)
     {
         $query = $this->_service->newEventQuery();
+        $query->setVisibility('public');
+        $query->setProjection('full');
         
         $query->setQuery($text);
         try 
