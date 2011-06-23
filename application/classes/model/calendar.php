@@ -220,7 +220,7 @@ class Model_Calendar {
 
         //$query->setFutureevents('true')
         $query->setUser('default');
-        $query->setVisibility('public');
+        $query->setVisibility('private');
         $query->setProjection('full');
 
         // Retrieve the event list by date range
@@ -242,8 +242,8 @@ class Model_Calendar {
     {
         $query = $this->_service->newEventQuery();
 
-        $query->setUser($this->_user);
-        $query->setVisibility('public');
+        $query->setUser('default');
+        $query->setVisibility('private');
         $query->setProjection('full');
         
         $query->setQuery($text);
@@ -271,16 +271,11 @@ class Model_Calendar {
         // Retrieve the event list from the calendar server
         try 
         {
-            $eventFeed = $this->_service->getCalendarEventFeed($query);
+            return $this->_service->getCalendarEventFeed($query);
         } 
         catch (Zend_Gdata_App_Exception $e) 
         {
             echo "Error: " . $e->getMessage();
-        }
-
-        foreach($eventFeed as $event)
-        {
-            $event->delete();
         }
     }
 }

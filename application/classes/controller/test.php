@@ -91,9 +91,6 @@ HTML;
         $start = Arr::get($_GET, 'start', date('Y-m-d'));
         $end = Arr::get($_GET, 'end', date('Y-m-d'));
 
-        $calendar->delete_all();
-        die;
-
         $events = $calendar->query_by_date_range($start, $end);
 
         foreach($events as $event)
