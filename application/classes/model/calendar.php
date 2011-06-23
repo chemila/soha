@@ -219,7 +219,7 @@ class Model_Calendar {
         $query = $this->_service->newEventQuery();
 
         //$query->setFutureevents('true')
-        $query->setUser($this->_user);
+        $query->setUser('default');
         $query->setVisibility('public');
         $query->setProjection('full');
 
@@ -254,6 +254,33 @@ class Model_Calendar {
         catch(Zend_Gdata_App_Exception $e) 
         {
             return false;
+        }
+    }
+
+    public function delete_all()
+    {
+        $query = $this->_service->newEventQuery();
+
+        $query->setUser('default');
+        // Set to $query->setVisibility('private-magicCookieValue') if using
+        // MagicCookie auth
+        $query->setVisibility('private');
+        $query->setProjection('full');
+        $query->setOrderby('starttime');
+         
+        // Retrieve the event list from the calendar server
+        try 
+        {
+            $eventFeed = $this->_service->getCalendarEventFeed($query);
+        } 
+        catch (Zend_Gdata_App_Exception $e) 
+        {
+            echo "Error: " . $e->getMessage();
+        }
+
+        foreach($eventFeed as $event)
+        {
+            $event->delete();
         }
     }
 }
