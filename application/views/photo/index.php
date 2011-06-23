@@ -1,5 +1,6 @@
 <!--{include file="header.php"}--> 
 <script type="text/javascript" src="media/js/photo.js"></script>
+<script type="text/javascript" src="media/js/gchart.js"></script>
 <script type="text/javascript" src="media/js/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="media/js/jquery.fancybox-1.3.4.js"></script>
 <link rel="stylesheet" href="media/css/fancybox/main.css" type="text/css" media="screen" />
@@ -60,7 +61,17 @@
 		    'type'				: 'iframe'
         });
     });
+
+    var goptions = {
+        type : 'gv',
+        size : '400x400',
+        data : 'a->b->c->d->a',
+        renderTo: 'container',
+        //applyTo: 'container',
+        id : 'mimg'
+    };
     //]]>
 </script>
 <div style="display:none;"><a id="fancy_layer" href="#inline" title=""></a></div>
+</body>
 </html>

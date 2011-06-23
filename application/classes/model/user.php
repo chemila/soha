@@ -488,4 +488,12 @@ class Model_User extends ORM {
             ->order_by('followers_count', 'desc')
             ->find_all();
     }
+
+    public function get_fans() 
+    {
+        return DB::select('fuid')->from('member_friend')
+            ->where('uid', '=', $this->pk())
+            ->execute($this->_db)
+            ->as_array('fuid');
+    }
 }

@@ -36,4 +36,9 @@ return array
         'patterns' => array(),
         'defaults' => array('controller' => 'auth', 'action' => 'index'),
     ),
+    'user' => array(
+        'uri' => '(user(/<action>(/<uid>)))',
+        'patterns' => array('uid' => '\d*'),
+        'defaults' => array('controller' => 'user', 'action' => 'index'),
+    ),
 );

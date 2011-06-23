@@ -3,7 +3,7 @@
 class Controller_Test extends Controller_Base {
 	public function action_index()
 	{
-        $this->trigger_error('error');
+        $this->init_view();
 	}
 
     public function action_debug()
@@ -85,18 +85,11 @@ HTML;
         }
     }
 
-    public function action_delete_event()
+    public function action_users()
     {
-        $calendar = new Model_Calendar;
-        $start = Arr::get($_GET, 'start', date('Y-m-d'));
-        $end = Arr::get($_GET, 'end', date('Y-m-d'));
+        $user = new model_user(1005136);
 
-        $events = $calendar->query_by_date_range($start, $end);
-
-        foreach($events as $event)
-        {
-            echo 'deleted '.$event->id->text. "<br>";
-            $event->delete();
-        }
+        $fans = $user->get_fans();
+        var_dump($fans);
     }
 }// End Welcome
