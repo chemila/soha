@@ -216,8 +216,12 @@ class Model_Calendar {
     {
         $query = $this->_service->newEventQuery();
 
-        // Retrieve the event list by date range
         //$query->setFutureevents('true')
+        $query->setUser('pagodabox@gmail.com');
+        $query->setVisibility('public');
+        $query->setProjection('full');
+
+        // Retrieve the event list by date range
         $query->setStartMin($start);
         $query->setStartMax($end);
          
@@ -235,6 +239,8 @@ class Model_Calendar {
     public function query_by_text($text)
     {
         $query = $this->_service->newEventQuery();
+
+        $query->setUser('pagodabox@gmail.com');
         $query->setVisibility('public');
         $query->setProjection('full');
         
