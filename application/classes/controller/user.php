@@ -13,7 +13,7 @@ class Controller_User extends Controller_Base {
         $json = array();
         
         $user = new Model_User($uid);
-        $self = array('uid' => 1, 'nick' => 'fuqiang', 'intro' => 'root');
+        $self = array('uid' => '1', 'nick' => 'fuqiang', 'intro' => 'root');
         $fans = $user->get_fans();
         $followers = $user->get_followers();
 

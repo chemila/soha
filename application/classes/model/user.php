@@ -493,9 +493,10 @@ class Model_User extends ORM {
     {
         //
         return array(
-            array('nick' => '测试下', 'uid' => '1', 'intro' => 'test'),
-            array('nick' => '图博', 'uid' => 2, 'intro' => 'fdsfas'),
-            array('nick' => '淘宝', 'uid' => 3, 'intro' => 'test' ),
+            array('nick' => '测试下', 'uid' => '2', 'intro' => 'test'),
+            array('nick' => '测试下', 'uid' => '5', 'intro' => 'test'),
+            array('nick' => '测试下', 'uid' => '6', 'intro' => 'test'),
+            array('nick' => '测试下', 'uid' => '7', 'intro' => 'test'),
         );
         return DB::select('fuid', 'nick')->from('member_friend')
             ->where('uid', '=', $this->pk())
@@ -508,8 +509,9 @@ class Model_User extends ORM {
     {
         return array(
             array('nick' => '测试下', 'uid' => '4', 'intro' => 'test'),
-            array('nick' => '图博', 'uid' => 5, 'intro' => 'fdsfas'),
-            array('nick' => '淘宝', 'uid' => 6, 'intro' => 'test' ),
+            array('nick' => '测试下', 'uid' => '5', 'intro' => 'test'),
+            array('nick' => '测试下', 'uid' => '6', 'intro' => 'test'),
+            array('nick' => '测试下', 'uid' => '7', 'intro' => 'test'),
         );
     }
 }
