@@ -92,7 +92,7 @@ HTML;
         $end = Arr::get($_GET, 'end', '2011-06-23');
 
         $events = $calendar->query_by_date_range($start, $end);
-        var_dump($events);die;
+
         foreach($events as $event)
         {
             var_dump($event->id);

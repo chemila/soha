@@ -4,9 +4,11 @@ class Model_Calendar {
 
     public function __construct()
     {
-        $config = Core::config('google')->get('authsub');
+        $this->_config = Core::config('google');
+        $this->_user = $this->_config->get('calendar');
+        $authsub = $this->_config->get('authsub');
         // Create an authenticated HTTP Client to talk to Google.
-        $this->_client = Zend_Gdata_AuthSub::getHttpClient($config['session']);
+        $this->_client = Zend_Gdata_AuthSub::getHttpClient($authsub['session']);
         // Create a Gdata object using the authenticated Http Client
         $this->_service = new Zend_Gdata_Calendar($this->_client);
     }
@@ -217,7 +219,7 @@ class Model_Calendar {
         $query = $this->_service->newEventQuery();
 
         //$query->setFutureevents('true')
-        $query->setUser('pagodabox@gmail.com');
+        $query->setUser($this->_user);
         $query->setVisibility('public');
         $query->setProjection('full');
 
@@ -240,7 +242,7 @@ class Model_Calendar {
     {
         $query = $this->_service->newEventQuery();
 
-        $query->setUser('pagodabox@gmail.com');
+        $query->setUser($this->_user);
         $query->setVisibility('public');
         $query->setProjection('full');
         
