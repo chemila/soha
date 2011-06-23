@@ -491,9 +491,10 @@ class Model_User extends ORM {
 
     public function get_fans() 
     {
-        return DB::select('fuid')->from('member_friend')
+        return DB::select('fuid', 'nick')->from('member_friend')
             ->where('uid', '=', $this->pk())
+            ->limit(20)
             ->execute($this->_db)
-            ->as_array('fuid');
+            ->as_array('nick');
     }
 }

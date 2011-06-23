@@ -64,7 +64,7 @@
 
     var goptions = {
         type : 'gv',
-        size : '400x400',
+        size : '500x500',
         data : 'a->b->c->d->a',
         renderTo: 'container',
         //applyTo: 'container',

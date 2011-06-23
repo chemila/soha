@@ -12,6 +12,20 @@ class Controller_User extends Controller_Base {
         $uid = Arr::get($_GET, 'uid', 1005136);
 
         $user = new Model_User($uid);
-        $fans = DB::
+        $fans = $user->get_fans();
+        $follower = $user->get_followers();
+        $json = '';
+
+        foreach($fans as $key => $value)
+        {
+            $json .= sprintf('%s->%s;', $key, $user->nick);
+        }
+
+        foreach($followers as $key => $value)
+        {
+            $json .= sprintf('%s->%s;', $user->nick, $key);
+        }
+
+        die($json);
     }
 }
