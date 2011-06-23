@@ -95,7 +95,6 @@ HTML;
 
         foreach($events as $event)
         {
-            var_dump($event);die;
             echo 'deleted '.$event->id->text. "<br>";
             $event->delete();
         }
