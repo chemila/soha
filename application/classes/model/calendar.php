@@ -208,7 +208,7 @@ class Model_Calendar {
      * @param  string           $eventId The event ID string
      * @return void
      */
-    public function delete_event_by_id($eventId)
+    public function delete_event($eventId)
     {
         $event = $this->get_event($eventId);
         $event->delete();
