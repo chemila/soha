@@ -3,10 +3,39 @@
 class Model_User extends ORM {
     const CATEGORY_DEFAULT = 0;
     const CATEGORY_STAR    = 1;
-    const CATEGORY_ALL     = NULL;
 
 	protected $_primary_key  = 'uid';
     protected $_table_name = 'member';
+
+    protected $_has_one = array(
+        'session' => array(
+            'model' => 'user_session',
+            'foreign_key' => 'uid',
+        ),       
+        'setting' => array(
+            'model' => 'user_setting',
+            'foreign_key' => 'uid',
+        ),       
+        'token' => array(
+            'model' => 'user_token',
+            'foreign_key' => 'uid',
+        ),       
+        'favorite' => array(
+            'model' => 'user_favorite',
+            'foreign_key' => 'uid',
+        ),       
+    );
+
+    protected $_has_many = array(
+        'fans' => array(
+            'model' => 'user_relation',
+            'foreign_key' => 'uid',
+        ),       
+        'followers' => array(
+            'model' => 'user_relation',
+            'foreign_key' => 'fuid',
+        ),
+    );
 
     public function load()
     {
@@ -186,25 +215,6 @@ class Model_User extends ORM {
         return true;
     }
 
-    public function get_fans_ids()
-    {
-        try
-        {
-            $response = Model_API::factory('user')->get_fans_all_uid(array('uid' => $this->pk()));
-            return Arr::flatten($response);
-        }
-        catch(Model_API_Exception $e){}
-    }
-
-    public function get_following_ids()
-    {
-        try
-        {
-            return Model_API::factory('user')->get_attention_all_uid(array('uid' => $this->pk()));
-        }
-        catch(Model_API_Exception $e){}
-    }
-
     public function inbox($page = 1, $limit = 30)
     {
         $offset = ($page - 1) * $limit;
@@ -293,38 +303,6 @@ class Model_User extends ORM {
         return $outbox->count_by_user($this->pk());
     }
 
-    public function get_uid($nick)
-    {
-        $response = Model_API::factory('user')->get_uid(array('nick' => $nick));
-
-        return $response['uid'];
-    }
-
-    public function following_of($fuid)
-    {
-        $response = Model_API::factory('user')->attention_exist(array(
-            'uid' => $this->pk(),
-            'fuid' => $fuid,
-        ));
-
-        return $response;
-    }
-    
-    public function fans_of($fuid)
-    {
-        $response = Model_API::factory('user')->attention_exist(array(
-            'uid' => $fuid,
-            'fuid' => $this->pk(),
-        ));
-
-        return $response;
-    }
-
-    public function like($key)
-    {
-        return Model_API::factory('user')->like(array('key' => $key));
-    }
-
     public function extend(Model_Star $star)
     {
         if( ! $this->is_star())
@@ -399,54 +377,6 @@ class Model_User extends ORM {
 	}
 	
 	
-	public function list_block($page=1)
-	{
-    	$data = array(
-            "uid" => $this->pk(),
-            "page" => $page
-    	);
-    	
-		$result = Model_API::factory('user')->list_block($data);
-		
-		return $result;
-	}
-	
-    public function add_block($fuids)
-    {
-    	if(empty($fuids))
-    		return false;
-    	
-    	$data = array(
-            "uid" => $this->pk(),
-            "fuids" => $fuids
-    	);
-    		
-    	return Model_API::factory("user")->add_block($data);
-     }
-    
-    
-    public function delete_block($fuids)
-    {
-    	if(empty($fuids))
-    		return false;
-    		
-    	$data = array(
-            "uid" => $this->pk(),
-            "fuids" => $fuids
-    	);
-    	
-    	return Model_API::factory("user")->delete_block($data);
-    }
-	
-    public function count_block()
-    {
-    	$data = array(
-            "uid" => $this->pk()
-    	);
-    	
-    	return Model_API::factory("user")->count_block($data);
-    }
-
 	public function get_unread_status()
 	{
 		$unread = new Model_Unread($this->pk());
@@ -460,25 +390,6 @@ class Model_User extends ORM {
 		return Model_Unread::get_default();
 	}
 
-    public function get_source()
-    {
-        $this->load();
-
-        if($this->loaded())
-        {
-            return $this->source;
-        }
-
-        return false;
-    }
-
-    public function get_setting($category, $default = false)
-    {
-        $setting = new Model_Setting(array('uid' => $this->pk(), 'category' => 0));
-
-        return $setting->get_category($category, $default);
-    }
-
     public function photos($page)
     {
         return $this->where('category', '=', 1)
@@ -487,31 +398,5 @@ class Model_User extends ORM {
             ->offset(($page - 1) * 20)
             ->order_by('followers_count', 'desc')
             ->find_all();
-    }
-
-    public function get_fans() 
-    {
-        //
-        return array(
-            array('nick' => '测试下', 'uid' => '2', 'intro' => 'test'),
-            array('nick' => '测试下', 'uid' => '5', 'intro' => 'test'),
-            array('nick' => '测试下', 'uid' => '6', 'intro' => 'test'),
-            array('nick' => '测试下', 'uid' => '7', 'intro' => 'test'),
-        );
-        return DB::select('fuid', 'nick')->from('member_friend')
-            ->where('uid', '=', $this->pk())
-            ->limit(20)
-            ->execute($this->_db)
-            ->as_array();
-    }
-
-    public function get_followers()
-    {
-        return array(
-            array('nick' => '测试下', 'uid' => '4', 'intro' => 'test'),
-            array('nick' => '测试下', 'uid' => '5', 'intro' => 'test'),
-            array('nick' => '测试下', 'uid' => '6', 'intro' => 'test'),
-            array('nick' => '测试下', 'uid' => '7', 'intro' => 'test'),
-        );
     }
 }

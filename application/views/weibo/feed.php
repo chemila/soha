@@ -61,7 +61,7 @@
             <div class="lf">
                 <cite>
                     <!--publish timeline counter--> 
-                    <!-- <a href="<!--{$weibo.uid}-->/<!--{$weibo.id}-->"> --><strong><!--{$weibo.timeline|date_format:"%Y-%m-%d %H:%M:%S"}--></strong><!--</a> -->
+                    <!-- <a href="<!--{$weibo.uid}-->/<!--{$weibo.id}-->"> --><strong><!--{$weibo.timeline|fuzzy_time}--></strong><!--</a> -->
                 </cite> 
                 <strong lang="CL1006">来自</strong>
                 <!--weibo source field--> 

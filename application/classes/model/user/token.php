@@ -4,6 +4,13 @@ class Model_User_Token extends Model_QORM {
     protected $_table_name = 'user_token';
     protected $_primary_key = 'uid';
 
+    protected $_belongs_to = array(
+        'user' => array(
+            'model' => 'user',
+            'foreign_key' => 'uid',
+        ),       
+    );
+
     public function to_access_token()
     {
         $this->reload();

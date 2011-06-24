@@ -89,7 +89,7 @@ HTML;
     {
         $user = new model_user(1005136);
 
-        $fans = $user->get_fans();
-        var_dump($fans);
+        $fans = $user->followers->find_all();
+        var_dump($user->last_query());
     }
 }// End Welcome

@@ -1,11 +1,20 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Model_Favorite extends Model_QORM {
+class Model_User_Favorite extends Model_QORM {
+    protected $_table_name = 'favorite';
+    protected $_primary_key = 'uid';
 
-    protected $_belongs_to = array(
-        'weibo' => array(
+    protected $_has_many = array(
+        'entries' => array(
             'model' => 'weibo',
             'foreign_key' => 'wid',
+        ),       
+    );
+
+    protected $_belongs_to = array(
+        'user' => array(
+            'model' => 'user',
+            'foreign_key' => 'uid',
         ),       
     );
 
