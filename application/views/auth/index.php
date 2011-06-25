@@ -40,9 +40,11 @@ float:
         <div><a href="auth/login?source=163" id="logo_163">
             <img src="media/img/auth/163.png">
         </a></div>
+        <!--
         <div><a href="auth/login?source=flickr" id="logo_flickr">
             <img src="media/img/auth/flickr.png">
         </a></div>
+        -->
     </div>   
     <div class="clear"></div>
 </div>

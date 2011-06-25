@@ -47,8 +47,8 @@ return array(
         'oauth_version' => '1.0',
         //'key' => '7865e2715349ac7d9a1c5c5d38474cda',
         //'secret' => 'c40a8377b35c1966',
-        'key' => 'a154c4d456af5c1bf299370f7ef23f55',
-        'secret' => '5cf4afafc7cb86c8',
+        'key' => '522d35664a7c2a4c028d9a0016be20c7',
+        'secret' => 'd06a7a4ff6777809',
         'callback' => URL::site('auth/oauth_callback', true),
     ),
 );

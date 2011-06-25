@@ -22,7 +22,7 @@ class OAuth_Provider_Flickr extends Kohana_OAuth_Provider {
 
 	public function url_access_token()
 	{
-		return 'http://www.flickr.com/services/oauth/authorize';
+        return 'http://www.flickr.com/services/oauth/access_token';
 	}
 }
 
