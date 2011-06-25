@@ -159,8 +159,6 @@ class Controller_Auth extends Controller_Base {
         {
             $this->trigger_error('获取access token失败');
         }
-        
-        var_dump($access_token);
         die('success');
     }
 
