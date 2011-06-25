@@ -71,7 +71,7 @@ HTML;
 
     public function action_oauth()
     {
-        $src = 'google';
+        $src = 'flickr';
         session::instance()->set('oauth_src', $src);
         $oauth = new OAuth($src);
 

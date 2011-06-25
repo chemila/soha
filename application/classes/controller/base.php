@@ -2,6 +2,7 @@
 
 abstract class Controller_Base extends Controller {
     protected $_is_login = FALSE;
+    protected $_error = 'errror';
 
     public function before()
     {
@@ -75,20 +76,15 @@ abstract class Controller_Base extends Controller {
         return max($page, 1);
     }
 
-    protected function trigger_error($message = NULL, Array $errors = Array(), $type = '404')
+    protected function trigger_error($message = NULL, $type = '404')
     {
         if(Request::$is_ajax)
         {
-            $this->response_json('CC2510', $errors);
+            $this->response_json('CC2510', $message);
         }
 
-        $this->init_view($type, 'error');
-
-        $this->view->errors = $errors;
-        $this->view->message = $message;
-        $this->view->title = '错误提示';
-
-        $this->request->action = 'force_exit';
+        Session::instance()->set($this->_error, $message);
+        $this->request->redirect('error/'.$type);
     }
 
     protected function response_json($code = 'A00006', $data = NULL, $callback = NULL)
@@ -114,7 +110,7 @@ abstract class Controller_Base extends Controller {
         die($response);
     }
 
-    public function action_force_exit(){}
+    public function action_force_exit() {}
 
     protected function init_user(Model_User $user)
     {

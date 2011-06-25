@@ -1,13 +1,28 @@
 <!--{include file="header.php"}--> 
-<style type="text/css">
-A:link   {color:red; text-decoration:none; cURSOR: default}
-A:visited{color:red; text-decoration:none; cURSOR: default}
-A:active {color:red; text-decoration:none; cURSOR: default}
-A:hover  {color:white; background-color:red; text-decoration:none; font-weight: bold; cURSOR: e-resize; }
-.content {text-align:center; margin-top:10px;}
+<style>
+.persistent {
+    margin: 0;
+    padding: 15px 0 15px 60px;
+    width: auto;
+    position: relative;
+    text-align: center;
+}
+.persistent.failure {
+    color: white;
+    background: url('media/img/error/persistent-red.png') repeat;
+    -moz-box-shadow: 0px 2px 6px #666 inset;
+    -webkit-box-shadow: 0px 2px 6px #666 inset;
+    box-shadow: 0px 2px 6px #666 inset;
+}
 </style>
 </head>
-<body bgcolor="#FFFFFF" MARGINHEIGHT="0" topmargin="0" vspace="0" marginwidth="0" leftmargin="0" hspace="0" style="margin:0">
+<body>
+<!--{if $error}--> 
+<div class="failure persistent">
+    <span class="sprite icon"></span>
+    <p><!--{$error}--></p>
+</div>
+<!--{/if}--> 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" height="70%">
     <tr align="center" valign="bottom"> 
         <td>
@@ -20,10 +35,8 @@ A:hover  {color:white; background-color:red; text-decoration:none; font-weight: 
         </td>
     </tr>
 </table>
-<div class="content">
-    <a href="/">Go home</a> | 
+<div class="content" style="text-align:center;margin-top:10px;">
     <a href="auth">Log in</a> | 
-    <a href="help">Get help</a> | 
     <a href="mailto:chemila@gmail.com">Email me</a> 
 </div>
 </body>

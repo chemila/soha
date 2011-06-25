@@ -36,16 +36,5 @@
     //]]>
 </script>
 <div style="display:none;"><a id="fancy_layer" href="#inline" title=""></a></div>
-<div style="display:none"> 
-    <form id="login_form" method="post" action="auth/login"> 
-        <p>
-            <label><input type="radio" name="source" value="sina" />sina</label>
-            <label><input type="radio" name="source" value="qq" />qq</label>
-            <label><input type="radio" name="source" value="sohu" />sohu</label>
-            <label><input type="radio" name="source" value="google" />google</label>
-        </p>
-        <p><input type="submit" value="Login" /></p> 
-    </form> 
-</div> 
 </body>
 </html>

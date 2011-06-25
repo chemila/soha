@@ -321,61 +321,6 @@ class Model_User extends ORM {
         return $this->_load_values($data);
     }
     
-	public function list_message($page = 1, $limit = 10)
-	{
-		$params = array(
-            "uid" => $this->pk(),
-            "page" => $page,
-            'limit' => $limit,
-		);
-		$response = Model_API::factory("message")->get_message_all($params);
-		
-		return $response;
-	}
-	
-	public function send_message($fuid, $content)
-	{
-		if( empty($content) || empty($fuid) )
-		{
-			return false;
-		}
-		
-		$data = array(
-            "uid" => $this->pk(),
-            "fuids" => $fuid,
-            "content" => $content
-		); 
-		
-		$response = Model_API::factory("message")->send_message($data);
-		
-		return $response;
-	}
-	
-	public function rm_message($msg_id)
-	{
-		if(empty($msg_id))
-			return false;
-			
-		$data = array(
-            "uid" => $this->pk(),
-            "msg_id" => $msg_id
-		);
-		
-		$response = Model_API::factory("message")->delete_message($data);
-		
-		return $response;
-	}
-	
-	public function count_message()
-	{
-		$data = array(
-		    "uid" => $this->pk(),
-		);
-		$response = Model_API::factory("message")->get_collect($data);
-		
-		return $response;
-	}
-	
 	
 	public function get_unread_status()
 	{
