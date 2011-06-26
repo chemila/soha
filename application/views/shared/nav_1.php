@@ -6,7 +6,7 @@
         <li class="link"><a id="fancy_chart" href="user/relationship">Relationship</a></li>
         <li class="link"><a href="javascript:show(++page);" title="Get next 20 photos">Next</a></li>
         <li class="link"><a href="javascript:show(--page);" title="Previous 20 photos">Previous</a></li>
-        <li class="link"><a id="login" title="Login" href="#login_form">Login</a></li>
+        <li class="link"><a id="login" title="Login" href="auth">Login</a></li>
     </ul> 
 </div>
 

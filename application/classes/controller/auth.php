@@ -2,10 +2,11 @@
 
 class Controller_Auth extends Controller_Base {
     const COOKIE_NAME = 'chemila';
+    const SESSION_NAME = 'source';
 
     public function action_index()
     {
-        $this->trigger_error();
+        $this->init_view();
     }
 
     public function action_authsub()
@@ -37,8 +38,13 @@ class Controller_Auth extends Controller_Base {
 
     public function action_login()
     {
-        $src = Arr::get($_GET, 'source', 'sina');
-        session::instance()->set('oauth_src', $src);
+        $src = Arr::get($_GET, 'source', false);
+        if( ! $src)
+        {
+            $this->trigger_error('source is invalid');
+        }
+
+        session::instance()->set(self::SESSION_NAME, $src);
         $oauth = new OAuth($src);
 
         if($callback = $oauth->request_token())
@@ -93,6 +99,10 @@ class Controller_Auth extends Controller_Base {
         {
             $this->trigger_error('获取用户信息失败');
         }
+
+        $this->init_view('success');
+        $this->view->user_info = $user_info;
+        return;
 
         $user = new Model_User;
         $choose = false;
@@ -149,15 +159,13 @@ class Controller_Auth extends Controller_Base {
         {
             $this->trigger_error('获取access token失败');
         }
-        
-        var_dump($access_token);
         die('success');
     }
 
     protected function get_referer_source()
     {
         //HTTP_REFERER
-        if($src = session::instance()->get_once('oauth_src', false))
+        if($src = session::instance()->get_once(self::SESSION_NAME, false))
             return $src;
 
         $referer = @$_SERVER['HTTP_REFERER'];

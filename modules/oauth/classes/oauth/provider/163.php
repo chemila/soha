@@ -2,7 +2,6 @@
 
 class OAuth_Provider_163 extends Kohana_OAuth_Provider {  
     public $name = '163';
-
     public $signature = 'HMAC_SHA1';
 
 	public function url_request_token()

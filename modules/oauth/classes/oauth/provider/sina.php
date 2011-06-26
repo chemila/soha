@@ -2,7 +2,6 @@
 
 class OAuth_Provider_Sina extends Kohana_OAuth_Provider {  
     public $name = 'sina';
-
     public $signature = 'HMAC_SHA1';
 
 	public function url_request_token()
