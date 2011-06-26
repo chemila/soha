@@ -9,7 +9,7 @@
         <div class="corner tr"></div>
         <div class="header">
             <h2>Oops, some error happens</h2>
-            <h3><!--{$error}--></h3>
+            <h3><font color="red"><!--{$error}--></font></h3>
         </div>
         <div class="content">
             <div class="picture"></div>
