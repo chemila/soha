@@ -1,0 +1,92 @@
+package re
+{
+    import flash.display.*;
+    import flash.text.*;
+
+    public class Research extends MovieClip
+    {
+        private var txtcolor:Object = 14929282;
+        public var key:String = "";
+        public var btn:Object;
+        public var txt:TextField;
+        public var randombtn:Object;
+
+        public function Research()
+        {
+            key = "";
+            txtcolor = 14929282;
+            txt.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+            btn.addEventListener("click", searchClick);
+            if (randombtn)
+            {
+                randombtn.addEventListener("click", randomChange);
+            }
+            return;
+        }// end function
+
+        public function init(param1:int = 14929282)
+        {
+            txtcolor = param1;
+            txt.textColor = txtcolor;
+            txt.text = "输入姓名";
+            txt.addEventListener(FocusEvent.FOCUS_IN, txtFocusIn);
+            txt.addEventListener(FocusEvent.FOCUS_OUT, txtFocusOut);
+            return;
+        }// end function
+
+        protected function randomChange(param1)
+        {
+            dispatchEvent(new Event("randomChange"));
+            return;
+        }// end function
+
+        public function clearInput()
+        {
+            txt.textColor = txtcolor;
+            txt.text = "输入姓名";
+            return;
+        }// end function
+
+        protected function keyDown(param1)
+        {
+            if (param1.charCode == 13)
+            {
+                searchClick(null);
+            }
+            return;
+        }// end function
+
+        function txtFocusIn(param1)
+        {
+            txt.textColor = 0;
+            txt.text = "";
+            return;
+        }// end function
+
+        protected function searchClick(param1)
+        {
+            if (txt.text == "输入姓名")
+            {
+                return;
+            }
+            if (txt.text.length < 2)
+            {
+                return;
+            }
+            key = txt.text;
+            clearInput();
+            dispatchEvent(new Event("keyChange"));
+            return;
+        }// end function
+
+        function txtFocusOut(param1)
+        {
+            if (txt.text == "")
+            {
+                clearInput();
+            }
+            return;
+        }// end function
+
+    }
+}

@@ -37,182 +37,18 @@ class Model_User extends ORM {
         ),
     );
 
-    public function load()
-    {
-        return $this->reload();
-    }
-
     public function is_star()
     {
-        $this->load();
+        $this->reload();
 
         $category = Arr::get($this->_object, 'category', 0);
         return $category == self::CATEGORY_STAR;
-    }
-
-    public function pk($uid = NULL)
-    {
-        if($uid)
-        {
-            $this->_object[$this->_primary_key] = $uid;
-        }
-
-        return $this->_object[$this->_primary_key];
-    }
-
-    public function save_token(OAuth_Token_Access $access_token)
-    {
-        $token = new Model_User_Token($this->pk());
-        $token->reload();
-
-        if( ! $token->loaded())
-        {
-            $token->uid = $this->pk();
-        }
-
-        $token->token = $access_token->token;
-        $token->secret = $access_token->secret;
-        $token->created_at = time();
-
-        $token->save();
-        return $token->saved();
-    }
-
-    public function save_session($sid = NULL, Array $data = NULL)
-    {
-        $session = new Model_Session($this->pk());
-        $session->reload();
-
-        if( ! $session->loaded())
-        {
-            $session->uid = $this->pk();
-        }
-
-        $session->sid = isset($sid) ? $sid : md5($this->pk().time().Text::random());
-        $session->updated_at = time();
-        if($data)
-        {
-            $session->data = serialize($data);
-        }
-
-        $session->save();
-
-        if($session->saved())
-            return $session->sid;
-
-        return false;
     }
 
     public function get_access_token()
     {
         $token = new Model_User_Token($this->pk());
         return $token->as_array();
-    }
-
-    public function list_following($category = self::CATEGORY_ALL, $page = 1, $limit = 20)
-    {
-        $params = array(
-            'uid' => $this->pk(),
-            'category' => $category,
-            'page' => $page,
-            'limit' => $limit,
-        );
-
-        return Model_API::factory('user')->attention_list($params);
-    }
-
-    public function count_following($category = self::CATEGORY_ALL)
-    {
-        $params = array(
-            'uid' => $this->pk(),
-            'category' => $category,
-        );
-		$response = Model_API::factory("user")->attention_count($params);
-
-		return $response[0];
-    }
-
-    public function add_followding($uid)
-    {
-        $params = array(
-            'uid' => $this->pk(),
-            'fuids' => $uid,
-        );
-
-		$response = Model_API::factory("user")->add_attention($params);
-
-        if(isset($response['result']))
-		    return $response['result'];
-
-        return false;
-    }
-
-    public function rm_following($uid)
-    {
-        $params = array(
-            'uid' => $this->pk(),
-            'fuids' => $uid,       
-        );
-        $response = Model_API::factory("user")->delete_attention($params);
-
-		return $response;
-    }
-
-    public function list_fans($page = 1, $limit = 20)
-    {
-		return Model_API::factory("user")->fans_list(array(
-                'uid' => $this->pk(),
-                'page' => $page,
-                'limit' => $limit,
-        ));
-    }
-
-    public function count_fans()
-    {
-		$response = Model_API::factory("user")->get_fans_count(array('uid' => $this->pk()));
-		return $response[0];
-    }
-
-    public function rm_fans($uid)
-    {
-        $params = array(
-            'uid' => $this->pk(),
-        	'fuids' => $uid,
-        );
-
-		return Model_API::factory("user")->fans_del($params);
-    }
-
-    public function friends_list($page = 1, $limit = 6)
-    {
-        $params = array(
-            'uid' => $this->pk(),
-            'page' => (int)$page,
-            'limit' => (int)$limit,
-        );
-
-        $result = Model_API::factory('user')->list_friend($params);
-        
-        return $result;
-    }
-
-    public function followers_of_friends($page = 1, $limit = 6)
-    {
-        $params = array(
-            'uid' => $this->pk(),
-            'page' => (int)$page,
-            'limit' => (int)$limit,
-        );
-
-        $result = Model_API::factory('user')->followers_of_followers($params);
-        
-        return $result;
-    }
-
-    // TODO: implement it
-    public function is_online()
-    {
-        return true;
     }
 
     public function inbox($page = 1, $limit = 30)

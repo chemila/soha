@@ -1,18 +1,9 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 abstract class Controller_Base extends Controller {
-    protected $_is_login = FALSE;
-    protected $_error = 'errror';
 
     public function before()
     {
-        $su = Cookie::get(Controller_Auth::COOKIE_NAME, FALSE);
-
-        if($su and preg_match('~sid=(\w+);uid=(\d+)~', $su))
-        {
-            $this->_is_login = TRUE;
-        }
-
         return parent::before();
     }
 
@@ -35,7 +26,7 @@ abstract class Controller_Base extends Controller {
 
     public function action_forbidden()
     {
-        $this->request->redirect('/');
+        $this->request->redirect('error/forbidden');
     }
 
     protected function init_view($action = NULL, $controller = NULL)
@@ -45,11 +36,9 @@ abstract class Controller_Base extends Controller {
             ':action'     => empty($action) ? $this->request->action : $action,
         )));
 
-        $this->view->is_login = $this->_is_login;
-
 		if($user = $this->get_current_user())
 		{
-			$this->view->current_user = $user->pk();
+			$this->view->current_user = $user->as_array();
 		}
     }
 
@@ -76,14 +65,20 @@ abstract class Controller_Base extends Controller {
         return max($page, 1);
     }
 
-    protected function trigger_error($message = NULL, $type = '404')
+    protected function trigger_error($error_path = 'default', $type = '404')
     {
+        $message = Core::message('error', $error_path, false);
+
         if(Request::$is_ajax)
         {
             $this->response_json('CC2510', $message);
         }
+    
+        if($message)
+        {
+            Session::instance()->set('error', $message);
+        }
 
-        Session::instance()->set($this->_error, $message);
         $this->request->redirect('error/'.$type);
     }
 
@@ -110,42 +105,19 @@ abstract class Controller_Base extends Controller {
         die($response);
     }
 
-    public function action_force_exit() {}
-
-    protected function init_user(Model_User $user)
-    {
-        if( ! isset($this->view))
-        {
-            $this->init_view();
-        }
-
-        $this->view->user = $user->as_array();
-        $this->view->followers = $user->list_following(Model_User::CATEGORY_STAR, 1, 9);
-        $this->view->general_followers = $user->list_following(Model_User::CATEGORY_DEFAULT, 1, 9);
-        $this->view->friends = $user->friends_list();
-        $this->view->followers_of_friends = $user->followers_of_friends();
-    }
-
     protected function get_current_user()
     {
         if(isset($this->user))
             return $this->user;
 
         $su = Cookie::get(Controller_Auth::COOKIE_NAME, false);
-        if( ! $su)
+
+        if( ! $su or ! preg_match('~sid=(\w+);uid=(\d+)$~', $su, $match))
             return false;
 
-        if( ! preg_match('~sid=(\w+);uid=(\d+)$~', $su, $match))
-            return false;
+        list(, $sid, $uid) = $match;
+        $user = new Model_User($uid);
 
-        $sid = $match[1];
-        $uid = $match[2];
-
-        $session = new Model_Session($uid);
-        if($sid != $session->sid)
-            return false;
-
-        $this->_is_login = true;
-        return $this->user = new Model_User($uid);
+        return $sid === $user->session->sid ? $user : false;
     }
 }

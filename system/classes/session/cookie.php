@@ -26,4 +26,8 @@ class Session_Cookie extends Session {
 		return Cookie::delete($this->_name);
 	}
 
+    public function id()
+    {
+        return md5(time().Text::random());
+    }
 } // End Session_Cookie

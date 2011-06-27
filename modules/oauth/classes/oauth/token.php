@@ -26,4 +26,12 @@ abstract class OAuth_Token extends Kohana_OAuth_Token {
 
         return $this;
     }
+
+    public function as_array()
+    {
+        return array(
+            'token' => $this->token,
+            'secret' => $this->secret,
+        );
+    }
 }

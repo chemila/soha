@@ -19,7 +19,7 @@
                     v: data[i].uid,
                     f: data[i].nick,
                 },
-                data[i].nick,
+                data[i].fuid,
                 data[i].intro
             ];
            

@@ -3,7 +3,7 @@
 class Controller_Error extends Controller_Base {
     public function after()
     {
-        $this->view->error = Session::instance()->get_once($this->_error);
+        $this->view->error = Session::instance()->get_once('error');
         return parent::after();
     }
     
@@ -13,6 +13,11 @@ class Controller_Error extends Controller_Base {
     }
 
     public function action_404()
+    {
+        $this->init_view('index');
+    }
+
+    public function action_forbidden()
     {
         $this->init_view('index');
     }

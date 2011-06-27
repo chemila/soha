@@ -5,14 +5,6 @@ class Controller_Authenticated extends Controller_Base {
 
     public function before()
     {
-        $header = array(
-            'Pragma' => 'no-cache',
-			'Cache-Control' => 'private, no-cache, must-revalidate, no-store',
-            'Expires' => 0,
-		);
-
-        $this->request->headers = $header + $this->request->headers;
-
         $config = Core::config('auth.'.$this->request->controller);
 
         isset($config['skipped']) or $config['skipped'] = array();
@@ -21,16 +13,13 @@ class Controller_Authenticated extends Controller_Base {
         if( ! in_array($this->request->action, $config['skipped']) or 
               in_array($this->request->action, $config['required']))
         {
-            if( ! $this->authenticate())
+            if( ! $user = $this->authenticate())
             {
                 $this->request->action = 'forbidden';
                 return false;
             }
-        }
 
-        if($this->user)
-        {
-            $this->init_cache($this->user);
+            $this->user = $user;
         }
 
         return parent::before();
@@ -38,12 +27,7 @@ class Controller_Authenticated extends Controller_Base {
 
     protected function authenticate()
     {
-        $user = $this->get_current_user();
-        if( ! $user)
-            return false;
-
-        $this->user->online = 1;
-        return true;
+        return $this->get_current_user();
     }
 
     public function action_forbidden()
@@ -53,11 +37,6 @@ class Controller_Authenticated extends Controller_Base {
             $this->response_json('CC2510');
         }
 
-        $this->request->redirect('/auth');
-    }
-
-    public function after()
-    {
-        return parent::after();
+        $this->request->redirect('auth');
     }
 }

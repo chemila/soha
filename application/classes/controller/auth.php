@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Auth extends Controller_Base {
-    const COOKIE_NAME = 'chemila';
+    const COOKIE_NAME = 'su';
     const SESSION_NAME = 'source';
 
     public function action_index()
@@ -41,7 +41,7 @@ class Controller_Auth extends Controller_Base {
         $src = Arr::get($_GET, 'source', false);
         if( ! $src)
         {
-            $this->trigger_error('source is invalid');
+            $this->trigger_error('auth.source');
         }
 
         session::instance()->set(self::SESSION_NAME, $src);
@@ -53,7 +53,7 @@ class Controller_Auth extends Controller_Base {
         }
         else
         {
-            $this->trigger_error('认证失败');
+            $this->trigger_error('oauth.request_token');
         }
     }
     
@@ -77,11 +77,11 @@ class Controller_Auth extends Controller_Base {
     public function action_oauth_callback()
     {
         $verifier = Arr::get($_GET, 'oauth_verifier', $_GET['oauth_token']);
-        $src = $this->get_referer_source();
+        $src = session::instance()->get_once(self::SESSION_NAME, false);
 
         if( ! $src)
         {
-            $this->trigger_error('获取认证来源出错');
+            $this->trigger_error('auth.source');
         }
 
         $oauth = new OAuth($src);
@@ -89,7 +89,7 @@ class Controller_Auth extends Controller_Base {
 
         if( ! $oauth->has_access_token())
         {
-            $this->trigger_error('获取access token失败');
+            $this->trigger_error('oauth.access_token');
         }
         // Fetch userinfo accoss oauth
         $model_oauth = Model_OAuth::factory($oauth);
@@ -97,49 +97,51 @@ class Controller_Auth extends Controller_Base {
 
         if( ! $user_info)
         {
-            $this->trigger_error('获取用户信息失败');
+            $this->trigger_error('oauth.user_info');
+        }
+
+        $user = new Model_User(array('suid' => $user_info['suid'], 'source' => $user_info['source']));
+
+        if( ! $user->loaded())
+        {
+            $user->values($user_info);
+            $user->save();
+
+            if( ! $user->saved())
+            {
+                $this->trigger_error('user.create');
+            }
+        }
+
+        $token = $user->token->find($user->pk());
+        if( ! $token->loaded())
+        {
+            $token->uid = $user->pk();
+        }
+        $token->values($access_token->as_array())->save();
+        if( ! $token->saved())
+        {
+            $this->trigger_error('token.create');
+        }
+
+        $session = $user->session->find($user->pk());
+        if( ! $session->loaded())
+        {
+            $session->uid = $user->pk();
+        }
+        $session->sid = Session::instance()->id();
+        $session->save();
+        if($user->session->saved())
+        {
+            Cookie::set(self::COOKIE_NAME, sprintf('sid=%s;uid=%s', $session->sid, $user->pk()));
+        }
+        else
+        {
+            $this->trigger_error('session.create');
         }
 
         $this->init_view('success');
         $this->view->user_info = $user_info;
-        return;
-
-        $user = new Model_User;
-        $choose = false;
-
-        if( ! $uid = $user->check_exist($user_info['suid'], $user_info['source']))
-        {
-            if( ! $uid = $user->create($user_info))
-            {
-                $this->trigger_error('创建用户失败');
-            }
-
-            $choose = true;
-        }
-
-        if( ! $user->save_token($access_token))
-        {
-            $this->trigger_error('用户token存储失败');
-        }
-
-        if($sid = $user->save_session())
-        {
-            Cookie::set(self::COOKIE_NAME, sprintf('sid=%s;uid=%s', $sid, $uid), 1296000);
-        }
-        else
-        {
-            $this->trigger_error('用户session存储失败');
-        }
-
-        if($choose)
-        {
-            $this->init_view('choose');
-            $this->view->user = $user_info;
-        }
-        else
-        {
-            $this->request->redirect('/');
-        }
     }
 
     public function action_oauth_google()
@@ -149,7 +151,7 @@ class Controller_Auth extends Controller_Base {
 
         if( ! $src)
         {
-            $this->trigger_error('获取认证来源出错');
+            $this->trigger_error('auth.source');
         }
 
         $oauth = new OAuth($src);
@@ -157,40 +159,8 @@ class Controller_Auth extends Controller_Base {
 
         if( ! $oauth->has_access_token())
         {
-            $this->trigger_error('获取access token失败');
+            $this->trigger_error('oauth.access_token');
         }
         die('success');
     }
-
-    protected function get_referer_source()
-    {
-        //HTTP_REFERER
-        if($src = session::instance()->get_once(self::SESSION_NAME, false))
-            return $src;
-
-        $referer = @$_SERVER['HTTP_REFERER'];
-
-        if(empty($referer))
-            return false;
-
-        if(false !== strpos($referer, 'api.t.163.com'))
-            return '163';
-
-        if(false !== strpos($referer, 'api.t.sohu.com'))
-            return 'sohu';
-
-        if(false !== strpos($referer, 'open.t.qq.com'))
-            return 'qq';
-
-        if(false !== strpos($referer, 'sina.com.cn'))
-            return 'sina';
-            
-        return false;
-    }
-
-    protected function getAuthSubUrl() 
-    {
-        $config = Core::config('google')->get('authsub');
-        return Zend_Gdata_AuthSub::getAuthSubTokenUri($config['next'], $config['scope'], false, true);
-    } 
 }

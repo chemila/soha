@@ -3,7 +3,6 @@
 class Model_Setting extends Model_QORM {
     const CATEGORY_DEFAULT = 0;
 
-    protected $_table_name = 'setting';
     protected $_categories = array('comment', 'message', 'weibo');
 
     public function by_user($uid)

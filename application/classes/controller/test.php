@@ -69,27 +69,4 @@ HTML;
 HTML;
     } 
 
-    public function action_oauth()
-    {
-        $src = 'flickr';
-        session::instance()->set('oauth_src', $src);
-        $oauth = new OAuth($src);
-
-        if($callback = $oauth->request_token())
-        {
-            $this->request->redirect($callback);
-        }
-        else
-        {
-            $this->trigger_error('认证失败');
-        }
-    }
-
-    public function action_users()
-    {
-        $user = new model_user(1005136);
-
-        $fans = $user->followers->find_all();
-        var_dump($user->last_query());
-    }
 }// End Welcome

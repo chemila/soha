@@ -1,0 +1,1205 @@
+package 
+{
+    import Relation.*;
+    import flash.display.*;
+    import flash.geom.*;
+    import flash.net.*;
+    import flash.text.*;
+    import flash.utils.*;
+    import re.*;
+
+    public class Relation extends Sprite
+    {
+        var ps:Object;
+        var rootNode:Object;
+        var startTimer:Object;
+        public var viewTf:TextField;
+        private var relationDistance:Number = 150;
+        var roleName:String = "";
+        var activeNode:Object;
+        var rs:Object;
+        public var copyURLBtn:SimpleButton;
+        var sp:Point;
+        var lineGra:Shape;
+        public var dc:Object;
+        var history:History;
+        public var refreshTf:TextField;
+        public var logoBtn:Object;
+        var nodes:Array;
+        var totalDragDistance:Number = 0;
+        var viewHolder:Sprite;
+        var dargop:Point;
+        var hitView:Object;
+        public var copyTip:MovieClip;
+        public var noresTip:MovieClip;
+        protected var noRelationView:Boolean = false;
+        public var loading:MovieClip;
+        var dargp:Point;
+        var timer:Timer;
+        var viewContentLoader:URLLoader;
+        protected var dragNode:Object;
+        var stageWidth:Object;
+        var tipXML:XML;
+        var viewType:Object;
+        var nameReCount:Object;
+        var research:Research;
+        public var data:Object;
+        var stageHeight:Object;
+        var relations:Array;
+        public static var tipxmlurl:String = "http://tag.soso.com/s/tip.xml";
+        public static var bigMode:Boolean;
+        public static var tagreldataurl:String = "http://tag.soso.com/i/getRelDataNew.php";
+        public static var tagsearch:String = "http://tag.soso.com/i/TagSearch.php";
+        public static var singleNode:Object = false;
+        public static var tagnewsrel:String = "http://tag.soso.com/i/News4FlashR.php";
+        public static var tagnews:String = "http://tag.soso.com/i/News4Flash.php";
+        public static var tagkeyword:String = "李娜-体育";
+        public static var tagrandomurl:String = "http://tag.soso.com/i/Random.php";
+        public static var taghpicurl:String = "http://tag.soso.com/i/getHpic.php";
+        public static var instance:Relation;
+
+        public function Relation()
+        {
+            var historyChange:*;
+            var ss:*;
+            var uloader:URLLoader;
+            nodes = [];
+            relations = [];
+            roleName = "";
+            nameReCount = {};
+            noRelationView = false;
+            relationDistance = 150;
+            dargp = new Point();
+            dargop = new Point(0, 0);
+            totalDragDistance = 0;
+            startTimer = getTimer();
+            historyChange = function (param1)
+            {
+                loadData(history.item);
+                return;
+            }// end function
+            ;
+            instance = this;
+            stage.align = "C";
+            stage.scaleMode = "noScale";
+            noresTip.visible = false;
+            getPars(this.loaderInfo);
+            new ScriptMode().init();
+            research = new Research();
+            addChild(research);
+            research.addEventListener("keyChange", researchChange);
+            research.addEventListener("randomChange", randomChange);
+            viewHolder = new Sprite();
+            addChild(viewHolder);
+            history = new History();
+            addChild(history);
+            history.addEventListener("change", historyChange);
+            if (bigMode)
+            {
+                stageWidth = 600;
+                stageHeight = 560;
+                history.x = stageWidth - 116;
+                history.y = 8;
+                research.y = 55;
+                research.x = 5;
+                research.init();
+                dc.addEventListener("dateChange", dateChange);
+                copyURLBtn.addEventListener(MouseEvent.CLICK, function (param1)
+            {
+                System.setClipboard("http://tag.soso.com/i/" + roleName + "?pid=tag.wal.copy&ch=wal.copy&y=" + getDateStr(dc.currentDate));
+                copyTip.gotoAndPlay(2);
+                return;
+            }// end function
+            );
+            }
+            else
+            {
+                stageWidth = 310;
+                stageHeight = 300;
+                research.init(6710886);
+                history.x = 202;
+                history.y = 4;
+                research.y = 286;
+                research.x = 5;
+                relationDistance = 120;
+                setChildIndex(viewHolder, 0);
+            }
+            showLoading(false);
+            timer = new Timer(25);
+            timer.addEventListener(TimerEvent.TIMER, timerHandler);
+            if (refreshTf)
+            {
+                ss = new StyleSheet();
+                ss.setStyle("a", {textDecoration:"underline", color:"#BC9D13"});
+                ss.setStyle("a:hover", {textDecoration:"underline", color:"#ff0000"});
+                refreshTf.styleSheet = ss;
+                refreshTf.htmlText = "<a href=\"event:refresh\">刷新关系</a>";
+                refreshTf.addEventListener("link", refreshData);
+                logoBtn.addEventListener("click", function (param1)
+            {
+                navigateToURL(new URLRequest("http://www.soso.com"));
+                return;
+            }// end function
+            );
+            }
+            if (loaderInfo.parameters.y)
+            {
+                loadData(tagkeyword, false, true, loaderInfo.parameters.y);
+            }
+            else
+            {
+                loadData(tagkeyword, false, true);
+            }
+            if (!bigMode)
+            {
+                uloader = new URLLoader(new URLRequest(tagrandomurl + "?en=utf8&pid=tag.wal.random&ch=wal.random&r=" + Math.random()));
+                uloader.addEventListener(Event.COMPLETE, function (param1)
+            {
+                research.txt.text = uloader.data;
+                return;
+            }// end function
+            );
+            }
+            return;
+        }// end function
+
+        protected function getNodeByName(param1)
+        {
+            var _loc_2:* = undefined;
+            if (param1 == data.VIP.name)
+            {
+                return data.VIP.mc;
+            }
+            for (_loc_2 in ps)
+            {
+                
+                if (ps[_loc_2].name == param1)
+                {
+                    return ps[_loc_2].mc;
+                }
+            }
+            return null;
+        }// end function
+
+        protected function mouseUp(param1)
+        {
+            stage.removeEventListener(MouseEvent.MOUSE_UP, mouseUp);
+            activeNode.stopDrag();
+            activeNode.reset();
+            activeNode = null;
+            return;
+        }// end function
+
+        protected function filterName(param1)
+        {
+            return param1.split(" ").join("");
+        }// end function
+
+        protected function timerHandler(param1)
+        {
+            run();
+            drawReleation();
+            return;
+        }// end function
+
+        protected function rootChangeNode(param1)
+        {
+            var _loc_2:String = null;
+            if (bigMode)
+            {
+                hitView = param1.currentTarget;
+                _loc_2 = tagnews + "?kw=" + toShortName(hitView.data.name) + (singleNode ? ("&o=1") : (""));
+                getNewsContent(_loc_2, rolecontentLoaded);
+                ExternalInterface.call("pr_get", _loc_2, "tag.a", 1, "tag");
+            }
+            else
+            {
+                navigateToURL(new URLRequest("http://tag.soso.com/i/" + encodeURI(toShortName(param1.currentTarget.data.name)) + "?pid=tag.wal.big&ch=wal.big"));
+            }
+            return;
+        }// end function
+
+        protected function randomChange(param1)
+        {
+            var uloader:URLLoader;
+            var e:* = param1;
+            uloader = new URLLoader(new URLRequest(tagrandomurl + "?en=utf8&pid=tag.wal.random&ch=wal.random&r=" + Math.random()));
+            uloader.addEventListener(Event.COMPLETE, function (param1)
+            {
+                if (bigMode)
+                {
+                    loadData(uloader.data, true, true, getCurrentDateStr());
+                }
+                else
+                {
+                    navigateToURL(new URLRequest(tagsearch + "?kw=" + encodeURI(uloader.data) + "&en=utf8&t=rel&pid=tag.wal.random&ch=wal.random"));
+                }
+                return;
+            }// end function
+            );
+            return;
+        }// end function
+
+        protected function setBrightness(param1:uint, param2:int) : uint
+        {
+            var trans:ColorTransform;
+            var c:* = param1;
+            var bright:* = param2;
+            trans = new ColorTransform();
+            trans.color = c;
+            var _loc_4:* = trans;
+            with (trans)
+            {
+                var _loc_5:* = (100 - Math.abs(bright)) / 100;
+                blueMultiplier = (100 - Math.abs(bright)) / 100;
+                var _loc_5:* = _loc_5;
+                greenMultiplier = _loc_5;
+                redMultiplier = _loc_5;
+                var _loc_5:* = bright > 0 ? (bright * (256 / 100)) : (0);
+                blueOffset = bright > 0 ? (bright * (256 / 100)) : (0);
+                var _loc_5:* = _loc_5;
+                greenOffset = _loc_5;
+                redOffset = _loc_5;
+            }
+            return trans.color;
+        }// end function
+
+        protected function clearView()
+        {
+            if (timer)
+            {
+                timer.stop();
+            }
+            while (viewHolder.numChildren > 0)
+            {
+                
+                viewHolder.removeChildAt(0);
+            }
+            nodes = [];
+            relations = [];
+            return;
+        }// end function
+
+        protected function recontentLoaded(param1)
+        {
+            var _loc_2:* = undefined;
+            var _loc_3:* = undefined;
+            var _loc_4:* = undefined;
+            var _loc_5:* = undefined;
+            var _loc_6:* = undefined;
+            showLoading(false);
+            _loc_2 = toObject(viewContentLoader.data);
+            _loc_3 = {};
+            _loc_3.name = hitView.fromNode.data.name;
+            _loc_3.name1 = hitView.toNode.data.name;
+            _loc_3.head = hitView.fromNode.data.pic;
+            _loc_3.head1 = hitView.toNode.data.pic;
+            _loc_3.relation = hitView.label;
+            _loc_4 = _loc_2.news.items ? (_loc_2.news.items) : ([]);
+            if (_loc_4)
+            {
+                if (!(_loc_4 is Array))
+                {
+                    _loc_4 = [_loc_4];
+                }
+            }
+            _loc_3.news = _loc_4;
+            _loc_5 = getRelKeys(hitView.label);
+            if (!(_loc_5 is Array))
+            {
+                _loc_5 = [_loc_5];
+            }
+            _loc_3.keys = _loc_5;
+            _loc_6 = RelationNews.getInstance();
+            _loc_6.update(_loc_3);
+            if (!_loc_6.hasEventListener("close"))
+            {
+                _loc_6.addEventListener("close", reNewsClose);
+            }
+            timer.stop();
+            Global.moudleDlgShow(_loc_6, root);
+            return;
+        }// end function
+
+        private function run()
+        {
+            var _loc_1:Point = null;
+            var _loc_2:Point = null;
+            var _loc_3:Number = NaN;
+            var _loc_4:Number = NaN;
+            var _loc_5:int = 0;
+            var _loc_6:Point = null;
+            var _loc_7:Point = null;
+            var _loc_8:RelationView = null;
+            var _loc_9:NodeView = null;
+            var _loc_10:NodeView = null;
+            var _loc_11:* = undefined;
+            var _loc_12:int = 0;
+            _loc_5 = nodes.length;
+            _loc_6 = new Point();
+            _loc_7 = new Point();
+            for each (_loc_8 in relations)
+            {
+                
+                _loc_9 = _loc_8.fromNode;
+                _loc_10 = _loc_8.toNode;
+                _loc_6 = new Point(_loc_9.x, _loc_9.y);
+                _loc_7 = new Point(_loc_10.x, _loc_10.y);
+                _loc_4 = Point.distance(_loc_6, _loc_7);
+                _loc_1 = _loc_7.subtract(_loc_6);
+                _loc_3 = 0.05 * (_loc_4 - relationDistance);
+                _loc_1.normalize(_loc_3);
+                _loc_9.acceleration.x = _loc_9.acceleration.x + _loc_1.x;
+                _loc_9.acceleration.y = _loc_9.acceleration.y + _loc_1.y;
+                _loc_10.acceleration.x = _loc_10.acceleration.x - _loc_1.x;
+                _loc_10.acceleration.y = _loc_10.acceleration.y - _loc_1.y;
+            }
+            _loc_11 = 0;
+            while (_loc_11 < _loc_5)
+            {
+                
+                _loc_9 = nodes[_loc_11];
+                _loc_6 = new Point(_loc_9.x, _loc_9.y);
+                _loc_2 = _loc_9.acceleration;
+                _loc_12 = _loc_11 + 1;
+                while (_loc_12 < _loc_5)
+                {
+                    
+                    _loc_10 = nodes[_loc_12];
+                    _loc_7 = new Point(_loc_10.x, _loc_10.y);
+                    _loc_1 = _loc_7.subtract(_loc_6);
+                    _loc_1.normalize(relationDistance / Point.distance(_loc_6, _loc_7) / 2);
+                    _loc_2.x = _loc_2.x - _loc_1.x;
+                    _loc_2.y = _loc_2.y - _loc_1.y;
+                    _loc_10.acceleration.x = _loc_10.acceleration.x + _loc_1.x;
+                    _loc_10.acceleration.y = _loc_10.acceleration.y + _loc_1.y;
+                    _loc_12 = _loc_12 + 1;
+                }
+                _loc_11 = _loc_11 + 1;
+            }
+            setSpeed();
+            move();
+            return;
+        }// end function
+
+        protected function drawReleation()
+        {
+            var _loc_1:* = undefined;
+            var _loc_2:RelationView = null;
+            lineGra.graphics.clear();
+            _loc_1 = 0;
+            while (_loc_1 < rs.length)
+            {
+                
+                _loc_2 = relations[_loc_1];
+                _loc_2.fromNode = getNodeByName(rs[_loc_1].from);
+                _loc_2.toNode = getNodeByName(rs[_loc_1].to);
+                _loc_2.x = (_loc_2.fromNode.x + _loc_2.toNode.x) / 2;
+                _loc_2.y = (_loc_2.fromNode.y + _loc_2.toNode.y) / 2;
+                lineGra.graphics.lineStyle(2, 12362792);
+                lineGra.graphics.moveTo(_loc_2.fromNode.x, _loc_2.fromNode.y);
+                lineGra.graphics.lineTo(_loc_2.toNode.x, _loc_2.toNode.y);
+                _loc_1 = _loc_1 + 1;
+            }
+            return;
+        }// end function
+
+        function getNameURL(param1)
+        {
+            var _loc_2:* = undefined;
+            var _loc_3:String = null;
+            _loc_2 = param1.toLowerCase();
+            _loc_3 = MD5.hash(_loc_2).toUpperCase();
+            return _loc_3.substr(0, 2) + "/" + _loc_3.substr(2, 2) + "/" + _loc_3;
+        }// end function
+
+        public function getCurrentDateStr() : String
+        {
+            return getDateStr(dc.currentDate);
+        }// end function
+
+        protected function stagemouseMove(param1)
+        {
+            var _loc_2:* = undefined;
+            if (move)
+            {
+            }
+            if (param1.buttonDown)
+            {
+            }
+            if (getTimer() - startTimer > 20)
+            {
+                dargp.x = param1.stageX;
+                dargp.y = param1.stageY;
+                _loc_2 = Point.distance(dargp, dargop);
+                if (_loc_2 > 10)
+                {
+                }
+                if (_loc_2 < 120)
+                {
+                    totalDragDistance = totalDragDistance + _loc_2;
+                }
+                dargop.x = dargp.x;
+                dargop.y = dargp.y;
+                startTimer = getTimer();
+            }
+            return;
+        }// end function
+
+        protected function getNewsContent(param1, param2)
+        {
+            viewContentLoader = new URLLoader(new URLRequest(param1));
+            viewContentLoader.dataFormat = "binary";
+            viewContentLoader.addEventListener(Event.COMPLETE, param2);
+            showLoading();
+            return;
+        }// end function
+
+        protected function nodeNewsClose(param1)
+        {
+            timer.start();
+            Global.moudleDlgHide(NodeNews.getInstance());
+            return;
+        }// end function
+
+        protected function dateChange(param1)
+        {
+            var _loc_2:* = undefined;
+            _loc_2 = param1.data as Date;
+            loadData(roleName, true, true, getDateStr(_loc_2));
+            ExternalInterface.call("rpv", 1);
+            return;
+        }// end function
+
+        protected function showDragTip()
+        {
+            var _loc_1:* = undefined;
+            var _loc_2:uint = 0;
+            _loc_1 = new DragTip();
+            stage.addChild(_loc_1);
+            _loc_1.x = dragNode.x;
+            _loc_1.y = dragNode.y;
+            if (tipXML != null)
+            {
+                _loc_2 = int(Math.random() * tipXML.node.length());
+                _loc_1.info = "      " + tipXML.node[_loc_2].tip.toString();
+                _loc_1.faceid = tipXML.node[_loc_2].emotion.toString();
+            }
+            else
+            {
+                _loc_1.faceid = null;
+                _loc_1.info = "";
+            }
+            return;
+        }// end function
+
+        protected function nodeMouseDown(param1)
+        {
+            if (!timer.running)
+            {
+                timer.start();
+            }
+            activeNode = param1.currentTarget;
+            stage.addEventListener("mouseMove", stagemouseMove);
+            stage.addEventListener("mouseUp", stagemouseUp);
+            dragNode = activeNode;
+            activeNode.startDrag();
+            stage.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+            getTipInfo();
+            return;
+        }// end function
+
+        protected function refreshData(param1)
+        {
+            loadData(roleName, true, false, getCurrentDateStr());
+            return;
+        }// end function
+
+        protected function researchChange(param1)
+        {
+            navigateToURL(new URLRequest(tagsearch + "?kw=" + encodeURI(filterName(research.key)) + "&en=utf8&t=rel&pid=tag.wal.so&ch=wal.so"));
+            return;
+        }// end function
+
+        private function setSpeed()
+        {
+            var _loc_1:Number = NaN;
+            var _loc_2:* = undefined;
+            var _loc_3:* = undefined;
+            var _loc_4:NodeView = null;
+            var _loc_5:Number = NaN;
+            var _loc_6:Point = null;
+            _loc_1 = 0.75;
+            _loc_2 = stageHeight;
+            _loc_3 = activeNode != null;
+            _loc_5 = 1;
+            for each (_loc_4 in nodes)
+            {
+                
+                sp = _loc_4.speed;
+                if (activeNode === _loc_4)
+                {
+                    sp.x = 0;
+                    sp.y = 0;
+                    continue;
+                }
+                _loc_6 = _loc_4.acceleration;
+                sp.x = (sp.x + _loc_6.x) * _loc_1;
+                sp.y = (sp.y + _loc_6.y) * _loc_1;
+                sp.x = Math.min(sp.x, _loc_2);
+                sp.x = Math.max(sp.x, -_loc_2);
+                sp.y = Math.min(sp.y, _loc_2);
+                sp.y = Math.max(sp.y, -_loc_2);
+                if (!_loc_3)
+                {
+                }
+                if (Math.abs(sp.x) <= _loc_5)
+                {
+                }
+                if (Math.abs(sp.y) <= _loc_5)
+                {
+                }
+                if (Math.abs(_loc_6.x) <= _loc_5)
+                {
+                }
+                if (Math.abs(_loc_6.y) > _loc_5)
+                {
+                    _loc_3 = true;
+                }
+            }
+            if (!_loc_3)
+            {
+                timer.stop();
+            }
+            return;
+        }// end function
+
+        protected function tipLink(param1, param2)
+        {
+            return "<font color=\"#ff9900\"><u><a href=\"" + param2 + "\" target=\"_blank\">" + param1 + "</a></u></font>";
+        }// end function
+
+        protected function rolecontentLoaded(param1)
+        {
+            var _loc_2:* = undefined;
+            var _loc_3:* = undefined;
+            var _loc_4:* = undefined;
+            var _loc_5:* = undefined;
+            var _loc_6:* = undefined;
+            showLoading(false);
+            _loc_2 = toObject(viewContentLoader.data);
+            _loc_3 = {};
+            _loc_3.name = hitView.data.name;
+            _loc_3.head = hitView.data.pic;
+            _loc_4 = _loc_2.news.items ? (_loc_2.news.items) : ([]);
+            if (!(_loc_4 is Array))
+            {
+                _loc_4 = [_loc_4];
+            }
+            _loc_3.news = _loc_4;
+            _loc_5 = _loc_2.news.hotsearch ? (_loc_2.news.hotsearch.kw) : (null);
+            if (!(_loc_5 is Array))
+            {
+                _loc_5 = [_loc_5];
+            }
+            _loc_3.keys = _loc_5;
+            _loc_6 = NodeNews.getInstance();
+            _loc_6.update(_loc_3);
+            if (!_loc_6.hasEventListener("close"))
+            {
+                _loc_6.addEventListener("close", nodeNewsClose);
+            }
+            timer.stop();
+            Global.moudleDlgShow(_loc_6, root);
+            return;
+        }// end function
+
+        protected function getDateStr(param1:Date) : String
+        {
+            var _loc_2:* = undefined;
+            var _loc_3:* = undefined;
+            _loc_2 = param1.getMonth() + 1;
+            if (_loc_2 < 10)
+            {
+                _loc_2 = "0" + _loc_2;
+            }
+            _loc_3 = param1.getDate();
+            if (_loc_3 < 10)
+            {
+                _loc_3 = "0" + _loc_3;
+            }
+            return param1.getFullYear() + "" + _loc_2 + "" + _loc_3;
+        }// end function
+
+        protected function stagemouseUp(param1)
+        {
+            stage.removeEventListener("mouseMove", stagemouseMove);
+            stage.removeEventListener("mouseUp", stagemouseUp);
+            if (totalDragDistance > 500 * 2)
+            {
+                showDragTip();
+            }
+            totalDragDistance = 0;
+            return;
+        }// end function
+
+        protected function showLoading(param1:Boolean = true)
+        {
+            if (param1)
+            {
+                if (!loading.stage)
+                {
+                    addChild(loading);
+                }
+            }
+            else
+            {
+                if (loading)
+                {
+                }
+                if (loading.stage)
+                {
+                    removeChild(loading);
+                }
+            }
+            return;
+        }// end function
+
+        protected function showErrorTip(param1:String) : void
+        {
+            var tips:* = param1;
+            stage.addChild(noresTip);
+            noresTip.visible = true;
+            noresTip.tf.htmlText = tips;
+            setTimeout(function ()
+            {
+                noresTip.visible = false;
+                return;
+            }// end function
+            , 3000);
+            return;
+        }// end function
+
+        protected function toObject(param1)
+        {
+            var str:*;
+            var ba:* = param1;
+            str;
+            try
+            {
+                str = ba.readMultiByte(ba.length, "gb2312");
+                str = str.split("#CC0033").join("\"#CC0033\"");
+                str = str.split("#C9BA57").join("\"#C9BA57\"");
+            }
+            catch (e)
+            {
+            }
+            return XML2Object.to(new XML(str));
+        }// end function
+
+        protected function initUI()
+        {
+            var _loc_1:* = undefined;
+            var _loc_2:* = undefined;
+            var _loc_3:NodeView = null;
+            var _loc_4:* = undefined;
+            var _loc_5:RelationView = null;
+            clearView();
+            lineGra = new Shape();
+            viewHolder.addChild(lineGra);
+            rootNode = new RootView();
+            rootNode.setLabel("<a href=\"event:txt\">" + data.VIP.name + "</a>");
+            rootNode.data = data.VIP;
+            rootNode.loadPic(data.VIP.bpic);
+            data.VIP.mc = rootNode;
+            rootNode.addEventListener(MouseEvent.MOUSE_DOWN, nodeMouseDown);
+            rootNode.addEventListener("change", rootChangeNode);
+            viewHolder.addChild(rootNode);
+            if (bigMode)
+            {
+                rootNode.x = stageWidth / 2;
+            }
+            else
+            {
+                rootNode.x = stageWidth / 2 + 80;
+            }
+            rootNode.y = stageHeight / 2 + 30;
+            nodes.push(rootNode);
+            ps = data.people;
+            _loc_1 = Math.PI * 2 * Math.random();
+            _loc_2 = 0;
+            while (_loc_2 < ps.length)
+            {
+                
+                _loc_3 = new NodeView();
+                _loc_3.data = ps[_loc_2];
+                _loc_3.loadPic(ps[_loc_2].pic);
+                _loc_3.addEventListener(MouseEvent.MOUSE_DOWN, nodeMouseDown);
+                _loc_3.addEventListener("change", changeNode);
+                _loc_3.setLabel("<a href=\"event:txt\">" + ps[_loc_2].name + "</a>");
+                ps[_loc_2].mc = _loc_3;
+                viewHolder.addChild(_loc_3);
+                nodes.push(_loc_3);
+                _loc_4 = Point.polar(relationDistance * Math.random() * 2, Math.PI / ps.length * _loc_2 * 2 + _loc_1);
+                if (bigMode)
+                {
+                    _loc_3.x = stageWidth / 2 + _loc_4.x;
+                }
+                else
+                {
+                    _loc_3.x = stageWidth / 2 + _loc_4.x + 20;
+                }
+                _loc_3.y = stageHeight / 2 + 30 + _loc_4.y;
+                _loc_2 = _loc_2 + 1;
+            }
+            rs = data.relation;
+            _loc_2 = 0;
+            while (_loc_2 < rs.length)
+            {
+                
+                _loc_5 = new RelationView();
+                _loc_5.addEventListener("change", changeRelation);
+                _loc_5.data = rs[_loc_2];
+                _loc_5.fromNode = getNodeByName(rs[_loc_2].from);
+                _loc_5.toNode = getNodeByName(rs[_loc_2].to);
+                _loc_5.percent = rs[_loc_2].p;
+                _loc_5.setLabels(rs[_loc_2].label);
+                rs[_loc_2].mc = _loc_5;
+                viewHolder.addChild(_loc_5);
+                relations.push(_loc_5);
+                _loc_2 = _loc_2 + 1;
+            }
+            drawReleation();
+            timer.start();
+            return;
+        }// end function
+
+        protected function loadData(param1, param2:Boolean = true, param3:Boolean = false, param4:String = null)
+        {
+            var dataUrl:String;
+            var urlLoader:URLLoader;
+            var dataError:*;
+            var getReCount:*;
+            var dataLoaded:*;
+            var name:* = param1;
+            var c:* = param2;
+            var showErrorTip:* = param3;
+            var date:* = param4;
+            dataError = function (param1)
+            {
+                var p:*;
+                var e:* = param1;
+                showLoading(false);
+                singleNode = true;
+                p;
+                p.pic = taghpicurl + "?kw=" + p.name + "&ty=s";
+                p.bpic = taghpicurl + "?kw=" + p.name + "&ty=b";
+                data = {};
+                data.VIP = p;
+                data.people = [];
+                data.relation = [];
+                initUI();
+                if (showErrorTip)
+                {
+                    stage.addChild(noresTip);
+                    noresTip.visible = true;
+                    if (date)
+                    {
+                        if (int(date) > int(getDateStr(new Date())))
+                        {
+                            noresTip.tf.htmlText = "抱歉，未来的关系还没有产生。";
+                        }
+                        else
+                        {
+                            noresTip.tf.htmlText = "抱歉，暂无关系数据。";
+                        }
+                        setTimeout(function ()
+                {
+                    noresTip.visible = false;
+                    return;
+                }// end function
+                , 3000);
+                    }
+                    else
+                    {
+                        noresTip.tf.htmlText = "<font color=\"#0000ff\"><a href=\"http://www.soso.com/q?sc=web&pid=tag.wal.so&ch=wal.so&w=" + name + "\" target=\"_blank\" ><u>" + name + "</u></a></font>" + "暂无关系数据，3秒后为您跳到其网页搜索结果页了解更多相关信息。";
+                        setTimeout(function ()
+                {
+                    navigateToURL(new URLRequest("http://www.soso.com/q?sc=web&pid=tag.wal.so&ch=wal.so&w=" + name), "_blank");
+                    noresTip.visible = false;
+                    return;
+                }// end function
+                , 3000);
+                    }
+                }
+                return;
+            }// end function
+            ;
+            getReCount = function (param1)
+            {
+                if (param1 == roleName)
+                {
+                    return 0;
+                }
+                if (nameReCount[param1])
+                {
+                    var _loc_2:* = nameReCount;
+                    var _loc_3:* = param1;
+                    var _loc_4:* = nameReCount[param1] + 1;
+                    _loc_2[_loc_3] = _loc_4;
+                }
+                else
+                {
+                    nameReCount[param1] = 1;
+                }
+                return nameReCount[param1];
+            }// end function
+            ;
+            dataLoaded = function (param1)
+            {
+                var d:ByteArray;
+                var str:*;
+                var ds:*;
+                var res:*;
+                var VIP:*;
+                var map:Dictionary;
+                var relation:*;
+                var randcount:*;
+                var people:*;
+                var rsd:*;
+                var i:*;
+                var randdata:*;
+                var v:*;
+                var get3r:*;
+                var addRelation:*;
+                var getPeople:*;
+                var e:* = param1;
+                get3r = function (param1)
+                {
+                    var _loc_2:Array = null;
+                    var _loc_3:* = undefined;
+                    var _loc_4:* = undefined;
+                    if (param1 == 0)
+                    {
+                        return [];
+                    }
+                    _loc_2 = [];
+                    _loc_3 = {};
+                    while (true)
+                    {
+                        
+                        _loc_4 = int(Math.random() * param1);
+                        if (!_loc_3[_loc_4])
+                        {
+                            _loc_2.push(_loc_4);
+                            _loc_3[_loc_4] = true;
+                            if (_loc_2.length < param1)
+                            {
+                            }
+                            if (_loc_2.length >= 3)
+                            {
+                                _loc_2.sort();
+                                return _loc_2;
+                            }
+                        }
+                    }
+                    return [];
+                }// end function
+                ;
+                addRelation = function (param1)
+                {
+                    relation.push({from:param1[0], to:param1[1], label:param1[4].split(","), p:param1[3]});
+                    if (!map[param1[0]])
+                    {
+                        map[param1[0]] = true;
+                        people.push(getPeople(param1[0]));
+                    }
+                    if (!map[param1[1]])
+                    {
+                        map[param1[1]] = true;
+                        people.push(getPeople(param1[1]));
+                    }
+                    return;
+                }// end function
+                ;
+                getPeople = function (param1)
+                {
+                    var _loc_2:* = undefined;
+                    _loc_2 = {name:param1, url:getNameURL(param1)};
+                    _loc_2.pic = taghpicurl + "?kw=" + _loc_2.name + "&ty=s";
+                    _loc_2.bpic = taghpicurl + "?kw=" + _loc_2.name + "&ty=b";
+                    return _loc_2;
+                }// end function
+                ;
+                showLoading(false);
+                singleNode = false;
+                d = urlLoader.data as ByteArray;
+                d.uncompress();
+                str = d.toString();
+                if (str)
+                {
+                }
+                if (str != "")
+                {
+                }
+                if (str.length < 30)
+                {
+                    dataError(e);
+                    return;
+                }
+                ds = str.split("\n");
+                res;
+                VIP;
+                map = new Dictionary();
+                relation;
+                randcount;
+                people;
+                rsd;
+                i;
+                while (i < ds.length)
+                {
+                    
+                    res[i] = ds[i].split("\t");
+                    if (res[i][2] == 1)
+                    {
+                        rsd.push(res[i]);
+                    }
+                    else if (res[i][2] == 0)
+                    {
+                        new activation.addRelation(res[i]);
+                    }
+                    i = (i + 1);
+                }
+                randdata = new activation.get3r(rsd.length);
+                v;
+                while (v < randdata.length)
+                {
+                    
+                    new activation.addRelation(rsd[randdata[v]]);
+                    v = (v + 1);
+                }
+                data = {};
+                i;
+                while (i < people.length)
+                {
+                    
+                    if (people[i].name == res[0][0])
+                    {
+                        data.VIP = people[i];
+                        people.splice(i, 1);
+                        break;
+                    }
+                    i = (i + 1);
+                }
+                data.people = people;
+                data.relation = relation;
+                data.people = Sort.sort(data);
+                initUI();
+                return;
+            }// end function
+            ;
+            noresTip.visible = false;
+            history.item = name;
+            roleName = name;
+            nameReCount = {};
+            if (bigMode)
+            {
+                if (c)
+                {
+                    ExternalInterface.call("showAll", name);
+                }
+            }
+            dataUrl = tagreldataurl + "?kw=" + filterName(name);
+            if (date)
+            {
+                dataUrl = dataUrl + ("&y=" + date + "&pid=tag.wal.z&ch=wal.z");
+            }
+            urlLoader = new URLLoader(new URLRequest(dataUrl));
+            urlLoader.dataFormat = "binary";
+            urlLoader.addEventListener(Event.COMPLETE, dataLoaded);
+            urlLoader.addEventListener(IOErrorEvent.IO_ERROR, dataError);
+            showLoading();
+            return;
+        }// end function
+
+        protected function getTipInfo()
+        {
+            var ul:URLLoader;
+            if (!tipXML)
+            {
+                ul = new URLLoader(new URLRequest(tipxmlurl));
+                ul.addEventListener(IOErrorEvent.IO_ERROR, function (param1)
+            {
+                return;
+            }// end function
+            );
+                ul.addEventListener(Event.COMPLETE, function (param1)
+            {
+                tipXML = new XML(ul.data);
+                return;
+            }// end function
+            );
+            }
+            return;
+        }// end function
+
+        private function move()
+        {
+            var _loc_1:Number = NaN;
+            var _loc_2:NodeView = null;
+            var _loc_3:* = undefined;
+            var _loc_4:* = undefined;
+            var _loc_5:* = undefined;
+            var _loc_6:* = undefined;
+            _loc_1 = 0.2;
+            for each (_loc_2 in nodes)
+            {
+                
+                _loc_3 = 0.5 * _loc_2.width + 5;
+                _loc_4 = stageWidth - _loc_3 - 5;
+                _loc_5 = 0.5 * _loc_2.height + 40;
+                _loc_6 = stageHeight - 0.5 * _loc_2.height - 40;
+                sp = _loc_2.speed;
+                _loc_2.x = _loc_2.x + sp.x;
+                _loc_2.y = _loc_2.y + sp.y;
+                _loc_2.acceleration.x = 0;
+                _loc_2.acceleration.y = 0;
+                if (bigMode)
+                {
+                    if (_loc_2.x < _loc_3)
+                    {
+                        _loc_2.x = (_loc_1 + 1) * _loc_3 - _loc_1 * _loc_2.x;
+                        sp.x = (-sp.x) * _loc_1;
+                    }
+                    if (_loc_2.x > _loc_4)
+                    {
+                        _loc_2.x = (_loc_1 + 1) * _loc_4 - _loc_1 * _loc_2.x;
+                        sp.x = (-sp.x) * _loc_1;
+                    }
+                    if (_loc_2.y < _loc_5)
+                    {
+                        _loc_2.y = (_loc_1 + 1) * _loc_5 - _loc_1 * _loc_2.y;
+                        sp.y = (-sp.y) * _loc_1;
+                    }
+                    if (_loc_2.y > _loc_6)
+                    {
+                        _loc_2.y = (_loc_1 + 1) * _loc_6 - _loc_1 * _loc_2.y;
+                        sp.y = (-sp.y) * _loc_1;
+                    }
+                    if (_loc_2.x < 270)
+                    {
+                    }
+                    if (_loc_2.y < 110)
+                    {
+                        _loc_2.y = (_loc_1 + 1) * 110 - _loc_1 * _loc_2.y;
+                        sp.y = -sp.y;
+                    }
+                }
+            }
+            return;
+        }// end function
+
+        protected function changeNode(param1)
+        {
+            var _loc_2:String = null;
+            _loc_2 = param1.currentTarget.data.name;
+            if (history.newItem(roleName))
+            {
+                loadData(param1.currentTarget.data.name);
+                ExternalInterface.call("rpv", 0);
+            }
+            return;
+        }// end function
+
+        protected function changeRelation(param1)
+        {
+            var _loc_2:String = null;
+            if (bigMode)
+            {
+                hitView = param1.currentTarget;
+                viewType = "relation";
+                if (noRelationView)
+                {
+                    navigateToURL(new URLRequest("http://www.soso.com/q?pid=tag.wal.r&ch=wal.r&w=" + hitView.fromNode.data.name + "+" + hitView.toNode.data.name + "+" + hitView.label));
+                }
+                else
+                {
+                    _loc_2 = tagnewsrel + "?kw=" + encodeURI(hitView.fromNode.data.name) + "+" + encodeURI(hitView.label) + "+" + encodeURI(hitView.toNode.data.name);
+                    getNewsContent(_loc_2, recontentLoaded);
+                    ExternalInterface.call("pr_get", _loc_2, "tag.c", 1, "tag");
+                }
+            }
+            else
+            {
+                navigateToURL(new URLRequest(tagsearch + "?kw=" + encodeURI(roleName) + "&en=utf8&t=rel&pid=tag.wal.big&ch=wal.big"));
+            }
+            return;
+        }// end function
+
+        protected function reNewsClose(param1)
+        {
+            timer.start();
+            Global.moudleDlgHide(RelationNews.getInstance());
+            return;
+        }// end function
+
+        protected function getRelKeys(param1)
+        {
+            var _loc_2:Array = null;
+            var _loc_3:* = undefined;
+            _loc_2 = hitView.labels.concat();
+            _loc_3 = 0;
+            while (_loc_3 < _loc_2.length)
+            {
+                
+                if (param1 == _loc_2[_loc_3])
+                {
+                    _loc_2.unshift(_loc_2.splice(_loc_3, 1));
+                    break;
+                }
+                _loc_3 = _loc_3 + 1;
+            }
+            return _loc_2;
+        }// end function
+
+        static function getPars(param1)
+        {
+            var _loc_2:* = undefined;
+            _loc_2 = param1.parameters;
+            if (_loc_2.tagkeyword != undefined)
+            {
+                tagkeyword = _loc_2.tagkeyword;
+            }
+            if (_loc_2.tagrandomurl != undefined)
+            {
+                tagrandomurl = _loc_2.tagrandomurl;
+            }
+            if (_loc_2.tagreldataurl != undefined)
+            {
+                tagreldataurl = _loc_2.tagreldataurl;
+            }
+            if (_loc_2.taghpicurl != undefined)
+            {
+                taghpicurl = _loc_2.taghpicurl;
+            }
+            if (_loc_2.tagnews != undefined)
+            {
+                tagnews = _loc_2.tagnews;
+            }
+            if (_loc_2.tagnewsrel != undefined)
+            {
+                tagnewsrel = _loc_2.tagnewsrel;
+            }
+            if (_loc_2.tagsearch != undefined)
+            {
+                tagsearch = _loc_2.tagsearch;
+            }
+            if (_loc_2.tipxmlurl != undefined)
+            {
+                tipxmlurl = _loc_2.tipxmlurl;
+            }
+            return;
+        }// end function
+
+    }
+}
