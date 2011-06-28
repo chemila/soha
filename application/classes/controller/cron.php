@@ -5,7 +5,7 @@ class Controller_Cron extends Controller {
     public function before()
     {
         //TODO: Do check client ip, protocal, is client first
-        if(false or ! in_array(Request::$client_ip, array('127.0.0.1')))
+        if(false and ! in_array(Request::$client_ip, array('127.0.0.1')))
         {
             $this->request->action = 'forbidden';
             return false;
