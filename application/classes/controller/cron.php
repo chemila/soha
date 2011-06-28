@@ -5,7 +5,7 @@ class Controller_Cron extends Controller {
     public function before()
     {
         //TODO: Do check client ip, protocal, is client first
-        if( ! in_array(Request::$client_ip, array('127.0.0.1', '60.28.113.123')))
+        if( ! in_array(Request::$client_ip, array('127.0.0.1')))
         {
             $this->request->action = 'forbidden';
             return false;
@@ -25,10 +25,11 @@ class Controller_Cron extends Controller {
         //Cron::set('queue_atme', array('* * * * *', array($this, 'queue_atme')));
         //Cron::set('queue_atme_trash', array('* * * * *', array($this, 'queue_atme_trash')));
         //Cron::set('queue_unread', array('* */2 * * *', array($this, 'queue_unread')));
+        //Cron::set('observe_star', array('* */2 * * *', array($this, 'observe_star')));
         Cron::set('collect_weibo_oauth', array('*/5 * * * *', array($this, 'collect_weibo_oauth')));
         Cron::set('queue_weibo', array('* * * * *', array($this, 'queue_weibo')));
-        //Cron::set('observe_star', array('* */2 * * *', array($this, 'observe_star')));
-        Cron::set('queue_weibo_publish', array('* * * * *', array($this, 'queue_weibo_publish')));
+        //Cron::set('queue_weibo_publish', array('* * * * *', array($this, 'queue_weibo_publish')));
+        Cron::set('upload_weibo_image', array('* * * * *', array($this, 'upload_weibo_image')));
 	    Cron::run();
     }
 
@@ -110,8 +111,8 @@ class Controller_Cron extends Controller {
                 $data = $model_oauth->home_timeline(array(
                     'count' => 20,
                     'since_id' => $since_id,
+                    //'feature' => '2', // Just image
                 ));
-
                 if( ! $data)
                     continue;
 
@@ -127,10 +128,45 @@ class Controller_Cron extends Controller {
         }
     }
 
+    public function upload_weibo_image()
+    {
+        $weibo = new Model_Weibo;
+        $not_saved = $weibo->where('type', '=', Model_Weibo::TYPE_IMAGE)
+            ->where('source', '=', 'sina')
+            ->where('tag', '=', 0)
+            ->order_by('id', 'desc')
+            ->limit(20)
+            ->find_all();
+
+        foreach($not_saved as $obj)
+        {
+            if( ! $obj->media_data) continue;
+            $array = unserialize($obj->media_data);
+            $src = Arr::path($array, 'img.src', false);
+            $middle = Arr::path($array, 'img.middle', false);
+
+            if($src)
+            {
+                $array['img']['src'] = Model_Weibo::load($src);
+            }
+            if($middle)
+            {
+                $array['img']['middle'] = Model_Weibo::load($middle);
+            }
+
+            $obj->media_data = serialize($array);
+            $obj->tag = 1;
+            $obj->save();
+
+            if($obj->saved()) 
+                printf('saved %s to %s<br>', $src, $array['img']['src']);
+        }
+    }
+
     public function queue_weibo()
     {
         $weibo_shadow = new Model_Collect_Weibo;
-        $shadows = $weibo_shadow->todo(120);
+        $shadows = $weibo_shadow->todo(50);
 
         foreach($shadows as $shadow)
         {
@@ -210,7 +246,7 @@ class Controller_Cron extends Controller {
         $this->queue_weibo();
         $this->queue_weibo_publish();
         **/
-        $this->queue_weibo_publish();
+        $this->upload_weibo_image();
     }
 
     public function action_forbidden()
@@ -251,6 +287,5 @@ class Controller_Cron extends Controller {
                 }
             }
         }
-
     }
 }

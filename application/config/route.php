@@ -41,4 +41,9 @@ return array
         'patterns' => array('uid' => '\d*'),
         'defaults' => array('controller' => 'user', 'action' => 'index'),
     ),
+    'cron' => array(
+        'uri' => '(cron(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'cron', 'action' => 'index'),
+    ),
 );

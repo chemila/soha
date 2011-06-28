@@ -33,7 +33,7 @@ $(document).ready(function() {
         'overlayOpacity'	: 0.5,
         'width'				: '80%',
         'height'			: '90%',
-        'autoScale'			: true,
+        'autoScale'			: false,
         'transitionIn'		: 'none',
         'transitionOut'		: 'none',
         'type'				: 'iframe'

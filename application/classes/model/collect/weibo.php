@@ -1,7 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Model_Collect_Weibo extends Model_QORM {
-    protected $_table_name = 'weibo_shadow';
+    protected $_table_name = 'shadow';
     protected $_has_one = array(
         'root' => array(
             'model' => 'Collect_Weibo',
@@ -20,43 +20,28 @@ class Model_Collect_Weibo extends Model_QORM {
         if( ! empty($status['root']))
         {
             $root = new self;
-            
             if( ! $rid = $root->check_exist($source, $status['root']['sid']))
             {
                 $root->values($status['root']);
                 $root->created_at = time();
-                $root->updated_at = time();
-
                 $root->save();
-
                 $rid = $root->pk();
             }
-
             unset($status['root']);
-            //$rid = $root->fetch($status['root'], $source);
         }
 
         if($pk = $this->check_exist($source, $status['sid']))
-        {
             return $pk;
-        }
 
         $this->values($status);
-
         $this->created_at = time();
-        $this->updated_at = time();
-
         if( ! empty($rid))
         {
             $this->rid = $rid;
         }
-
         $this->save();
-
         if($this->saved())
-        {
             return $this->pk();
-        }
     }
 
     public function check_exist($source, $sid)

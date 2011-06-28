@@ -1,12 +1,11 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 abstract class Model_QORM extends ORM {
-
     protected $_queue_key;
     protected $_mq;
     protected $_mc;
 
-    protected $_ignored_columns = array('_queue_key', '_queue_trash_key', 'user');
+    protected $_ignored_columns = array('_queue_key', '_queue_trash_key');
 
     public function init()
     {

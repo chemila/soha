@@ -2,6 +2,7 @@
 
 return array(
     'sina' => array(
+        //kaliy_2011_2@sina.com
         '1005142',
     ),
     /**

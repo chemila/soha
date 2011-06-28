@@ -113,7 +113,7 @@ class Controller_Auth extends Controller_Base {
             }
         }
 
-        $token = $user->token->find($user->pk());
+        $token = $user->token->reload();
         if( ! $token->loaded())
         {
             $token->uid = $user->pk();
@@ -124,7 +124,7 @@ class Controller_Auth extends Controller_Base {
             $this->trigger_error('token.create');
         }
 
-        $session = $user->session->find($user->pk());
+        $session = $user->session->reload();
         if( ! $session->loaded())
         {
             $session->uid = $user->pk();

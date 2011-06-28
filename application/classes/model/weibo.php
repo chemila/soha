@@ -225,7 +225,7 @@ class Model_Weibo extends Model_QORM {
         $user = new Model_User($this->uid);
         $fans = $user->get_fans_ids();
 
-        $user->load();
+        $user->reload();
         $user->statuses_count ++;
         $user->save();
 
@@ -351,5 +351,46 @@ class Model_Weibo extends Model_QORM {
             ->limit(20)
             ->offset(($page - 1) * 20)
             ->find_all();
+    }
+
+    public static function load($url)
+    {
+        // Cache file is a hash of the name
+        $ext = pathinfo($url, PATHINFO_EXTENSION);
+        if( ! $ext)
+        {
+            $ext = 'jpg';
+        }
+
+		$file = sha1($url).'.'.$ext;
+        $lifetime = 24 * 3600;
+        $config = core::config('upload');
+
+		// Cache directories are split by keys to prevent filesystem overload
+		$dir = $config->get('path').DIRECTORY_SEPARATOR.$file[0].$file[1].DIRECTORY_SEPARATOR;
+
+        if (is_file($dir.$file))
+        {
+            return $dir.$file;
+        }
+
+		if ( ! is_dir($dir))
+		{
+			// Create the cache directory
+			mkdir($dir, 0777, TRUE);
+
+			// Set permissions (must be manually set to fix umask issues)
+			chmod($dir, 0777);
+		}
+        
+        $data = @file_get_contents($url);
+
+        if( ! $data)
+            return FALSE;
+
+        if(file_put_contents($dir.$file, $data, LOCK_EX))
+            return $dir.$file;
+
+        return FALSE;
     }
 }

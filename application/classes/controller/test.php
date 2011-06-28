@@ -69,4 +69,21 @@ HTML;
 HTML;
     } 
 
+    public function action_social()
+    {
+        $this->init_view();
+    }
+
+    public function action_orm()
+    {
+        $user = new model_user(1005142);
+        $fans = $user->fans->find_all();
+        var_dump(array_keys(array()));
+        var_dump($fans->as_array());
+        $token  = $user->token->reload();
+        var_dump($token->loaded());
+        $session  = $user->session->reload();
+        var_dump($session->as_array());
+    }
+
 }// End Welcome

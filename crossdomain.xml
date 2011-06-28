@@ -1,0 +1,7 @@
+<!DOCTYPE cross-domain-policy SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd"> 
+
+<cross-domain-policy> 
+    <allow-access-from domain="*.soso.com" /> 
+    <allow-access-from domain="*.qq.com" /> 
+    <allow-access-from domain="*.pagodabox.com" /> 
+</cross-domain-policy> 

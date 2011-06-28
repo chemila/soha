@@ -29,11 +29,11 @@ class Model_User extends ORM {
     protected $_has_many = array(
         'fans' => array(
             'model' => 'user_relation',
-            'foreign_key' => 'uid',
+            'foreign_key' => 'fuid',
         ),       
         'followers' => array(
             'model' => 'user_relation',
-            'foreign_key' => 'fuid',
+            'foreign_key' => 'uid',
         ),
     );
 
@@ -179,5 +179,27 @@ class Model_User extends ORM {
             ->offset(($page - 1) * 20)
             ->order_by('followers_count', 'desc')
             ->find_all();
+    }
+
+    public function get_fans_ids()
+    {
+        $fans = $this->fans->find_all()->as_array('uid');
+        return array_keys($fans);
+    }
+
+    public function get_followers_ids()
+    {
+        $followers = $this->followers->find_all()->as_array('fid');
+        return array_keys($followers);
+    }
+
+    public function load()
+    {
+        return $this->reload();
+    }
+
+    public function is_online()
+    {
+        return false;
     }
 }
