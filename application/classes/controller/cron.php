@@ -26,9 +26,9 @@ class Controller_Cron extends Controller {
         //Cron::set('queue_atme_trash', array('* * * * *', array($this, 'queue_atme_trash')));
         //Cron::set('queue_unread', array('* */2 * * *', array($this, 'queue_unread')));
         //Cron::set('observe_star', array('* */2 * * *', array($this, 'observe_star')));
-        Cron::set('collect_weibo_oauth', array('*/5 * * * *', array($this, 'collect_weibo_oauth')));
-        Cron::set('queue_weibo', array('* * * * *', array($this, 'queue_weibo')));
         //Cron::set('queue_weibo_publish', array('* * * * *', array($this, 'queue_weibo_publish')));
+        //Cron::set('queue_weibo', array('* * * * *', array($this, 'queue_weibo')));
+        Cron::set('collect_weibo_oauth', array('*/5 * * * *', array($this, 'collect_weibo_oauth')));
         Cron::set('upload_weibo_image', array('* * * * *', array($this, 'upload_weibo_image')));
 	    Cron::run();
     }
