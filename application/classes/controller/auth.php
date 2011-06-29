@@ -140,8 +140,7 @@ class Controller_Auth extends Controller_Base {
             $this->trigger_error('session.create');
         }
 
-        $this->init_view('success');
-        $this->view->user_info = $user_info;
+        $this->request->redirect('user/index');
     }
 
     public function action_oauth_google()

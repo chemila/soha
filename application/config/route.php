@@ -66,4 +66,9 @@ return array
         'patterns' => array(),
         'defaults' => array('controller' => 'user', 'action' => 'index'),
     ),
+    'intl' => array(
+        'uri' => '(intl/help.html)',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'help', 'action' => 'intl'),
+    ),
 );

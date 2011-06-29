@@ -41,7 +41,7 @@ $(document).ready(function() {
 
     $("#login").fancybox({
         'showCloseButton'   : true,
-        //'titlePosition'		: 'over',
+        'titlePosition'		: 'over',
         'overlayColor'		: '#000',
         'overlayOpacity'	: 0.5,
         'autoScale'			: true,

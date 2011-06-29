@@ -63,7 +63,7 @@ class Controller_Data extends Controller_Base {
                     'http://\\1.sinaimg.cn/\\2/180/\\3/\\4', $item->portrait);
             $xml .= sprintf("<i i='%d' e='%s' h='%s' c='%s' d='%d %d' s='%s' l='%s'/>",
                 $i, $file, $item->source, $item->nick.' '.Text::limit_chars($item->intro, 20),
-                180, 180, $item->portrait, $item->portrait);
+                180, 180, $item->portrait, '/error/404');
         }
         //<n i='id' c='0'>
         $xml .= "<n i='id' c='0'>";

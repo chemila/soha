@@ -6,5 +6,10 @@ class Controller_Help extends Controller_Base {
     {
         $this->init_view();
     }
+
+    public function action_intl()
+    {
+        die('test');
+    }
 }
 

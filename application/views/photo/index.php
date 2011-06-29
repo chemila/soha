@@ -9,7 +9,7 @@
 <link href="media/css/nav/main.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<!--{include file="shared/nav_1.php"}--> 
+<!--{include file="shared/nav.php"}--> 
 <div id="photos">
     <strong>This site requires Flash Player 8.0 or greater</strong><br />
     Please click <a href="http://www.adobe.com/products/flashplayer/">here</a> to download.<br />

@@ -48,5 +48,6 @@ height: 55px;
     </div>   
     <div class="clear"></div>
 </div>
-<!--{include file="footer/main.php"}--> 
+</body>
+</html>
 
