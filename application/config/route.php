@@ -38,7 +38,7 @@ return array
     ),
     'user' => array(
         'uri' => '(user(/<action>(/<uid>)))',
-        'patterns' => array('uid' => '\d*'),
+        'patterns' => array('uid' => '\d+'),
         'defaults' => array('controller' => 'user', 'action' => 'index'),
     ),
     'cron' => array(

@@ -17,6 +17,7 @@ return array(
         'create' => '用户令牌创建失败',
     ),
     'user' => array(
+        'default' => '用户数据有误',
         'create' => '创建用户失败',   
     ),
 );
