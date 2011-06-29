@@ -86,7 +86,6 @@ if ( ! defined('SUPPRESS_REQUEST'))
     }
     catch(Exception $e)
     {
-        var_dump($e);die;
         // Add this exception to the log
 		Core::$log->add(Core::ERROR, $e->getMessage());
 
