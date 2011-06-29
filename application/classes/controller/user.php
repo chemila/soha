@@ -4,7 +4,10 @@ class Controller_User extends Controller_Base {
 
     public function action_index()
     {
-        $this->trigger_error('user.default');
+        $query = Arr::get($_GET, 'q', false);
+
+        $this->init_view('swirl', 'shared');
+        $this->view->query = $query;
     }
 
     public function action_fans()

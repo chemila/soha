@@ -20,4 +20,7 @@ return array(
         'default' => '用户数据有误',
         'create' => '创建用户失败',   
     ),
+    'help' => array(
+        'default' => '正在建设中',   
+    ),
 );

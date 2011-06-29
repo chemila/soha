@@ -9,7 +9,7 @@ class Controller_Help extends Controller_Base {
 
     public function action_intl()
     {
-        die('test');
+        $this->trigger_error('help.default');
     }
 }
 

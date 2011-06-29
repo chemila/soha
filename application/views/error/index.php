@@ -23,4 +23,5 @@
         <div class="corner br"></div>
     </div>
 </div>
-<!--{include file="footer/main.php"}--> 
+</body>
+</html>
