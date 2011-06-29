@@ -14,11 +14,19 @@ class Controller_Data extends Controller_Base {
     {
         //$this->init_view('swirl_2', 'user'); return;
         $this->user = new model_user($id);
-        $all = $followers = $this->user->get_followers();
-        $collection = array();
+        $followers = $this->user
+            ->where('source', '=', 'sina')
+            ->where('portrait', '!=', '')
+            ->limit(20)
+            ->order_by('fans_count', 'desc')
+            ->find_all();
 
+
+        $collection = array();
         foreach($followers as $obj)
         {
+            $all[] = $obj;
+
             $fs = $obj->get_fans();
             $collection[$obj->pk()]['name'] = $obj->nick;
             $collection[$obj->pk()]['sub'] = $fs;
@@ -42,7 +50,7 @@ class Controller_Data extends Controller_Base {
         if(false and $cached = Core::cache($cache_key, NULL, NULL, false))
             return $cached;
 
-        $xml = "<browser><l l='0'/><i i='0'/>"."\r\n";
+        $xml = "<browser><l l='0'/><i i='0'/>";
         //<i i='id' e='thumb_url' h='host_name' c='caption split by x' d='width height' s='image_url' l='land_url '/>
         $i = 0;
         $map = array();
@@ -51,8 +59,10 @@ class Controller_Data extends Controller_Base {
             $i ++;
             $map[$item->pk()] = $i;
             if( ! $item->portrait) continue;
-            $xml .= sprintf("<i i='%d' e='%s' h='%s' c='%s' d='%d %d' s='%s' l='%s '/>\r\n",
-                $i, $item->portrait, $item->source, $item->nick,
+            $file = preg_replace('~http://(\w+)\.sinaimg\.cn/(\w+)/\d+/(\w+)/(\d+)/?$~i', 
+                    'http://\\1.sinaimg.cn/\\2/180/\\3/\\4', $item->portrait);
+            $xml .= sprintf("<i i='%d' e='%s' h='%s' c='%s' d='%d %d' s='%s' l='%s'/>",
+                $i, $file, $item->source, $item->nick.' '.Text::limit_chars($item->intro, 20),
                 180, 180, $item->portrait, $item->portrait);
         }
         //<n i='id' c='0'>
@@ -61,20 +71,24 @@ class Controller_Data extends Controller_Base {
         //<n i='id' c='collection_id' k1='pagoda'>
         foreach($collection as $pk => $array)
         {
-            $xml .= sprintf("<n i='%d' c='%s' k1='%s'>\r\n", $map[$pk], $pk, $collection[$pk]['name']);
-
-            foreach($array['sub'] as $obj)
+            if(count($array['sub']))
             {
-                $xml .= sprintf("<n i='%d' c='%s' k1='%s'/>\r\n", $map[$obj->pk()], $obj->pk(), $obj->nick);
+                $xml .= sprintf("<n i='%d' c='%s' k1='%s'>", $map[$pk], $pk, $collection[$pk]['name']);
+                foreach($array['sub'] as $obj)
+                {
+                    $xml .= sprintf("<n i='%d' c='%s' k1='%s'/>", $map[$obj->pk()], $obj->pk(), $obj->nick);
+                }
+                $xml .= "</n>";
             }
-
-            $xml .= "</n>\r\n";
+            else
+            {
+                $xml .= sprintf("<n i='%d' c='%s' k1='%s'/>", $map[$pk], $pk, $collection[$pk]['name']);
+            }
         }
         //</n></n></browser>
         $xml .= "</n></browser>";
 
         Core::cache($cache_key, $xml, 86400, false);
-
         return $xml;
     }
 
