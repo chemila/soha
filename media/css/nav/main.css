@@ -4,7 +4,7 @@
     height: 32px;
     margin: 0 0 0 -7px;
     position: relative;
-    width: 998px;
+    width: 100%;
 }
 .app.nav .left {
     background-position: -366px -8px;
@@ -15,7 +15,6 @@
     width: 7px;
 }
 .sprite {
-    background: url("sprite.png") no-repeat scroll 0 0 transparent;
     display: block;
 }
 * {

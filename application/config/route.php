@@ -46,4 +46,24 @@ return array
         'patterns' => array(),
         'defaults' => array('controller' => 'cron', 'action' => 'index'),
     ),
+    'log' => array(
+        'uri' => '(log(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'log', 'action' => 'index'),
+    ),
+    'xml' => array(
+        'uri' => '(xml(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'data', 'action' => 'index'),
+    ),
+    'suggest' => array(
+        'uri' => '(suggest(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'data', 'action' => 'suggest'),
+    ),
+    'html' => array(
+        'uri' => '(html(/<action>))',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'user', 'action' => 'index'),
+    ),
 );

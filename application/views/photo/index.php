@@ -36,5 +36,4 @@
     //]]>
 </script>
 <div style="display:none;"><a id="fancy_layer" href="#inline" title=""></a></div>
-</body>
-</html>
+<!--{include file="footer/main.php"}-->
