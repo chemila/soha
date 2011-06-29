@@ -2,6 +2,7 @@
 
 return array(
     'default' => '未知错误',
+    'todo' => '正在建设中...',
     'oauth' => array(
         'request_token' => '获取请求令牌失败',
         'access_token' => '获取访问令牌失败',

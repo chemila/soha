@@ -47,6 +47,6 @@ class Controller_User extends Controller_Base {
     public function action_show()
     {
         $user = new Model_User($this->request->param('uid'));
-        var_dump($user->as_array());
+        $this->trigger_error('todo'); 
     }
 }

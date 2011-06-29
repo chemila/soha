@@ -65,7 +65,7 @@ abstract class Controller_Base extends Controller {
         return max($page, 1);
     }
 
-    protected function trigger_error($error_path = 'default', $type = 'index')
+    protected function trigger_error($error_path = 'default', $type = '')
     {
         $message = Core::message('error', $error_path, false);
 
