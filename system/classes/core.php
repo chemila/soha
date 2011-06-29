@@ -764,13 +764,14 @@ class Core {
 	 * @param   string   name of the cache
 	 * @param   mixed    data to cache
 	 * @param   integer  number of seconds the cache is valid for
+	 * @param   boolean  serialize yes or not
 	 * @return  mixed    for getting
 	 * @return  boolean  for setting
 	 */
-	public static function cache($name, $data = NULL, $lifetime = NULL)
+	public static function cache($name, $data = NULL, $lifetime = NULL, $serialize = true)
 	{
 		// Cache file is a hash of the name
-		$file = sha1($name).'.txt';
+		$file = sha1($name);
 
 		// Cache directories are split by keys to prevent filesystem overload
 		$dir = Core::$cache_dir.DIRECTORY_SEPARATOR.$file[0].$file[1].DIRECTORY_SEPARATOR;
@@ -788,7 +789,8 @@ class Core {
 				if ((time() - filemtime($dir.$file)) < $lifetime)
 				{
 					// Return the cache
-					return unserialize(file_get_contents($dir.$file));
+                    $content = file_get_contents($dir.$file);
+                    return $serialize ? unserialize($content) : $content;
 				}
 				else
 				{
@@ -820,7 +822,10 @@ class Core {
 
         // If no extension setting
 		// Force the data to be a string
-		$data = serialize($data);
+        if($serialize)
+        {
+		    $data = serialize($data);
+        }
 
 		try
 		{

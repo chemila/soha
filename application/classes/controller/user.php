@@ -6,6 +6,6 @@ class Controller_User extends Controller_Authenticated {
     {
         $this->init_view('swirl', 'shared');
         $this->view->type = 'user';
-        $this->view->version = 'chemila';
+        $this->view->version = $this->user->pk();
     }
 }

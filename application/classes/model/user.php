@@ -181,16 +181,50 @@ class Model_User extends ORM {
             ->find_all();
     }
 
-    public function get_fans_ids()
+    public function get_fans_ids($limit = 20, $offset = 0)
     {
-        $fans = $this->fans->find_all()->as_array('uid');
+        $fans = $this->fans->limit($limit)
+            ->offset($offset)
+            ->find_all()
+            ->as_array('uid');
+
         return array_keys($fans);
     }
 
-    public function get_followers_ids()
+    public function get_fans($limit = 20, $offset = 0)
     {
-        $followers = $this->followers->find_all()->as_array('fid');
+        $ids = $this->get_fans_ids($limit, $offset);
+        $users = array();
+
+        foreach($ids as $uid)
+        {
+            $users[] = new self($uid);
+        }
+
+        return $users;
+    }
+
+    public function get_followers_ids($limit = 20, $offset = 0)
+    {
+        $followers = $this->followers->limit($limit)
+            ->offset($offset)
+            ->find_all()
+            ->as_array('fuid');
+
         return array_keys($followers);
+    }
+
+    public function get_followers($limit = 20, $offset = 0)
+    {
+        $ids = $this->get_followers_ids($limit, $offset);
+        $users = array();
+
+        foreach($ids as $uid)
+        {
+            $users[] = new self($uid);
+        }
+
+        return $users;
     }
 
     public function load()
