@@ -7,6 +7,8 @@
     height: 32px;
     line-height: 23px;
     z-index: 9999;
+    border-bottom: 1px solid #DADBDC;
+    text-align: center;
 }
 .nav li a {
     color: #8F0045;
@@ -41,8 +43,8 @@
     width: 3px;
 }
 .nav li a.active {
-    background: none repeat scroll 0 0 #EAEAEA;
-    color: #000000;
+    background: #EAEAEA;
+    color: black;
 }
 ul, ul li {
     list-style-position: outside;
@@ -59,17 +61,6 @@ ul, ul li {
 a {
     text-decoration: none;
 }
-.nav .list .link.active a {
-    color: #8F0045;
-    display: block;
-    font-size: 15px;
-    height: 32px;
-    line-height: 30px;
-    margin: 0;
-    padding: 0 10px;
-    position: relative;
-}
-
 a:hover {
     background-image: -webkit-gradient(linear, 0% 100%, 0% 0%, from(#CFCFCF), to(#E0E0E0));
     color: #3D3D3D;

@@ -37,5 +37,6 @@ class Controller_User extends Controller_Base {
 
         $this->init_view();
         $this->view->user = $user->as_array();
+        $this->view->sid = $user->pk();
     }
 }
