@@ -15,7 +15,7 @@ class Controller_Data extends Controller_Base {
         //$this->init_view('swirl_2', 'user'); return;
         $this->user = new model_user($id);
         $followers = $this->user
-            ->where('source', '=', 'sina')
+            //->where('source', '=', 'sina')
             ->where('portrait', '!=', '')
             ->limit(20)
             ->order_by('fans_count', 'desc')
