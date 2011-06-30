@@ -1,7 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_User extends Controller_Base {
-
+class Controller_User extends Controller_Authenticated {
     public function action_index()
     {
         $query = Arr::get($_GET, 'q', false);
@@ -38,5 +37,11 @@ class Controller_User extends Controller_Base {
         $this->init_view();
         $this->view->user = $user->as_array();
         $this->view->sid = $user->pk();
+    }
+
+    public function action_profile()
+    {
+        $this->init_view('swirl', 'shared');
+        $this->view->sid = $this->user->pk();
     }
 }

@@ -17,7 +17,6 @@ class Controller_Data extends Controller_Base {
     protected function user_swirl($id = NULL, $query = NULL)
     {
         $user = new model_user;
-
         if($query)
         {
             $users = $user->where('nick', 'like', '%'.$query.'%')->find_all(); 
@@ -32,7 +31,7 @@ class Controller_Data extends Controller_Base {
         else
         {
             $this->cache_key = 'user_swirl_top'.date('Ymd');
-            $users = $user->where('portrait', '!=', '')
+            $users = $user->where('source', '=', 'sina')
                 ->limit(20)
                 ->order_by('fans_count', 'desc')
                 ->find_all();
@@ -51,7 +50,6 @@ class Controller_Data extends Controller_Base {
         }
         
         $all = array_unique($all);
-
         die($this->to_xml($all, $collection));
     }
 
@@ -73,15 +71,10 @@ class Controller_Data extends Controller_Base {
         {
             $i ++;
             $map[$item->pk()] = $i;
-            if( ! $item->portrait) 
-            {
-                $item->portrait = '/media/img/portrait/default_180.gif';
-            }
-
             $url = $this->fix_portrait($item->portrait, $item->source, 180);
-            $xml .= sprintf("<i i='%d' e='%s' h='%s' c='%s' d='%d %d' s='%s' l='%s'/>",
+            $xml .= sprintf("<i i='%d' e='%s' h='%s' c='%s' d='%d %d' l='%s'/>", 
                 $i, $url, $item->source, $item->nick.' '.Text::limit_chars($item->location, 20),
-                180, 180, $item->portrait, 'user/show/'.$item->pk());
+                180, 180, 'user/show/'.$item->pk());
         }
         //<n i='id' c='0'>
         $xml .= "<n i='id' c='0'>";
@@ -127,11 +120,16 @@ class Controller_Data extends Controller_Base {
         $this->view->query = $name;
     }
 
-    protected function fix_portrait($url, $source = NULL, $size = 180)
+    protected function fix_portrait($url = NULL, $source = NULL, $size = 180)
     {
         if( ! $source)
         {
-            return $url;
+            return URL::site($url, true);
+        }
+
+        if( ! $url)
+        {
+            return URL::site('/media/img/portrait/default_m.jpg', true);
         }
     
         $url_info = parse_url($url);
@@ -156,18 +154,14 @@ class Controller_Data extends Controller_Base {
         }
         //http://oimagec1.ydstatic.com/image?w=48&h=48&url=http%3A%2F%2F126.fm%2F2y8Xi5
         //elseif(preg_match('~^http://\w+\.ydstatic\.com~', $url, $match))
-        if('sohu' == $source and strpos($url_info['host'], "ydstatic.com"))
+        if('163' == $source)
         {
-            if($size == 50)
-            {
-                $query = $url_info['query'];
-            }
-            else 
-            {
-                $size = $map['large'];
-                $query = str_replace("=48", "=$size", $url_info['query']);
-            }
-            return $url_info['scheme']."://".$url_info['host']."".$url_info['path']."?".$query;
+            return URL::site('/media/img/portrait/default_m.jpg', true);
         }
+    }
+
+    public function action_test()
+    {
+        $this->user_swirl('1003324');
     }
 }

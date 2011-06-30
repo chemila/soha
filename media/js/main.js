@@ -39,7 +39,7 @@ $(document).ready(function() {
         'type'				: 'iframe'
     });
 
-    $("#fancy_login").fancybox({
+    $("#fancy_profile").fancybox({
         'showCloseButton'   : true,
         'overlayColor'		: '#000',
         'overlayOpacity'	: 0.5,

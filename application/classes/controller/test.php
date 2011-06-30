@@ -71,7 +71,7 @@ HTML;
 
     public function action_social()
     {
-        $this->init_view();
+        var_dump(url::site('/media/img/portrait/default_180.png', true));
     }
 
     public function action_orm()
