@@ -69,6 +69,11 @@ class Controller_Data extends Controller_Base {
         //hot commented
         //fans
         //followers
+        $user = new Model_User($id);
+        
+        $fans = $user->get_fans();
+        $followers = $user->get_followers();
+        $feeds = $user->get_feeds();
     }
 
     protected function to_xml($items, $collection)

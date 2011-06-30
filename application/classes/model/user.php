@@ -35,6 +35,18 @@ class Model_User extends ORM {
             'model' => 'user_relation',
             'foreign_key' => 'uid',
         ),
+        'feeds' => array(
+            'modle' => 'weibo',
+            'foreign_key' => 'uid',
+        ),
+        'comments' => array(
+            'modle' => 'comment',
+            'foreign_key' => 'uid',
+        ),
+        'ats' => array(
+            'modle' => 'atme',
+            'foreign_key' => 'uid',
+        ),
     );
 
     public function is_star()
@@ -225,6 +237,17 @@ class Model_User extends ORM {
         }
 
         return $users;
+    }
+
+    public function get_feeds($limit = 20, $offset = 0)
+    {
+        return $this->feeds
+            ->order_by('forward_count', 'desc')
+            ->order_by('comment_count', 'desc')
+            ->order_by('id', 'desc')
+            ->limit($limit)
+            ->offset($offset)
+            ->find_all();
     }
 
     public function load()
