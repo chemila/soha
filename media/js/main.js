@@ -1,8 +1,8 @@
 $(document).ready(function() {
-        
     function formatTitle(title, currentArray, currentIndex, currentOpts) {
         return '<div id="fancybox-title-over"><span><a href="javascript:;" onclick="$.fancybox.close();"></a></span>' + (title && title.length ? '<b>' + title + '</b>' : '' ) + '</div>';
     }
+
     $("#fancy_layer").fancybox({
         'titlePosition'		: 'over',
         'showCloseButton'   : true,
@@ -39,9 +39,8 @@ $(document).ready(function() {
         'type'				: 'iframe'
     });
 
-    $("#login").fancybox({
+    $("#fancy_login").fancybox({
         'showCloseButton'   : true,
-        'titlePosition'		: 'over',
         'overlayColor'		: '#000',
         'overlayOpacity'	: 0.5,
         'autoScale'			: true,
@@ -52,4 +51,3 @@ $(document).ready(function() {
         'type'				: 'iframe'
     });
 });
-

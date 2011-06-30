@@ -65,21 +65,23 @@ abstract class Controller_Base extends Controller {
         return max($page, 1);
     }
 
-    protected function trigger_error($error_path = 'default', $type = '')
+    protected function trigger_error($error_path)
     {
-        $message = Core::message('error', $error_path, false);
+        if( ! $error_path)
+        {
+            $this->request->redirect('error/404');
+        }
 
+        $message = Core::message('error', $error_path, Core::message('error.default'));
         if(Request::$is_ajax)
         {
             $this->response_json('CC2510', $message);
         }
-    
-        if($message)
+        else
         {
             Session::instance()->set('error', $message);
+            $this->request->redirect('error');
         }
-
-        $this->request->redirect('error/'.$type);
     }
 
     protected function response_json($code = 'A00006', $data = NULL, $callback = NULL)

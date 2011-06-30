@@ -30,6 +30,12 @@ class Controller_User extends Controller_Base {
     public function action_show()
     {
         $user = new Model_User($this->request->param('uid'));
-        $this->trigger_error('todo'); 
+        $user->reload();
+
+        if( ! $user->loaded())
+            $this->trigger_error();
+
+        $this->init_view();
+        $this->view->user = $user->as_array();
     }
 }

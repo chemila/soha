@@ -4,7 +4,7 @@ class Controller_Photo extends Controller_Base {
     public function action_index()
     {
         //media/swf/clusterBrowser.swf?q=&version=1003321&s=user
-        if(strpos($_SERVER['HTTP_REFERER'], '/media/swf'))
+        if(strpos($_SERVER['HTTP_REFERER'], '/media/swf/clusterBrowser.swf'))
         {
             $this->request->redirect('user');
         }
@@ -160,7 +160,7 @@ class Controller_Photo extends Controller_Base {
             'title' => Text::limit_chars($data['content'], '80', '...'),
             'icon' => URL::site('media/img/icon/1308731950_images_plus.ico', true),
             'url' => $image,
-            'height' => 180,
+            'width' => 300,
         );
         $calendar->create_web_event($params);
         unset($data, $image, $params);
@@ -175,9 +175,10 @@ class Controller_Photo extends Controller_Base {
         $image = preg_replace('~http://(\w+)\.sinaimg\.cn/(\w+)/\d+/(\w+)/(\d+)/?$~i', 
                 'http://\\1.sinaimg.cn/\\2/180/\\3/\\4', $data['portrait']);
         $params = array(
-            'title' => Text::limit_chars($data['nick'].' '.$data['intro'], '50', '...'),
+            'title' => Text::limit_chars($data['nick'].' 来自：'.$data['location'], '50', '...'),
             'icon' => URL::site('media/img/icon/1308734578_users-add.ico', true),
-            'height' => 180,
+            'width' => 130,
+            'height' => 130,
             'url' => $image,
         );
         $calendar->create_web_event($params);

@@ -18,7 +18,7 @@
 </div>
 <script type="text/javascript">
     //<![CDATA[
-    var so = new SWFObject("/media/swf/photos.swf", "polaroid", "100%", "100%", "8", "#FFFFFF");
+    var so = new SWFObject("media/swf/photos.swf", "polaroid", "100%", "100%", "8", "#FFFFFF");
     var page = 1;
     var type = 'weibo';
     show(page);
