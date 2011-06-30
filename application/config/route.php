@@ -38,7 +38,7 @@ return array
     ),
     'user' => array(
         'uri' => '(user(/<action>(/<uid>)))',
-        'patterns' => array('uid' => '\d*'),
+        'patterns' => array('uid' => '\d+'),
         'defaults' => array('controller' => 'user', 'action' => 'index'),
     ),
     'cron' => array(
@@ -65,5 +65,10 @@ return array
         'uri' => '(html(/<action>))',
         'patterns' => array(),
         'defaults' => array('controller' => 'user', 'action' => 'index'),
+    ),
+    'intl' => array(
+        'uri' => '(intl/help.html)',
+        'patterns' => array(),
+        'defaults' => array('controller' => 'help', 'action' => 'intl'),
     ),
 );

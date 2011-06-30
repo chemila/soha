@@ -7,5 +7,6 @@ var fr = window.parent.document.getElementById('fancybox-frame');
 </script>
 </header>
 welcome: <!--{$user_info.nick}--> 
-<!--{include file="footer/main.php"}--> 
+</body>
+</html>
 

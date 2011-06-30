@@ -9,8 +9,10 @@
         <div class="corner tr"></div>
         <div class="header">
             <h2>Oops, some error happens</h2>
+            <!--{if $error}--> 
             <img src="media/img/icon/warning-y16.png" alt="error" />
-            <span style="margin:0 5px;"><font color="red"><!--{$error}--></font></span>
+            <!--{/if}--> 
+            <span style="margin:0 5px;"><font color="red"><!--{$error|default:''}--></font></span>
         </div>
         <div class="content">
             <div class="picture"></div>
@@ -21,4 +23,5 @@
         <div class="corner br"></div>
     </div>
 </div>
-<!--{include file="footer/main.php"}--> 
+</body>
+</html>

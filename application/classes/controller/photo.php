@@ -3,7 +3,15 @@
 class Controller_Photo extends Controller_Base {
     public function action_index()
     {
-        $this->init_view();
+        //media/swf/clusterBrowser.swf?q=&version=1003321&s=user
+        if(strpos($_SERVER['HTTP_REFERER'], '/media/swf'))
+        {
+            $this->request->redirect('user');
+        }
+        else
+        {
+            $this->init_view();
+        }
     }
 
 	public function action_xml()
@@ -152,6 +160,7 @@ class Controller_Photo extends Controller_Base {
             'title' => Text::limit_chars($data['content'], '100', '...'),
             'icon' => URL::site('media/img/icon/1308731950_images_plus.ico', true),
             'url' => $image,
+            'height' => '80',
             'type' => 'image/'.pathinfo($image, PATHINFO_EXTENSION),
         );
         $calendar->create_web_event($params);
@@ -169,8 +178,7 @@ class Controller_Photo extends Controller_Base {
         $params = array(
             'title' => Text::limit_chars($data['nick'].' '.$data['intro'], '30', '...'),
             'icon' => URL::site('media/img/icon/1308734578_users-add.ico', true),
-            'width' => '180',
-            'height' => '180',
+            'height' => '50',
             'url' => $image,
             'type' => 'image/'.pathinfo($image, PATHINFO_EXTENSION),
         );
