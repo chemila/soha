@@ -155,13 +155,16 @@ class Controller_Photo extends Controller_Base {
         
         $array = unserialize($data['media_data']);
         $image = $array['img']['src'];
+        $image_info = $this->get_image_size($image);
+        list($with, $height, $type) = $image_info;
 
         $params = array(
-            'title' => Text::limit_chars($data['content'], '100', '...'),
+            'title' => Text::limit_chars($data['content'], '80', '...'),
             'icon' => URL::site('media/img/icon/1308731950_images_plus.ico', true),
             'url' => $image,
-            'height' => '80',
-            'type' => 'image/'.pathinfo($image, PATHINFO_EXTENSION),
+            'width' => $with,
+            'height' => $height,
+            'type' => $type,
         );
         $calendar->create_web_event($params);
         unset($data, $image, $params);
@@ -175,12 +178,15 @@ class Controller_Photo extends Controller_Base {
             ->as_array();
         $image = preg_replace('~http://(\w+)\.sinaimg\.cn/(\w+)/\d+/(\w+)/(\d+)/?$~i', 
                 'http://\\1.sinaimg.cn/\\2/180/\\3/\\4', $data['portrait']);
+        $image_info = $this->get_image_size($image);
+        list($with, $height, $type) = $image_info;
         $params = array(
-            'title' => Text::limit_chars($data['nick'].' '.$data['intro'], '30', '...'),
+            'title' => Text::limit_chars($data['nick'].' '.$data['intro'], '50', '...'),
             'icon' => URL::site('media/img/icon/1308734578_users-add.ico', true),
-            'height' => '50',
+            'width' => $width,
+            'height' => $height,
             'url' => $image,
-            'type' => 'image/'.pathinfo($image, PATHINFO_EXTENSION),
+            'type' => $type,
         );
         $calendar->create_web_event($params);
     }
@@ -198,5 +204,27 @@ class Controller_Photo extends Controller_Base {
             echo 'deleted '.$event->id->text. "<br>";
             $event->delete();
         }
+    }
+
+    protected function get_image_size($image, $max_width = 180, $max_height = 180)
+    {
+        $image_info = @getimagesize($image);
+        if( ! $image_info)
+        {
+            return array(NULL, NULL, 'image/jpg');
+        }
+
+        $type = $image_info['mime'];
+
+        list($width, $height) = getimagesize($image); 
+
+        $ratioh = $max_height/$height; 
+        $ratiow = $max_width/$width; 
+        $ratio = min($ratioh, $ratiow); 
+        // New dimensions 
+        $width = intval($ratio*$width); 
+        $height = intval($ratio*$height); 
+
+        return array($width, $height, $type);
     }
 }

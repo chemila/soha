@@ -20,9 +20,8 @@ class Controller_Data extends Controller_Base {
 
         if($query)
         {
-            $user->find('nick', '=', $query); 
-            $this->cache_key = 'user_swirl_'.$user->pk().'_'.date('Ymd');
-            $users = $user->get_followers();
+            $users = $user->where('nick', 'like', '%'.$query.'%')->find_all(); 
+            $this->cache_key = 'user_swirl_'.$query.'_'.date('Ymd');
         }
         elseif('0' !== $id)
         {

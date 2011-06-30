@@ -17,7 +17,7 @@
         <div class="content">
             <div class="picture"></div>
             <hr />
-            <p><a href="auth">Log in</a> | <a href="mailto:chemila@gmail.com">Email me</a> | <a href="http://weibo.com/chemila">Blog</a></p>
+            <p><a href="auth">Log in</a> | <a href="mailto:chemila@gmail.com">Email me</a></p>
         </div>
         <div class="corner bl"></div>
         <div class="corner br"></div>

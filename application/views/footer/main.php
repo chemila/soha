@@ -1,3 +1,4 @@
+<!--
 <div id="gg">
     <div class="close">
         <a href="javascript:void(0)" onclick="$('#gg').hide();" title="关闭">×</a>
@@ -11,5 +12,6 @@
         </ul>
     </div>
 </div>
+-->
 </body>
 </html>
