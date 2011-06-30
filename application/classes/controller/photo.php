@@ -155,16 +155,12 @@ class Controller_Photo extends Controller_Base {
         
         $array = unserialize($data['media_data']);
         $image = $array['img']['src'];
-        $image_info = $this->get_image_size($image);
-        list($with, $height, $type) = $image_info;
 
         $params = array(
             'title' => Text::limit_chars($data['content'], '80', '...'),
             'icon' => URL::site('media/img/icon/1308731950_images_plus.ico', true),
             'url' => $image,
-            'width' => $with,
-            'height' => $height,
-            'type' => $type,
+            'height' => 180,
         );
         $calendar->create_web_event($params);
         unset($data, $image, $params);
@@ -178,15 +174,11 @@ class Controller_Photo extends Controller_Base {
             ->as_array();
         $image = preg_replace('~http://(\w+)\.sinaimg\.cn/(\w+)/\d+/(\w+)/(\d+)/?$~i', 
                 'http://\\1.sinaimg.cn/\\2/180/\\3/\\4', $data['portrait']);
-        $image_info = $this->get_image_size($image);
-        list($with, $height, $type) = $image_info;
         $params = array(
             'title' => Text::limit_chars($data['nick'].' '.$data['intro'], '50', '...'),
             'icon' => URL::site('media/img/icon/1308734578_users-add.ico', true),
-            'width' => $width,
-            'height' => $height,
+            'height' => 180,
             'url' => $image,
-            'type' => $type,
         );
         $calendar->create_web_event($params);
     }

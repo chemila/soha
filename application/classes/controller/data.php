@@ -4,12 +4,12 @@ class Controller_Data extends Controller_Base {
 
     public function action_index()
     {
-        $type = Arr::get($_GET, 's', 'user');
+        $sid = Arr::get($_GET, 's', '0');
         $query = Arr::get($_GET, 'q', false);
-        $version = Arr::get($_GET, 'version', '0');
+        $version = Arr::get($_GET, 'version', 'user');
 
-        call_user_func_array(array($this, $type.'_swirl'), array(
-            'id' => $version, 
+        call_user_func_array(array($this, $version.'_swirl'), array(
+            'id' => $sid, 
             'query' => $query,
         ));
     }

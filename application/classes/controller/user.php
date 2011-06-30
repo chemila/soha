@@ -10,37 +10,20 @@ class Controller_User extends Controller_Base {
         $this->view->query = $query;
     }
 
-    public function action_fans()
-    {
-        $query = Arr::get($_GET, 'q', false);
-        $version = Arr::get($_GET, 'version', 0);
-        $type = Arr::get($_GET, 's', 'user');
-
-        $this->init_view('swirl', 'shared');
-        $this->view->type = $type;
-        $this->view->version = $version;
-        $this->view->query = $query;
-
-        if($user = $this->get_current_user())
-        {
-            $this->view->version = $user->pk();
-        }
-    }
-
     public function action_followers()
     {
         $query = Arr::get($_GET, 'q', false);
-        $version = Arr::get($_GET, 'version', 0);
-        $type = Arr::get($_GET, 's', 'user');
+        $version = Arr::get($_GET, 'version', 'user');
+        $sid = Arr::get($_GET, 's', '0');
 
         $this->init_view('swirl', 'shared');
-        $this->view->type = $type;
+        $this->view->sid = $sid;
         $this->view->version = $version;
         $this->view->query = $query;
 
         if($user = $this->get_current_user())
         {
-            $this->view->version = $user->pk();
+            $this->view->sid = $user->pk();
         }
     }
 
