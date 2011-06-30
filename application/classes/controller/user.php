@@ -7,6 +7,12 @@ class Controller_User extends Controller_Authenticated {
 
         $this->init_view('swirl', 'shared');
         $this->view->query = $query;
+        $this->view->version = 'user';
+    }
+
+    public function action_home()
+    {
+        $this->trigger_error();
     }
 
     public function action_followers()
@@ -26,9 +32,17 @@ class Controller_User extends Controller_Authenticated {
         }
     }
 
-    public function action_show()
+    public function action_profile()
     {
-        $user = new Model_User($this->request->param('uid'));
+        if($uid = $this->request->param('uid'))
+        {
+            $user = new Model_User($uid);
+        }
+        else
+        {
+            $user = $this->get_current_user();
+        }
+
         $user->reload();
 
         if( ! $user->loaded())
@@ -37,11 +51,6 @@ class Controller_User extends Controller_Authenticated {
         $this->init_view();
         $this->view->user = $user->as_array();
         $this->view->sid = $user->pk();
-    }
-
-    public function action_profile()
-    {
-        $this->init_view('swirl', 'shared');
-        $this->view->sid = $this->user->pk();
+        $this->view->version = 'profile';
     }
 }

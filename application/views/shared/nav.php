@@ -1,8 +1,10 @@
 <div class="app nav">
     <ul class="list">
-        <li class="link active"><a href="javascript:type='weibo';show(page=1);">Home</a></li>
+        <li class="link active"><a href="javascript:type='weibo';show(page=1);">Public</a></li>
+        <li class="link"><a id="fancy_home" href="user/home">Home</a></li>
         <li class="link"><a id="fancy_profile" href="user/profile">Profile</a></li>
         <li class="link"><a href="javascript:type='user';show(page=1);">Users</a></li>
+        <li class="link"><a id="fancy_users" href="user">Hot</a></li>
         <li class="link"><a id="fancy_calendar" href="https://www.google.com/calendar/embed?title=t.pagodabox.com&amp;height=700&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=pagodabox%40gmail.com&amp;color=%232F6213&amp;ctz=Asia%2FShanghai">Calendar</a></li>
         <li class="link"><a id="fancy_chart" href="user/followers">Followers</a></li>
         <li class="link"><a href="javascript:show(++page);" title="Get next 20 photos">Next</a></li>

@@ -3,7 +3,8 @@
 class Controller_Data extends Controller_Base {
     public function before()
     {
-        if( ! stripos($_SERVER['HTTP_REFERER'], 'media/swf/clusterBrowser.swf'))
+        if( ! Arr::get($_SERVER, 'HTTP_REFERER', false) or  
+            ! stripos(@$_SERVER['HTTP_REFERER'], 'media/swf/clusterBrowser.swf'))
         {
             $this->trigger_error();
         }
@@ -39,8 +40,9 @@ class Controller_Data extends Controller_Base {
         {
             $this->cache_key = 'user_swirl_top'.date('Ymd');
             $users = $user->where('source', '=', 'sina')
-                ->limit(20)
                 ->order_by('fans_count', 'desc')
+                ->order_by('statuses_count', 'desc')
+                ->limit(40)
                 ->find_all();
         }
 
@@ -60,9 +62,13 @@ class Controller_Data extends Controller_Base {
         die($this->to_xml($all, $collection));
     }
 
-    protected function weibo_swirl($id = NULL, $query = NULL)
+    protected function profile_swirl($id = NULL, $query = NULL)
     {
-        $this->init_view('swirl', 'weibo');
+        //weibo
+        //hot forwarded
+        //hot commented
+        //fans
+        //followers
     }
 
     protected function to_xml($items, $collection)
@@ -78,10 +84,11 @@ class Controller_Data extends Controller_Base {
         {
             $i ++;
             $map[$item->pk()] = $i;
+
             $url = $this->fix_portrait($item->portrait, $item->source, 180);
             $xml .= sprintf("<i i='%d' e='%s' h='%s' c='%s' d='%d %d' l='%s'/>", 
                 $i, $url, $item->source, $item->nick.' '.Text::limit_chars($item->location, 20),
-                180, 180, 'user/show/'.$item->pk());
+                180, 180, 'user/profile/'.$item->pk());
         }
         //<n i='id' c='0'>
         $xml .= "<n i='id' c='0'>";

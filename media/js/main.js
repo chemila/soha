@@ -62,4 +62,17 @@ $(document).ready(function() {
         'transitionOut'		: 'none',
         'type'				: 'iframe'
     });
+
+    $("#fancy_users").fancybox({
+        'showCloseButton'   : true,
+        'overlayColor'		: '#000',
+        'overlayOpacity'	: 0.5,
+        'autoScale'			: true,
+        'width'				: '80%',
+        'height'			: '90%',
+        'transitionIn'		: 'none',
+        'transitionOut'		: 'none',
+        'type'				: 'iframe'
+    });
+
 });
