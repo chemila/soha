@@ -1,6 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class Controller_Data extends Controller_Base {
+    public function before()
+    {
+        if( ! stripos($_SERVER['HTTP_REFERER'], 'media/swf/clusterBrowser.swf'))
+        {
+            $this->trigger_error();
+        }
+    }
 
     public function action_index()
     {
@@ -152,8 +159,6 @@ class Controller_Data extends Controller_Base {
             }
             return $url;
         }
-        //http://oimagec1.ydstatic.com/image?w=48&h=48&url=http%3A%2F%2F126.fm%2F2y8Xi5
-        //elseif(preg_match('~^http://\w+\.ydstatic\.com~', $url, $match))
         if('163' == $source)
         {
             return URL::site('/media/img/portrait/default_m.jpg', true);

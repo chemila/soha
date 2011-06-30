@@ -39,6 +39,18 @@ $(document).ready(function() {
         'type'				: 'iframe'
     });
 
+    $("#fancy_login").fancybox({
+        'showCloseButton'   : true,
+        'overlayColor'		: '#000',
+        'overlayOpacity'	: 0.5,
+        'width'				: '80%',
+        'height'			: '90%',
+        'autoScale'			: false,
+        'transitionIn'		: 'none',
+        'transitionOut'		: 'none',
+        'type'				: 'iframe'
+    });
+
     $("#fancy_profile").fancybox({
         'showCloseButton'   : true,
         'overlayColor'		: '#000',
