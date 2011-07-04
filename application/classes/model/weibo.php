@@ -342,12 +342,13 @@ class Model_Weibo extends Model_QORM {
         return $model_oauth->publish_status($params);
     }
 
-    public function photos($page = 1)
+    public function photos($limit = 20, $offset = 0)
     {
         return $this->where('img', '!=', '')
+            ->where('source', '=', 'sina')
             ->order_by('id', 'desc')
-            ->limit(20)
-            ->offset(($page - 1) * 20)
+            ->limit($limit)
+            ->offset($offset)
             ->find_all();
     }
 

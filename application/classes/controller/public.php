@@ -11,7 +11,7 @@ class Controller_Public extends Controller_Photo {
     {
         $page = $this->get_page();
         $model_weibo = new Model_Weibo;
-        $photos = $model_weibo->photos($page);
+        $photos = $model_weibo->photos(20, ($page - 1) * 20);
         $data = array();
 
         foreach($photos as $weibo)
