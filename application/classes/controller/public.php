@@ -69,8 +69,9 @@ class Controller_Public extends Controller_Base {
     public function action_profile()
     {
         $page = $this->get_page();
-        $uid = $this->request->param('uid');
-        $model_user = new Model_User($uid);
+        $uid = $this->request->param('uid', false);
+
+        $model_user = $uid ? new Model_User($uid) : $this->get_current_user();
         $model_user->reload();
 
         if( ! $model_user->loaded())
