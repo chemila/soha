@@ -344,8 +344,7 @@ class Model_Weibo extends Model_QORM {
 
     public function photos($page = 1)
     {
-        return $this->where('user_category', '=', 1)
-            ->where('source', '=', 'sina')
+        return $this->where('img', '!=', '')
             ->order_by('id', 'desc')
             ->limit(20)
             ->offset(($page - 1) * 20)
