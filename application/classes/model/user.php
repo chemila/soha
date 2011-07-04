@@ -259,4 +259,31 @@ class Model_User extends ORM {
     {
         return false;
     }
+
+    public function fix_portrait($size = 180)
+    {
+        if( ! $this->portrait)
+            return URL::site('/media/img/portrait/default_m.jpg', true);
+
+        if( ! $this->source)
+            return URL::site($this->portrait, true);
+
+        if('sina' == $this->source)
+            return preg_replace('~http://(\w+)\.sinaimg\.cn/(\w+)/\d+/(\w+)/(\d+)/?$~i', 
+                    'http://\\1.sinaimg.cn/\\2/'.$size.'/\\3/\\4', $this->portrait);
+
+        if('qq' == $this->source)
+            return rtrim($this->portrait, '/').'/'.$size;
+
+        if('sohu' == $this->source)
+        {
+            if(50 != $size)
+                return preg_replace('~http://(\w+)\.(\w+)\.itc\.cn/(\w+)/(\w+)/(\w+)/(\w+)/m_(\w+)~i',
+                    'http://\\1.\\2.itc.cn/\\3/\\4/\\5/\\6/\\7', $this->portrait);
+
+            return $this->portrait;
+        }
+    
+        return URL::site('/media/img/portrait/default_m.jpg', true);
+    }
 }

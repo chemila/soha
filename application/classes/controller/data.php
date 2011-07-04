@@ -90,7 +90,7 @@ class Controller_Data extends Controller_Base {
             $i ++;
             $map[$item->pk()] = $i;
 
-            $url = $this->fix_portrait($item->portrait, $item->source, 180);
+            $url = $item->fix_portrait(180);
             $xml .= sprintf("<i i='%d' e='%s' h='%s' c='%s' d='%d %d' l='%s'/>", 
                 $i, $url, $item->source, $item->nick.' '.Text::limit_chars($item->location, 20),
                 180, 180, 'user/profile/'.$item->pk());
@@ -137,44 +137,6 @@ class Controller_Data extends Controller_Base {
 
         $this->view->users = $result;
         $this->view->query = $name;
-    }
-
-    protected function fix_portrait($url = NULL, $source = NULL, $size = 180)
-    {
-        if( ! $source)
-        {
-            return URL::site($url, true);
-        }
-
-        if( ! $url)
-        {
-            return URL::site('/media/img/portrait/default_m.jpg', true);
-        }
-    
-        $url_info = parse_url($url);
-
-        if('sina' == $source)
-        {
-            return preg_replace('~http://(\w+)\.sinaimg\.cn/(\w+)/\d+/(\w+)/(\d+)/?$~i', 
-                    'http://\\1.sinaimg.cn/\\2/'.$size.'/\\3/\\4', $url);
-        }
-        if('qq' == $source)
-        {
-            return rtrim($url, '/').'/'.$size;
-        }
-        if('sohu' == $source and strpos($url_info['host'], "cr.itc.cn"))
-        {
-            if(50 != $size)
-            {
-                return preg_replace('~http://(\w+)\.(\w+)\.itc\.cn/(\w+)/(\w+)/(\w+)/(\w+)/m_(\w+)~i',
-                    'http://\\1.\\2.itc.cn/\\3/\\4/\\5/\\6/\\7', $url);
-            }
-            return $url;
-        }
-        if('163' == $source)
-        {
-            return URL::site('/media/img/portrait/default_m.jpg', true);
-        }
     }
 
     public function action_test()

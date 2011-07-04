@@ -111,6 +111,17 @@ class Controller_Auth extends Controller_Base {
             {
                 $this->trigger_error('user.create');
             }
+
+            $calendar = new Model_Calendar;
+            $params = array(
+                'title' => Text::limit_chars('@'.$user->nick.' 来自：'.$user->location, '50', '...'),
+                'icon' => URL::site('media/img/icon/1308734578_users-add.ico', true),
+                'width' => 180,
+                'height' => 180,
+                'url' => $user->fix_portrait(180),
+            );
+            $calendar->create_web_event($params);
+            unset($calendar, $params);
         }
 
         $token = $user->token->reload();
