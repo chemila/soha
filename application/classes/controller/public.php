@@ -1,43 +1,70 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Public extends Controller_Base
-{
+class Controller_Public extends Controller_Photo {
+
     public function action_index()
     {
-        $page = $this->get_page();
-        $limit = 30;
-
         $this->init_view();
-        $weibo = new Model_Weibo;
-        $this->set_cache();
-
-        $news = $weibo->star_news($page, $limit);
-        $this->view->count = $weibo->count_last_query();
-        $this->view->perpage = $limit;
-
-        $hot = $weibo->hot_commented($page, $limit + 15);
-        $this->view->stars_news = $weibo->extend_collection($news);
-        $this->view->hot_commented = $weibo->extend_collection($hot);
     }
 
-    protected function set_cache()
+    public function action_feed()
     {
-        $model_star = new model_star;
-        $this->cache = Cache::instance('memcache');
+        $page = $this->get_page();
+        $model_weibo = new Model_Weibo;
+        $photos = $model_weibo->photos($page);
+        $data = array();
 
-        if( ! $stars = $this->cache->get('star:hot'))
+        foreach($photos as $weibo)
         {
-            $stars = $model_star->hot(90);
-            $this->cache->set('star:hot', $stars, 24*3600);
+            $content = $desc = $weibo->content;
+            $url = $weibo->img ? $this->load($weibo->img) : '/media/img/404.png';
+            $url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $url);
+
+            $json = array(
+                'pk' => $weibo->pk(),
+                'content' => $content,
+                'image' => $url,
+            );
+
+            $data[] = array(
+                'desc' => Text::limit_chars($desc, 25, '...'),
+                'url' => $url,
+                'link' => sprintf("details(%s);", json_encode($json)),
+            );
         }
 
-        if( ! $stars_count_all = $this->cache->get('star:count_all'))
+        $xml = $this->to_xml($data);
+        die($xml);
+    }
+
+    public function action_user()
+    {
+        $page = $this->get_page();
+        $model_user = new Model_User;
+        $photos = $model_user->photos($page);
+        $data = array();
+
+        foreach($photos as $user)
         {
-            $stars_count_all = $model_star->count_all();
-            $this->cache->set('star:count_all', $stars_count_all, 24*3600);
+            $content = $user->location.' '.$user->intro;
+            $desc = '@'.$user->nick.' '.$user->intro;
+            $url = $user->portrait ? $this->load($user->fix_portrait()) : '/media/img/portrait/default_m.jpg';
+            $url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $url);
+
+            $json = array(
+                'pk' => $user->pk(),
+                'content' => $content,
+                'image' => $url,
+            );
+
+            $data[] = array(
+                'desc' => Text::limit_chars($desc, 25, '...'),
+                'url' => $url,
+                'link' => sprintf("details(%s);", json_encode($json)),
+            );
         }
 
-        $this->view->stars = array_chunk($stars, 3);
-        $this->view->stars_count_all = $stars_count_all;
+        $xml = $this->to_xml($data);
+        die($xml);
     }
 }

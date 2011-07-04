@@ -86,6 +86,10 @@ if ( ! defined('SUPPRESS_REQUEST'))
     }
     catch(Exception $e)
     {
+        if(in_array(Request::$client_ip, array('127.0.0.1')))
+        {
+            var_dump($e);die;
+        }
         // Add this exception to the log
 		Core::$log->add(Core::ERROR, $e->getMessage());
 

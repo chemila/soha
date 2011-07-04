@@ -3,6 +3,6 @@
 return array(
     'user' => array(
         'skipped' => array(''),
-        'required' => array('profile'),
+        'required' => array('home'),
     ),
 );

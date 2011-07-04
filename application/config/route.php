@@ -12,9 +12,9 @@
 return array
 (
     'default' => array(
-        'uri' => '(photo(/<action>))',
+        'uri' => '(public(/<action>))',
         'patterns' => array(),
-        'defaults' => array('controller' => 'photo', 'action' => 'index'),
+        'defaults' => array('controller' => 'public', 'action' => 'index'),
     ),
     'test' => array(
         'uri' => '(test(/<action>))',
@@ -26,10 +26,10 @@ return array
         'patterns' => array(),
         'defaults' => array('controller' => 'error', 'action' => 'index'),
     ),
-    'photo' => array(
-        'uri' => '(photo(/<action>(/<type>)))',
-        'patterns' => array('page' => '\w*'),
-        'defaults' => array('controller' => 'photo', 'action' => 'index'),
+    'public' => array(
+        'uri' => '(public(/<action>(/<page>)))',
+        'patterns' => array('page' => '\d*'),
+        'defaults' => array('controller' => 'public', 'action' => 'index'),
     ),
     'auth' => array(
         'uri' => '(auth(/<action>))',

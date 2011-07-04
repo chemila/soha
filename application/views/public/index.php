@@ -1,76 +1,39 @@
-<!--{include file="header/public.php"}-->
+<!--{include file="header.php"}--> 
+<script type="text/javascript" src="media/js/photo.js"></script>
+<script type="text/javascript" src="media/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="media/js/main.js"></script>
+<script type='text/javascript' src='media/js/google_jsapi.js'></script>
+<script type="text/javascript" src="media/js/jquery.fancybox-1.3.4.js"></script>
+<link href="media/css/fancybox/main.css" rel="stylesheet" type="text/css" />
+<link href="media/css/photo.css" rel="stylesheet" type="text/css">
+<link href="media/css/nav/main.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<!--{include file="shared/nav.php"}--> 
+<div id="photos">
+    <strong>This site requires Flash Player 8.0 or greater</strong><br />
+    Please click <a href="http://www.adobe.com/products/flashplayer/">here</a> to download.<br />
+    <p>
+    email: <a href="mailto:chemila@gmail.com">chemila@gmail.com</a>
+</div>
+<script type="text/javascript">
+    //<![CDATA[
+    var so = new SWFObject("media/swf/photos.swf", "polaroid", "100%", "100%", "8", "#FFFFFF");
+    var page = 1;
+    var type = 'feed';
+    show(page);
 
-<div id="wrap">
-<div class="mxk_header">
-<!--start: header top-->
-<!--{include file="header/top.php"}-->
-<ul class="nav">
-<li><a href="public" class="current">微博明星(
-<!--{$stars_count_all}-->
-)</a></li>
-<li><a href="home">我关注的</a></li>
-</ul>
-</div>
-<div class="main">
-<div class="main_leftimg"></div>
-<div class="main_t"></div>
-<div class="main_c">
-<!-- start: search -->
-<div class="search">
-<!--{include file="search/quick.php"}-->
-<!--{include file="search/input.php"}-->
-</div>
-<!--start: stars list-->
-<div class="blk_29">
+    function show(page) {
+        if(page < 0) return;
+        so.addVariable("xmlURL","public/" + type + '?page=' + page);
+        so.addParam("wmode", "transparent");
+        so.write("photos");
+    }
 
-<div class="LeftBotton"><div id="haback" style="height:50px;margin-top:120px;"></div></div>
-<div class="Cont" id="ISL_Cont_1">
-<div class="ScrCont" id="hacon" style="overflow:hidden;width:840px;height:280px;">
-<ul id="scroll_star_list" style="width:10000px">
-<!--{include file="public/stars.php"}-->
-</ul>
-<div id="List2_1"></div>
-</div>
-</div>
-<div class="RightBotton"><div id="hanext" style="height:50px;margin-top:120px;"></div></div>
-</div>
-<!--start: weibo list including news and hot commented-->
-<div class="clearfix">
-<div class="fan_comments w280bg">
-<div class="title">
-<!--<a href="index2.html" class="show">展开查看</a>-->
-<h2 class="fan_comments_title">粉丝热议</h2>
-</div>
-<!--start: hot commented weibo list-->
-<ul class="small_list" id="feed_comment_list" >
-<!--{foreach from=$hot_commented item=weibo key=index}-->
-<!--{include file="weibo/hot_commented.php" weibo=$weibo index=$index}-->
-<!--{/foreach}-->
-</ul>
-</div>
-<!--star stars news-->
-<div class="star_news w620bg">
-<div class="title">
-<h2 class="star_news_title">明星动态</h2>
-</div>
-<ul class="MIB_feed" id="feed_list">
-<!--{foreach from=$stars_news item=weibo}-->
-<!--{include file='weibo/feed.php' weibo=$weibo}-->
-<!--{/foreach}-->
-</ul>
-</div>
-</div>
-<!-- pagination -->
-<div class="pages">
-<!--{pagination total=$count|default:0 perpage=$perpage|default:20 tpl="public/pagination"}-->
-</div>
-</div>
-<div class="main_b"></div>
-</div>
-<script type="text/javascript" src="media/js/base.js" charset='gb2312'>
+    function details(json) {
+        $('#fancy_layer').attr('title', json.content).attr('href', json.image).trigger('click');
+    }
+    //]]>
 </script>
-<script>
-function fn(){};
-Exes("YO.Effect.HtmlMoveLoad","hacon/ul/li/haback/hanext",1,50,Easing.Out,fn,5000);
-</script>
-<!--{include file="footer.php"}-->
+<div style="display:none;"><a id="fancy_layer" href="#inline" title=""></a></div>
+<!--{include file="footer/main.php"}-->

@@ -86,4 +86,73 @@ HTML;
         var_dump($session->as_array());
     }
 
+    public function action_db()
+    {
+        $weibo = new model_weibo;
+        $data = $weibo->where('type', '=', '1')
+            ->where('img', '=', '')
+            ->order_by('id', 'desc')
+            ->find_all();
+
+        foreach($data as $obj)
+        {
+            $array = unserialize($obj->media_data);
+            $obj->img = arr::path($array, 'img.src', '/media/img/404.png');
+            $obj->save();
+        }
+    }
+
+    public function action_calendar()
+    {
+        $calendar = new Model_Calendar;
+        $weibo = new model_weibo;
+        $data = $weibo->where('img', '!=', '')
+            ->order_by(DB::Expr('rand(unix_timestamp())'))
+            ->limit(1)
+            ->find()
+            ->as_array();
+        
+        $image = $data['img'];
+        $params = array(
+            'title' => Text::limit_chars($data['content'], '80', '...'),
+            'icon' => URL::site('media/img/icon/1308731950_images_plus.ico', true),
+            'url' => $image,
+        );
+        $calendar->create_web_event($params);
+        unset($data, $image, $params);
+
+        $user = new model_user;
+        $data = $user->where('category', '=', 1)
+            ->where('source', '=', 'sina')
+            ->order_by(DB::Expr('rand(unix_timestamp())'))
+            ->limit(1)
+            ->find()
+            ->as_array();
+        $image = preg_replace('~http://(\w+)\.sinaimg\.cn/(\w+)/\d+/(\w+)/(\d+)/?$~i', 
+                'http://\\1.sinaimg.cn/\\2/180/\\3/\\4', $data['portrait']);
+        $params = array(
+            'title' => Text::limit_chars($data['nick'].' 来自：'.$data['location'], '50', '...'),
+            'icon' => URL::site('media/img/icon/1308734578_users-add.ico', true),
+            'width' => 180,
+            'height' => 180,
+            'url' => $image,
+        );
+        $calendar->create_web_event($params);
+    }
+
+    public function action_delete_event()
+    {
+        $calendar = new Model_Calendar;
+        $start = Arr::get($_GET, 'start', date('Y-m-d'));
+        $end = Arr::get($_GET, 'end', date('Y-m-d'));
+
+        $events = $calendar->query_by_date_range($start, $end);
+
+        foreach($events as $event)
+        {
+            echo 'deleted '.$event->id->text. "<br>";
+            $event->delete();
+        }
+    }
+
 }// End Welcome

@@ -48,8 +48,7 @@ class Controller_User extends Controller_Authenticated {
         if( ! $user->loaded())
             $this->trigger_error();
 
-        $this->init_view();
-        $this->view->user = $user->as_array();
+        $this->init_view('swirl', 'shared');
         $this->view->sid = $user->pk();
         $this->view->version = 'profile';
     }
