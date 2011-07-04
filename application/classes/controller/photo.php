@@ -160,7 +160,6 @@ class Controller_Photo extends Controller_Base {
             'title' => Text::limit_chars($data['content'], '80', '...'),
             'icon' => URL::site('media/img/icon/1308731950_images_plus.ico', true),
             'url' => $image,
-            'width' => 300,
         );
         $calendar->create_web_event($params);
         unset($data, $image, $params);
@@ -177,8 +176,8 @@ class Controller_Photo extends Controller_Base {
         $params = array(
             'title' => Text::limit_chars($data['nick'].' 来自：'.$data['location'], '50', '...'),
             'icon' => URL::site('media/img/icon/1308734578_users-add.ico', true),
-            'width' => 130,
-            'height' => 130,
+            'width' => 180,
+            'height' => 180,
             'url' => $image,
         );
         $calendar->create_web_event($params);
