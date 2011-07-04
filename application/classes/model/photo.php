@@ -48,6 +48,15 @@ class Model_Photo {
         $xml = '<?xml version="1.0" encoding="utf-8"?>'."\r\n";
         $xml .= '<photos>'."\r\n";
 
+        if(empty($array))
+        {
+            $array[] = array(
+                'desc' => 'Sorry, data not found! Try others please.',
+                'url' => '/media/img/404.png',
+                'link' => '#',
+            );
+        }
+
         foreach($array as $photo)
         {
             $tmp = '<photo ';
