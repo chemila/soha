@@ -84,17 +84,8 @@ abstract class Controller_Base extends Controller {
         }
     }
 
-    protected function response_json($code = 'A00006', $data = NULL, $callback = NULL)
+    protected function response_json($json, $callback = NULL)
     {
-        $json = array(
-            'code' => $code,       
-        );
-
-        if( ! empty($data))
-        {
-            $json['data'] = $data;
-        }
-
         if( ! $callback)
         {
             $response = json_encode($json);

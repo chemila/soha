@@ -34,22 +34,9 @@ class Controller_User extends Controller_Authenticated {
 
     public function action_profile()
     {
-        if($uid = $this->request->param('uid'))
-        {
-            $user = new Model_User($uid);
-        }
-        else
-        {
-            $user = $this->get_current_user();
-        }
+        $uid = $this->request->param('uid');
+        $this->init_view();
 
-        $user->reload();
-
-        if( ! $user->loaded())
-            $this->trigger_error();
-
-        $this->init_view('swirl', 'shared');
-        $this->view->sid = $user->pk();
-        $this->view->version = 'profile';
+        $this->view->uid = $uid;
     }
 }

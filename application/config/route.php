@@ -27,8 +27,8 @@ return array
         'defaults' => array('controller' => 'error', 'action' => 'index'),
     ),
     'public' => array(
-        'uri' => '(public(/<action>(/<page>)))',
-        'patterns' => array('page' => '\d*'),
+        'uri' => '(public(/<action>(/<type>(/<uid>))))',
+        'patterns' => array('type' => '\w+', 'uid' => '\d+'),
         'defaults' => array('controller' => 'public', 'action' => 'index'),
     ),
     'auth' => array(

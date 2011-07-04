@@ -207,3 +207,19 @@ if(Array.prototype.push==null){
 var getQueryParamValue=deconcept.util.getRequestParameter;
 var FlashObject=deconcept.SWFObject;
 var SWFObject=deconcept.SWFObject;
+
+function details(json) {
+    $('#fancy_layer').attr('title', json.content).attr('href', json.image).trigger('click');
+}
+
+function showVisual(a, container) {
+    a = a || {page: 1, type: 'feed', uid: 0};
+	container = container || 'photos';
+
+    var so = new SWFObject("media/swf/photos.swf", "polaroid", "100%", "100%", "8", "#FFFFFF");
+    var url = "/public/" + a.type + '/uid/' + (a.uid || 0) + '?page=' + (a.page || 1);
+
+    so.addVariable("xmlURL", url);
+    so.addParam("wmode", "transparent");
+    so.write(container);
+}

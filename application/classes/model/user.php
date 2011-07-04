@@ -36,7 +36,7 @@ class Model_User extends ORM {
             'foreign_key' => 'uid',
         ),
         'feeds' => array(
-            'modle' => 'weibo',
+            'model' => 'weibo',
             'foreign_key' => 'uid',
         ),
         'comments' => array(
@@ -239,7 +239,7 @@ class Model_User extends ORM {
         return $users;
     }
 
-    public function get_feeds($limit = 20, $offset = 0)
+    public function get_hot_feeds($limit = 20, $offset = 0)
     {
         return $this->feeds
             ->order_by('forward_count', 'desc')
