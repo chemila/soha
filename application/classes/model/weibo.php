@@ -345,7 +345,6 @@ class Model_Weibo extends Model_QORM {
     public function photos($page = 1)
     {
         return $this->where('user_category', '=', 1)
-            ->where('type', '=', 1)
             ->where('source', '=', 'sina')
             ->order_by('id', 'desc')
             ->limit(20)

@@ -76,7 +76,7 @@ class Controller_Data extends Controller_Base {
         $feeds = $user->get_feeds();
     }
 
-    protected function to_xml($items, $collection)
+    protected function to_xml($items, $collection, $parent = NULL)
     {
         if(false and $cached = Core::cache($this->cache_key, NULL, NULL, false))
             return $cached;
