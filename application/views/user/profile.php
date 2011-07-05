@@ -20,4 +20,4 @@
 <script type="text/javascript">
     showVisual({type: 'profile', uid: <!--{$uid|default:0}-->});
 </script>
-<!--{include file="footer/main.php"}-->
+<!--{include file="footer.php"}-->

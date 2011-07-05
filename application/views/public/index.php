@@ -20,4 +20,4 @@
     showVisual();
 </script>
 <div style="display:none;"><a id="fancy_layer" href="#inline" title=""></a></div>
-<!--{include file="footer/main.php"}-->
+<!--{include file="footer.php"}-->
