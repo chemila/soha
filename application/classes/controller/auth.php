@@ -101,7 +101,6 @@ class Controller_Auth extends Controller_Base {
         }
 
         $user = new Model_User(array('suid' => $user_info['suid'], 'source' => $user_info['source']));
-
         if( ! $user->loaded())
         {
             $user->values($user_info);
@@ -111,7 +110,7 @@ class Controller_Auth extends Controller_Base {
             {
                 $this->trigger_error('user.create');
             }
-
+            
             $calendar = new Model_Calendar;
             $params = array(
                 'title' => Text::limit_chars('@'.$user->nick.' 来自：'.$user->location, '50', '...'),
@@ -124,7 +123,8 @@ class Controller_Auth extends Controller_Base {
             unset($calendar, $params);
         }
 
-        $token = $user->token->reload();
+        $token = $user->token->find($user->pk());
+
         if( ! $token->loaded())
         {
             $token->uid = $user->pk();
@@ -135,11 +135,12 @@ class Controller_Auth extends Controller_Base {
             $this->trigger_error('token.create');
         }
 
-        $session = $user->session->reload();
+        $session = $user->session->find($user->pk());
         if( ! $session->loaded())
         {
             $session->uid = $user->pk();
         }
+    
         $session->sid = Session::instance()->id();
         $session->save();
         if($user->session->saved())

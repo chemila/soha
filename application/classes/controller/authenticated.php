@@ -34,7 +34,7 @@ class Controller_Authenticated extends Controller_Base {
     {
         if(Request::$is_ajax)
         {
-            $this->response_json('CC2510');
+            $this->response_json();
         }
 
         $this->request->redirect('auth');

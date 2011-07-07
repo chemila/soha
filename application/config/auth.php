@@ -2,7 +2,7 @@
 
 return array(
     'user' => array(
-        'skipped' => array(''),
+        'skipped' => array('index'),
         'required' => array('home'),
     ),
 );

@@ -104,7 +104,7 @@ abstract class Controller_Base extends Controller {
             return $this->user;
 
         $su = Cookie::get(Controller_Auth::COOKIE_NAME, false);
-
+        //var_dump($su);die;
         if( ! $su or ! preg_match('~sid=(\w+);uid=(\d+)$~', $su, $match))
             return false;
 
