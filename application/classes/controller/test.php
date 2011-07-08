@@ -4,6 +4,7 @@ class Controller_Test extends Controller_Base {
 	public function action_index()
 	{
         $this->init_view();
+        var_dump($this->request->directory);die;
 	}
 
     public function action_debug()
