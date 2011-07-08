@@ -1,12 +1,14 @@
-<!--{include file="header.php"}--> 
-<script type="text/javascript" src="media/js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="media/js/main.js"></script>
-<script type="text/javascript" src="media/js/jquery.fancybox-1.3.4.js"></script>
+<!doctype html>
+<html>
+<head>
+<base href="<!--{url_base}-->" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>登陆成功</title>
 <script type="text/javascript">
-var fr = window.parent.document.getElementById('fancybox-frame');
+    setTimeout(function(){window.close();},3000);
 </script>
-</header>
-welcome: <!--{$user_info.nick}--> 
+</head>
+welcome: <!--{$user.nick}--> 
 </body>
 </html>
 

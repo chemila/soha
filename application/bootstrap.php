@@ -63,7 +63,7 @@ Core::modules(array(
     'smarty'     => MODPATH.'smarty',
     'queue'      => MODPATH.'queue',      // Queue access
     'cron'       => MODPATH.'cron',       // Run cron job
-    'zend'       => MODPATH.'zend',       // Run cron job
+    'zend'       => MODPATH.'zend',       // Zend extension
 ));
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
