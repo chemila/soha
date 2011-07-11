@@ -8,10 +8,8 @@ class Controller_Weibo extends Controller_Authenticated {
 
         if( ! $id)
         {
-            $this->trigger_error('该微博已不存在');
+            $this->trigger_error();
         }
-
-        $page = $this->get_page();
 
         $weibo = new Model_Weibo($id);
         $user = $weibo->get_user();

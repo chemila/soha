@@ -208,8 +208,21 @@ var getQueryParamValue=deconcept.util.getRequestParameter;
 var FlashObject=deconcept.SWFObject;
 var SWFObject=deconcept.SWFObject;
 
-function details(json) {
-    $('#fancy_layer').attr('title', json.content).attr('href', json.image).trigger('click');
+function showFeed(json) {
+    console.info(json);
+    $.fancybox.showActivity();
+    $.fancybox({
+        'type'              : 'iframe',
+        'showCloseButton'   : 'true',
+        'width'				: json.width,
+        'height'			: json.height,
+        'overlayColor'		: '#000',
+        'overlayOpacity'	: 0.5,
+        'autoScale'			: true,
+        'scrolling'         : 'auto',
+        'title'             : json.title,
+        'href'              : json.href
+    });
 }
 
 function showVisual(a, container) {

@@ -18,7 +18,7 @@ return array
     (
         // List extension class names
     ),
-    'templates'      => APPPATH.'views/twig',
+    'templates'      => APPPATH.'views',
     'suffix'         => '.twig',
     'context_object' => TRUE,
 );

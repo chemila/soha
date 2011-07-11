@@ -1,9 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
  * Twig template controller
- *
- * @package    Kohana-Twig
- * @author     John Heathco <jheathco@gmail.com>
  */
 abstract class Controller_Twig extends Controller {
 
@@ -22,24 +19,38 @@ abstract class Controller_Twig extends Controller {
 	 */
 	public $context;
 
-	public function __construct(Request $request, Response $response)
+	public function __construct(Request $request)
 	{
 		// Setup the Twig loader environment
-		$this->twig = Kohana_Twig::instance();
+        // Load Twig configuration
+        $config = Core::config('twig');
 
-		if (Kohana_Twig::$config->context_object)
-		{
-			// Context treated as an object
-			$this->context = new stdClass;
-		}
-		else
-		{
-			// Context treated as an array
-			$this->context = array();
-		}
+        // Create the the loader
+        $loader = new Twig_Loader_Filesystem($config->templates);
 
-		// Auto-generate template filename ('index' method called on Controller_Admin_Users looks for 'admin/users/index')
-		$this->template = $request->controller().'/'.$request->action().Kohana_Twig::$config->suffix;
+        // Set up Twig
+        $this->twig = new Twig_Environment($loader, $config->environment);
+
+        foreach ($config->extensions as $extension)
+        {
+            // Load extensions
+            $this->twig->addExtension(new $extension);
+        }
+
+        if ($config->context_object)
+        {
+            // Context treated as an object
+            $this->context = new stdClass;
+        }
+        else
+        {
+            // Context treated as an array
+            $this->context = array();
+        }
+
+		// Auto-generate template filename 
+        //('index' method called on Controller_Admin_Users looks for 'admin/users/index')
+		$this->template = $request->controller.'/'.$request->action.$config->suffix;
 
 		if ($request->directory)
 		{
@@ -47,7 +58,7 @@ abstract class Controller_Twig extends Controller {
 			$this->template = $request->directory.'/'.$this->template;
 		}
 
-		parent::__construct($request, $response);
+		parent::__construct($request);
 	}
 
 	public function after()
@@ -55,8 +66,7 @@ abstract class Controller_Twig extends Controller {
 		if ($this->auto_render)
 		{
 			// Auto-render the template
-			$this->response->body($this->twig->loadTemplate($this->template)->render((array) $this->context));
+			$this->request->response = $this->twig->loadTemplate($this->template)->render((array) $this->context);
 		}
 	}
-
 } // End Controller_Twig

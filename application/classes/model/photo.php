@@ -12,7 +12,6 @@ class Model_Photo {
         }
 
 		$file = sha1($url).'.'.$ext;
-        $lifetime = 24 * 3600;
         $config = core::config('upload');
 
 		// Cache directories are split by keys to prevent filesystem overload
@@ -78,14 +77,15 @@ class Model_Photo {
     public static function get_image_size($image, $max_width = 180, $max_height = 180)
     {
         $image_info = @getimagesize($image);
+
         if( ! $image_info)
         {
-            return array(NULL, NULL, 'image/jpg');
+            return array(800, 600, 'image/jpg');
         }
 
         $type = $image_info['mime'];
 
-        list($width, $height) = getimagesize($image); 
+        list($width, $height) = $image_info;
 
         $ratioh = $max_height/$height; 
         $ratiow = $max_width/$width; 

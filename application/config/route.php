@@ -6,7 +6,6 @@
  *    ->defaults(array(
  *        'controller' => 'welcome',
  *        'action'     => 'index',
- *        'action'     => 'index',
  *    ));
  */
 return array
@@ -70,5 +69,10 @@ return array
         'uri' => '(intl/help.html)',
         'patterns' => array(),
         'defaults' => array('controller' => 'help', 'action' => 'intl'),
+    ),
+    'feed' => array(
+        'uri' => '(feed(/<action>(/<id>)))',
+        'patterns' => array('id' => '\d+'),
+        'defaults' => array('controller' => 'feed', 'action' => 'show'),
     ),
 );
