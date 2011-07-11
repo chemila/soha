@@ -218,8 +218,8 @@ function showFeed(json) {
         'height'			: json.height,
         'overlayColor'		: '#000',
         'overlayOpacity'	: 0.5,
-        'autoScale'			: true,
-        'scrolling'         : 'auto',
+        'autoScale'			: false,
+        'scrolling'         : 'no',
         'title'             : json.title,
         'href'              : json.href
     });

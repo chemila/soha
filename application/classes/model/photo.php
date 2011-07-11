@@ -76,6 +76,11 @@ class Model_Photo {
 
     public static function get_image_size($image, $max_width = 180, $max_height = 180)
     {
+        if(0 !== strpos('http://', $image))
+        {
+            $image = URL::site($image, true);
+        }
+
         $image_info = @getimagesize($image);
 
         if( ! $image_info)
@@ -87,14 +92,18 @@ class Model_Photo {
 
         list($width, $height) = $image_info;
 
-        $ratioh = $max_height/$height; 
-        $ratiow = $max_width/$width; 
+        $ratioh = ceil($max_height/$height); 
+        $ratiow = ceil($max_width/$width); 
         $ratio = min($ratioh, $ratiow); 
         // New dimensions 
         $width = intval($ratio*$width); 
         $height = intval($ratio*$height); 
 
-        return array($width, $height, $type);
+        return array(
+            'width' => $width, 
+            'height' => $height, 
+            'type' => $type,
+        );
     }
 }
 

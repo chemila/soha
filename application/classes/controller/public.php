@@ -93,11 +93,14 @@ class Controller_Public extends Controller_Base {
             $content = $desc = $weibo->content;
             $url = Model_Photo::load($weibo->img);
             $url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $url);
+            $size_info = Model_Photo::get_image_size($url, 600, 600);
 
             $json = array(
                 'pk' => $weibo->pk(),
                 'content' => $content,
                 'image' => $url,
+                'width' => $size_info['width'],
+                'height' => $size_info['height'],
             );
 
             $data[] = array(
