@@ -5,4 +5,7 @@ return array(
         'skipped' => array('index'),
         'required' => array('home'),
     ),
+    'feed' => array(
+        'skipped' => array('show'),
+    ),
 );

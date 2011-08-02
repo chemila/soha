@@ -19,7 +19,6 @@ class Controller_Public extends Controller_Base {
             $content = $desc = $weibo->content;
             $url = $weibo->img ? Model_Photo::load($weibo->img) : '/media/img/404.png';
             $size_info = Model_Photo::get_image_size($url, 800, 400);
-
             $url = str_replace($_SERVER['DOCUMENT_ROOT'], '', $url);
 
             $json = array(

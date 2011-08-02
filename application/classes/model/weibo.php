@@ -13,6 +13,10 @@ class Model_Weibo extends Model_QORM {
             'model' => 'weibo',
             'foreign_key' => 'rid',
         ),
+        'user' => array(
+            'model' => 'user',
+            'foreign_key' => 'uid',
+        ),
     );
     protected $_has_many = array(
         'comments' => array(

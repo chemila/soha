@@ -32,6 +32,7 @@ class Controller_Feed extends Controller_Authenticated {
 
         $this->init_view();
         $this->view->src = $url;
-        $this->view->weibo = $weibo->as_array();
+        $this->view->size = $size_info;
+        $this->view->weibo = $weibo->as_array() + array('user' => $weibo->user->find($weibo->uid)->as_array());
     }
 }

@@ -92,9 +92,10 @@ class Model_Photo {
 
         list($width, $height) = $image_info;
 
-        $ratioh = ceil($max_height/$height); 
-        $ratiow = ceil($max_width/$width); 
+        $ratioh = $max_height/$height; 
+        $ratiow = $max_width/$width; 
         $ratio = min($ratioh, $ratiow); 
+
         // New dimensions 
         $width = intval($ratio*$width); 
         $height = intval($ratio*$height); 
