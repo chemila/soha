@@ -81,28 +81,28 @@ class Model_Photo {
             $image = URL::site($image, true);
         }
 
-        $image_info = @getimagesize($image);
+        $info = @getimagesize($image); 
 
-        if( ! $image_info)
+        if( ! $info) 
         {
-            return array(800, 600, 'image/jpg');
+            $width = $max_width;
+            $height = $max_height;
+            $type = 'image/jpeg';
         }
-
-        $type = $image_info['mime'];
-
-        list($width, $height) = $image_info;
-
-        $ratioh = $max_height/$height; 
-        $ratiow = $max_width/$width; 
-        $ratio = min($ratioh, $ratiow); 
-
-        // New dimensions 
-        $width = intval($ratio*$width); 
-        $height = intval($ratio*$height); 
-
+        else
+        {
+            list($width, $height, $type) = $info;
+            $ratioh = $max_height/$height; 
+            $ratiow = $max_width/$width; 
+            $ratio = min($ratioh, $ratiow); 
+            // New dimensions 
+            $width = intval($ratio*$width); 
+            $height = intval($ratio*$height); 
+        }
+               
         return array(
-            'width' => $width, 
-            'height' => $height, 
+            'width' => (int)$width, 
+            'height' => (int)$height, 
             'type' => $type,
         );
     }

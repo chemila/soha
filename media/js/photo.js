@@ -210,11 +210,13 @@ var SWFObject=deconcept.SWFObject;
 
 function showFeed(json) {
     $.fancybox.showActivity();
+    var width = $(window).width() * 0.8;
+    var height = $(window).height() * 0.8;
     $.fancybox({
         'type'              : 'iframe',
         'showCloseButton'   : 'true',
-        'width'				: json.width,
-        'height'			: json.height,
+        'width'				: width,
+        'height'			: height,
         'overlayColor'		: '#000',
         'overlayOpacity'	: 0.5,
         'autoScale'			: true,
